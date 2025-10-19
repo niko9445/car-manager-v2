@@ -9,14 +9,10 @@ interface AddCarDataModalProps {
 }
 
 const AddCarDataModal: React.FC<AddCarDataModalProps> = ({ onClose, onSave }) => {
-  const [fields, setFields] = useState<CarDataField[]>([
-    { name: '', value: '', unit: '' }
-  ]);
-
-  const [showSuggestions, setShowSuggestions] = useState<number | null>(null);
+  const [fields, setFields] = useState<CarDataField[]>([{ name: '', value: '', unit: '' }]);
+  const [activeSuggestionIndex, setActiveSuggestionIndex] = useState<number | null>(null);
   const timeoutRef = useRef<number | null>(null);
 
-  // Предопределенные поля для автодополнения
   const predefinedFields = useMemo(() => [
     { name: 'Пробег', unit: 'км' },
     { name: 'Расход топлива', unit: 'л/100км' },
@@ -40,80 +36,47 @@ const AddCarDataModal: React.FC<AddCarDataModalProps> = ({ onClose, onSave }) =>
     { name: 'Налог', unit: 'руб/год' }
   ], []);
 
-  const handleSubmit = (e: React.FormEvent): void => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
-    const isValid = fields.every(field => field.name.trim() && field.value.trim());
-    
-    if (isValid) {
+    if (fields.every(f => f.name.trim() && f.value.trim())) {
       onSave({ fields });
     }
   };
 
-  const addField = (): void => {
-    setFields([...fields, { name: '', value: '', unit: '' }]);
+  const addField = () => setFields([...fields, { name: '', value: '', unit: '' }]);
+  const removeField = (index: number) => {
+    if (fields.length > 1) setFields(fields.filter((_, i) => i !== index));
   };
 
-  const removeField = (index: number): void => {
-    if (fields.length > 1) {
-      const updatedFields = fields.filter((_, i) => i !== index);
-      setFields(updatedFields);
-    }
+  const updateField = (index: number, key: keyof CarDataField, value: string) => {
+    const updated = fields.map((f, i) => i === index ? { ...f, [key]: value } : f);
+    setFields(updated);
   };
 
-  const updateField = (index: number, field: keyof CarDataField, value: string): void => {
-    const updatedFields = fields.map((f, i) => 
-      i === index ? { ...f, [field]: value } : f
-    );
-    setFields(updatedFields);
-  };
-
-  // Фильтрация предопределенных полей для автодополнения
   const filteredSuggestions = useMemo(() => {
-    if (showSuggestions === null) return [];
-    const currentName = fields[showSuggestions]?.name.toLowerCase() || '';
-    return predefinedFields.filter(field =>
-      field.name.toLowerCase().includes(currentName) &&
-      !fields.some((f, idx) => idx !== showSuggestions && f.name === field.name)
+    if (activeSuggestionIndex === null) return [];
+    const current = fields[activeSuggestionIndex]?.name.toLowerCase() || '';
+    return predefinedFields.filter(
+      f => f.name.toLowerCase().includes(current) &&
+           !fields.some((field, idx) => idx !== activeSuggestionIndex && field.name === f.name)
     );
-  }, [showSuggestions, fields, predefinedFields]);
+  }, [activeSuggestionIndex, fields, predefinedFields]);
 
   const handleSuggestionSelect = (index: number, suggestion: typeof predefinedFields[0]) => {
-    const updatedFields = [...fields];
-    updatedFields[index] = {
-      ...updatedFields[index],
-      name: suggestion.name,
-      unit: suggestion.unit
-    };
-    setFields(updatedFields);
-    setShowSuggestions(null);
+    const updated = [...fields];
+    updated[index] = { ...updated[index], name: suggestion.name, unit: suggestion.unit };
+    setFields(updated);
+    setActiveSuggestionIndex(null);
   };
 
-  const handleInputFocus = (index: number) => {
-    // В ДЕСКТОПНОЙ ВЕРСИИ: показываем автодополнение всегда при фокусе
-    setShowSuggestions(index);
-  };
+  const handleInputFocus = (index: number) => setActiveSuggestionIndex(index);
 
   const handleInputBlur = () => {
-    // Задержка чтобы успеть кликнуть по suggestion
-    timeoutRef.current = window.setTimeout(() => {
-      setShowSuggestions(null);
-    }, 200);
+    timeoutRef.current = window.setTimeout(() => setActiveSuggestionIndex(null), 200);
   };
 
-  const handleSuggestionMouseDown = (e: React.MouseEvent) => {
-    // Предотвращаем blur при клике на suggestion
-    e.preventDefault();
-    if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current);
-      timeoutRef.current = null;
-    }
-  };
-
-  const handleManualInputClick = (index: number) => {
-    // Скрываем автодополнение при выборе ручного ввода
-    setShowSuggestions(null);
-  };
+  const handleSuggestionMouseDown = (e: React.MouseEvent) => e.preventDefault();
+  const handleManualInputClick = () => setActiveSuggestionIndex(null);
 
   return (
     <Modal isOpen={true} onClose={onClose} title="Добавить данные об авто" size="md">
@@ -132,45 +95,40 @@ const AddCarDataModal: React.FC<AddCarDataModalProps> = ({ onClose, onSave }) =>
                   onBlur={handleInputBlur}
                   required
                 />
-                
-                {showSuggestions === index && (
-                  <div className="addcardatamodal__suggestions">
-                    <div className="addcardatamodal__suggestions-header">
-                      Выберите параметр или введите свой
-                    </div>
-                    
-                    {/* СТРОКА РУЧНОГО ВВОДА - В ВЕРХУ */}
-                    <div
-                      className="addcardatamodal__suggestion-item addcardatamodal__suggestion-item--manual"
-                      onMouseDown={handleSuggestionMouseDown}
-                      onClick={() => handleManualInputClick(index)}
-                    >
-                      ✏️ Ввести свой параметр
-                    </div>
-                    
-                    {/* Предопределенные параметры */}
-                    {filteredSuggestions.map((suggestion, idx) => (
-                      <div
-                        key={idx}
-                        className="addcardatamodal__suggestion-item"
-                        onMouseDown={handleSuggestionMouseDown}
-                        onClick={() => handleSuggestionSelect(index, suggestion)}
-                      >
-                        <strong>{suggestion.name}</strong>
-                        {suggestion.unit && <span className="addcardatamodal__suggestion-unit"> ({suggestion.unit})</span>}
-                      </div>
-                    ))}
-                    
-                    {/* Если нет подходящих параметров */}
-                    {filteredSuggestions.length === 0 && (
-                      <div className="addcardatamodal__suggestion-item addcardatamodal__suggestion-item--empty">
-                        Нет подходящих параметров
-                      </div>
-                    )}
+
+                <div className={`addcardatamodal__suggestions ${activeSuggestionIndex === index ? 'show' : ''}`}>
+                  <div className="addcardatamodal__suggestions-header">
+                    Выберите параметр или введите свой
                   </div>
-                )}
+
+                  <div
+                    className="addcardatamodal__suggestion-item addcardatamodal__suggestion-item--manual"
+                    onMouseDown={handleSuggestionMouseDown}
+                    onClick={() => handleManualInputClick()}
+                  >
+                    ✏️ Ввести свой параметр
+                  </div>
+
+                  {filteredSuggestions.map((suggestion, idx) => (
+                    <div
+                      key={idx}
+                      className="addcardatamodal__suggestion-item"
+                      onMouseDown={handleSuggestionMouseDown}
+                      onClick={() => handleSuggestionSelect(index, suggestion)}
+                    >
+                      <strong>{suggestion.name}</strong>
+                      {suggestion.unit && <span className="addcardatamodal__suggestion-unit"> ({suggestion.unit})</span>}
+                    </div>
+                  ))}
+
+                  {filteredSuggestions.length === 0 && (
+                    <div className="addcardatamodal__suggestion-item addcardatamodal__suggestion-item--empty">
+                      Нет подходящих параметров
+                    </div>
+                  )}
+                </div>
               </div>
-              
+
               <input
                 className="form__input"
                 type="text"
@@ -179,7 +137,7 @@ const AddCarDataModal: React.FC<AddCarDataModalProps> = ({ onClose, onSave }) =>
                 onChange={(e) => updateField(index, 'value', e.target.value)}
                 required
               />
-              
+
               <input
                 className="form__input"
                 type="text"
@@ -187,9 +145,9 @@ const AddCarDataModal: React.FC<AddCarDataModalProps> = ({ onClose, onSave }) =>
                 value={field.unit}
                 onChange={(e) => updateField(index, 'unit', e.target.value)}
               />
-              
+
               {fields.length > 1 && (
-                <button 
+                <button
                   type="button"
                   className="form__remove-button"
                   onClick={() => removeField(index)}
@@ -201,11 +159,7 @@ const AddCarDataModal: React.FC<AddCarDataModalProps> = ({ onClose, onSave }) =>
           ))}
         </div>
 
-        <button 
-          type="button"
-          className="form__add-button"
-          onClick={addField}
-        >
+        <button type="button" className="form__add-button" onClick={addField}>
           + Добавить поле
         </button>
 
