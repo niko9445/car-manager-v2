@@ -13,18 +13,20 @@ const Sidebar: React.FC<SidebarProps> = ({
   onAddCar,
   onDeleteCar
 }) => {
-
-  const handleCarSelect = (car: Car) => setSelectedCar(car);
+  const handleCarSelect = (car: Car) => {
+    setSelectedCar(car);
+  };
 
   const handleDeleteClick = () => {
-    if (selectedCar) onDeleteCar(selectedCar);
+    if (selectedCar) {
+      onDeleteCar(selectedCar);
+    }
   };
 
   return (
     <div className="sidebar__container">
       <div className="sidebar__header">
         <h2 className="sidebar__title">Мои автомобили</h2>
-
         <div className="sidebar__header-actions">
           {selectedCar && (
             <button 
@@ -36,7 +38,7 @@ const Sidebar: React.FC<SidebarProps> = ({
               🗑️
             </button>
           )}
-
+          
           <button 
             className="sidebar__add-button"
             onClick={onAddCar}
@@ -62,7 +64,7 @@ const Sidebar: React.FC<SidebarProps> = ({
       <div className="sidebar__cars-list">
         {cars.length === 0 ? (
           <div className="sidebar__empty">
-            <div className="sidebar__empty-icon">🚗</div>
+            <div className="sidebar__empty-icon">{"🚗"}</div>
             <p className="sidebar__empty-text">Нет автомобилей</p>
             <p className="sidebar__empty-subtext">Добавьте первый автомобиль</p>
           </div>

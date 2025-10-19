@@ -234,6 +234,16 @@ const AppContent = () => {
   return (
     <>
       <div className="app">
+
+        {/* Оверлей для мобильных */}
+          {isMobile && sidebarOpen && (
+            <div
+              className="sidebar-overlay"
+              onClick={() => setSidebarOpen(false)}
+            />
+          )}
+
+
         {/* Сайдбар */}
           <div
             className={`sidebar-wrapper ${
@@ -251,13 +261,6 @@ const AppContent = () => {
             />
           </div>
 
-          {/* Оверлей для мобильных */}
-          {isMobile && sidebarOpen && (
-            <div
-              className="sidebar-overlay"
-              onClick={() => setSidebarOpen(false)}
-            />
-          )}
 
 
         <div className="app__main">
