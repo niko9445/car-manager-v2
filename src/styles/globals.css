@@ -1,0 +1,191 @@
+@import './variables.css';
+@import './reset.css';
+@import './components/buttons.css';
+@import './components/modals.css';
+@import './components/forms.css';
+@import './components/cards.css';
+
+
+/* ===== ОСНОВНЫЕ СТИЛИ ПРИЛОЖЕНИЯ ===== */
+
+/* Типография */
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 600;
+  line-height: 1.3;
+  margin-bottom: var(--space-2);
+}
+
+h1 { font-size: var(--font-size-3xl); }
+h2 { font-size: var(--font-size-2xl); }
+h3 { font-size: var(--font-size-xl); }
+h4 { font-size: var(--font-size-lg); }
+h5 { font-size: var(--font-size-base); }
+h6 { font-size: var(--font-size-sm); }
+
+p {
+  margin-bottom: var(--space-4);
+  line-height: 1.6;
+}
+
+/* ОСНОВНАЯ СТРУКТУРА ЛАЙАУТА */
+.app {
+  display: flex;
+  height: 100vh;
+  background: var(--color-bg-primary);
+  position: relative;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  overflow: hidden;
+}
+
+.app > * {
+  margin: 0;
+  padding: 0;
+}
+
+.sidebar-wrapper {
+  position: relative;
+}
+
+/* Отвечает за этот тупой отступ в котором у меня была постоянна проблема */
+.app__main {
+  flex: 1;
+  margin-left: 0;
+  background: var(--color-bg-primary);
+  height: 100vh;
+  overflow: auto;
+}
+
+/* Стили для сайдбара */
+.sidebar-edge {
+  position: fixed;
+  left: 0;
+  top: 0;
+  height: 100vh;
+  width: 12px;
+  background: linear-gradient(
+    90deg,
+    rgba(59, 130, 246, 0.6) 0%,
+    rgba(59, 130, 246, 0.3) 70%,
+    transparent 100%
+  );
+  z-index: 998;
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  backdrop-filter: blur(2px);
+}
+
+.sidebar-edge:hover {
+  width: 16px;
+  background: linear-gradient(
+    90deg,
+    rgba(59, 130, 246, 0.8) 0%,
+    rgba(59, 130, 246, 0.4) 70%,
+    transparent 100%
+  );
+}
+
+.sidebar-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--color-bg-overlay);
+  z-index: 999;
+  backdrop-filter: blur(2px);
+}
+
+/* Утилитарные классы */
+.text-center { text-align: center; }
+.text-left { text-align: left; }
+.text-right { text-align: right; }
+
+.mt-1 { margin-top: var(--space-1); }
+.mt-2 { margin-top: var(--space-2); }
+.mt-4 { margin-top: var(--space-4); }
+.mt-6 { margin-top: var(--space-6); }
+
+.mb-1 { margin-bottom: var(--space-1); }
+.mb-2 { margin-bottom: var(--space-2); }
+.mb-4 { margin-bottom: var(--space-4); }
+.mb-6 { margin-bottom: var(--space-6); }
+
+.p-4 { padding: var(--space-4); }
+.p-6 { padding: var(--space-6); }
+
+/* Скрытие скроллбаров но с сохранением функциональности */
+.scrollbar-hidden {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hidden::-webkit-scrollbar {
+  display: none;
+}
+
+/* Кастомные скроллбары */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: var(--color-bg-secondary);
+  border-radius: 3px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: var(--color-border-secondary);
+  border-radius: 3px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: var(--color-text-muted);
+}
+
+/* Мобильная адаптация */
+@media (max-width: 768px) {
+  .sidebar-wrapper {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    z-index: 1000;
+    transition: transform var(--transition-normal);
+  }
+
+  .sidebar-wrapper--closed {
+    transform: translateX(-100%);
+  }
+
+  .sidebar-wrapper--open {
+    transform: translateX(0);
+  }
+
+  .app__main {
+    margin-left: 0 !important;
+    width: 100% !important;
+  }
+
+  /* Уменьшаем размеры текста на мобильных */
+  h1 { font-size: var(--font-size-2xl); }
+  h2 { font-size: var(--font-size-xl); }
+  h3 { font-size: var(--font-size-lg); }
+  h4 { font-size: var(--font-size-base); }
+}
+
+/* Очень маленькие экраны */
+@media (max-width: 480px) {
+  h1 { font-size: var(--font-size-xl); }
+  h2 { font-size: var(--font-size-lg); }
+  h3 { font-size: var(--font-size-base); }
+}
+
+/* Поддержка безопасных зон для iPhone */
+@supports(padding: max(0px)) {
+  .app {
+    padding-left: max(0px, env(safe-area-inset-left));
+    padding-right: max(0px, env(safe-area-inset-right));
+  }
+}

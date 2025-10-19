@@ -1,0 +1,197 @@
+/* CSS переменные для DataManager */
+.datamanager__container {
+  --card-bg: #1e293b;
+  --card-border: #334155;
+  --text-primary: #f8fafc;
+  --text-secondary: #94a3b8;
+  --accent-green: #10b981;
+  --accent-purple: #8b5cf6;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.3);
+  --transition: all 0.3s ease;
+}
+
+.datamanager__container {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  margin: 20px 32px;
+}
+
+.datamanager__title {
+  margin: 0 0 8px 0;
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.datamanager__description {
+  margin: 0 0 24px 0;
+  font-size: 14px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.datamanager__actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.datamanager__button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px;
+  border: none;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: var(--transition);
+  min-width: auto;
+  flex: none;
+  position: relative;
+  overflow: hidden;
+}
+
+.datamanager__button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+  transition: left 0.5s;
+}
+
+.datamanager__button:hover::before {
+  left: 100%;
+}
+
+.datamanager__button--export {
+  background: linear-gradient(135deg, #059669 0%, var(--accent-green) 100%);
+  color: white;
+  border: 1px solid var(--accent-green);
+  box-shadow: 0 2px 8px rgba(5, 150, 105, 0.3);
+}
+
+.datamanager__button--export:hover {
+  background: linear-gradient(135deg, var(--accent-green) 0%, #34d399 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(5, 150, 105, 0.4);
+}
+
+.datamanager__button--import {
+  background: linear-gradient(135deg, #7c3aed 0%, var(--accent-purple) 100%);
+  color: white;
+  border: 1px solid var(--accent-purple);
+  box-shadow: 0 2px 8px rgba(124, 58, 237, 0.3);
+}
+
+.datamanager__button--import:hover {
+  background: linear-gradient(135deg, var(--accent-purple) 0%, #a78bfa 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(124, 58, 237, 0.4);
+}
+
+.datamanager__icon {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
+/* Простая анимация иконки при hover */
+.datamanager__button:hover .datamanager__icon {
+  transform: scale(1.1);
+  transition: transform 0.2s ease;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+  .datamanager__container {
+    margin: 20px 16px;
+    padding: 20px;
+  }
+  
+  .datamanager__actions {
+    flex-direction: column;
+  }
+  
+  .datamanager__button {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* Стили для DataManager в сайдбаре */
+.sidebar__data-manager .datamanager__container {
+  background: transparent;
+  border: 1px solid #4b5563;
+  border-radius: 8px;
+  padding: 16px;
+  margin: 0;
+}
+
+.sidebar__data-manager .datamanager__title {
+  font-size: 16px;
+  margin-bottom: 6px;
+  color: #f3f4f6;
+}
+
+.sidebar__data-manager .datamanager__description {
+  font-size: 12px;
+  margin-bottom: 16px;
+  color: #9ca3af;
+  line-height: 1.4;
+}
+
+.sidebar__data-manager .datamanager__actions {
+  flex-direction: column;
+  gap: 8px;
+}
+
+.sidebar__data-manager .datamanager__button {
+  width: 100%;
+  justify-content: center;
+  padding: 10px 16px;
+  font-size: 13px;
+}
+
+.sidebar__data-manager .datamanager__icon {
+  width: 16px;
+  height: 16px;
+}
+
+/* Мобильная версия для сайдбара */
+@media (max-width: 768px) {
+  .sidebar__data-manager {
+    padding: 12px;
+  }
+  
+  .sidebar__data-manager .datamanager__container {
+    padding: 12px;
+  }
+}
+
+/* Поддержка reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .datamanager__button {
+    transition: none;
+  }
+
+  .datamanager__button::before {
+    display: none;
+  }
+
+  .datamanager__button:hover {
+    transform: none;
+  }
+
+  .datamanager__button:hover .datamanager__icon {
+    transform: none;
+  }
+}

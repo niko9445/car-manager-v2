@@ -1,0 +1,219 @@
+/* DataCard - упрощенный стиль */
+
+.datacard {
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border-primary);
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
+  transition: all var(--transition-normal);
+  animation: datacard-appear 0.4s ease-out forwards;
+  opacity: 0;
+  transform: translateY(20px);
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+
+.datacard:hover {
+  border-color: var(--color-border-accent);
+  background: var(--color-bg-tertiary);
+}
+
+.datacard--active {
+  border-color: var(--color-accent-blue);
+  background: var(--color-bg-tertiary);
+  box-shadow: var(--shadow-md);
+}
+
+@keyframes datacard-appear {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Упрощенная сетка - без вложенных контейнеров */
+.datacard__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--space-4);
+}
+
+.datacard__item {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-4);
+  background: var(--color-bg-tertiary);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border-secondary);
+  transition: all var(--transition-fast);
+}
+
+.datacard__item:hover {
+  border-color: var(--color-border-accent);
+  background: var(--color-bg-card);
+}
+
+.datacard__label {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  font-weight: 500;
+  line-height: 1.2;
+}
+
+.datacard__value {
+  font-size: var(--font-size-base);
+  color: var(--color-text-primary);
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+/* Контейнер кнопок - прозрачный с отступом от краев */
+.datacard__actions {
+  position: absolute;
+  top: var(--space-5);
+  right: var(--space-5);
+  display: flex;
+  gap: var(--space-3);
+  background: none;
+  padding: 0;
+  border: none;
+  box-shadow: none;
+  animation: datacard-actions-appear 0.2s ease-out;
+  z-index: 2;
+}
+
+@keyframes datacard-actions-appear {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Кнопки с цветным фоном БЕЗ ТЕНИ */
+.datacard__action {
+  width: 36px;
+  height: 36px;
+  border: none;
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  /* УБРАЛ box-shadow: var(--shadow-md); */
+}
+
+.datacard__action--edit {
+  background: var(--color-accent-blue);
+  color: white;
+}
+
+.datacard__action--edit:hover {
+  background: var(--color-accent-blue-hover);
+  transform: scale(1.1);
+  /* УБРАЛ box-shadow: var(--shadow-lg); */
+}
+
+.datacard__action--delete {
+  background: var(--color-accent-red);
+  color: white;
+}
+
+.datacard__action--delete:hover {
+  background: var(--color-accent-red-hover);
+  transform: scale(1.1);
+  /* УБРАЛ box-shadow: var(--shadow-lg); */
+}
+
+.datacard__action svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* Мобильная версия */
+@media (max-width: 768px) {
+  .datacard {
+    padding: var(--space-4);
+  }
+  
+  .datacard__grid {
+    grid-template-columns: 1fr;
+    gap: var(--space-3);
+  }
+  
+  .datacard__item {
+    padding: var(--space-3);
+  }
+  
+  .datacard__actions {
+    top: var(--space-4);
+    right: var(--space-4);
+    gap: var(--space-2);
+  }
+  
+  .datacard__action {
+    width: 40px;
+    height: 40px;
+  }
+  
+  .datacard__action svg {
+    width: 20px;
+    height: 20px;
+  }
+}
+
+/* Очень маленькие экраны */
+@media (max-width: 480px) {
+  .datacard {
+    padding: var(--space-3);
+  }
+  
+  .datacard__grid {
+    gap: var(--space-2);
+  }
+  
+  .datacard__item {
+    padding: var(--space-3);
+  }
+  
+  .datacard__actions {
+    top: var(--space-3);
+    right: var(--space-3);
+    gap: var(--space-2);
+  }
+  
+  .datacard__action {
+    width: 36px;
+    height: 36px;
+  }
+  
+  .datacard__action svg {
+    width: 18px;
+    height: 18px;
+  }
+}
+
+/* Поддержка reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .datacard {
+    animation: none;
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+  
+  .datacard__actions {
+    animation: none;
+  }
+  
+  .datacard__action:hover {
+    transform: none;
+  }
+}

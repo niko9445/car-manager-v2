@@ -1,0 +1,164 @@
+/* Специфичные стили только для EditCarModal */
+
+.editcarmodal__data-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.editcarmodal__data-item {
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border-primary);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  transition: all var(--transition-fast);
+}
+
+.editcarmodal__data-item:hover {
+  border-color: var(--color-border-accent);
+  box-shadow: var(--shadow-sm);
+}
+
+/* РЕЖИМ ПРОСМОТРА */
+.editcarmodal__view-mode {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: var(--space-4);
+  gap: var(--space-4);
+}
+
+.editcarmodal__data-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.editcarmodal__data-fields {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin-bottom: var(--space-3);
+}
+
+.editcarmodal__data-field {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-1) 0;
+}
+
+.editcarmodal__field-name {
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  flex-shrink: 0;
+  min-width: 120px;
+}
+
+.editcarmodal__field-value {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-primary);
+  font-weight: 600;
+  text-align: right;
+  word-break: break-word;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--space-1);
+}
+
+.editcarmodal__field-unit {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  font-weight: 400;
+  opacity: 0.8;
+}
+
+.editcarmodal__data-meta {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.editcarmodal__data-date {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  opacity: 0.7;
+}
+
+.editcarmodal__data-actions {
+  display: flex;
+  gap: var(--space-2);
+  flex-shrink: 0;
+  align-items: flex-start;
+}
+
+/* РЕЖИМ РЕДАКТИРОВАНИЯ */
+.editcarmodal__edit-mode {
+  padding: var(--space-4);
+}
+
+.editcarmodal__edit-fields {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
+}
+
+/* Мобильная адаптация */
+@media (max-width: 768px) {
+  .editcarmodal__view-mode {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--space-3);
+    padding: var(--space-3);
+  }
+  
+  .editcarmodal__data-actions {
+    align-self: stretch;
+    justify-content: space-between;
+  }
+  
+  .editcarmodal__data-field {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-1);
+  }
+  
+  .editcarmodal__field-name {
+    min-width: auto;
+    font-size: var(--font-size-xs);
+  }
+  
+  .editcarmodal__field-value {
+    text-align: left;
+    justify-content: flex-start;
+    font-size: var(--font-size-sm);
+  }
+  
+  .editcarmodal__edit-mode {
+    padding: var(--space-3);
+  }
+}
+
+@media (max-width: 480px) {
+  .editcarmodal__view-mode {
+    padding: var(--space-2);
+  }
+  
+  .editcarmodal__edit-mode {
+    padding: var(--space-2);
+  }
+  
+  .editcarmodal__data-actions {
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+  
+  .editcarmodal__data-actions .btn {
+    width: 100%;
+  }
+}

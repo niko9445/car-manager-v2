@@ -1,0 +1,294 @@
+.sidebar__container {
+  width: 300px;
+  background: #111827;
+  border-right: 1px solid #374151;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow-y: auto;
+}
+
+.sidebar__header {
+  padding: 20px;
+  border-bottom: 1px solid #374151;
+  background: #1f2937;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.sidebar__title {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 700;
+  color: #f8fafc;
+  text-align: center;
+}
+
+/* Стили для хедера */
+.sidebar__header-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* Стильная кнопка удаления */
+.sidebar__delete-btn {
+  padding: 10px 14px;
+  border: 1px solid #374151;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
+  color: #ef4444;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: 40px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  font-weight: 600;
+}
+
+.sidebar__delete-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(239, 68, 68, 0.1), transparent);
+  transition: left 0.6s ease;
+}
+
+.sidebar__delete-btn:hover {
+  border-color: #ef4444;
+  color: #fff;
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(239, 68, 68, 0.4);
+}
+
+.sidebar__delete-btn:hover::before {
+  left: 100%;
+}
+
+.sidebar__delete-btn:active {
+  transform: translateY(0);
+  transition: transform 0.1s ease;
+}
+
+/* Кнопка добавления */
+.sidebar__add-button {
+  flex: 1;
+  background: linear-gradient(135deg, #1e40af 0%, #1e3a8a 100%);
+  color: white;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 10px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  height: 40px;
+  box-shadow: 0 4px 12px rgba(30, 64, 175, 0.3);
+}
+
+.sidebar__add-button:hover {
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
+}
+
+.sidebar__add-button:active {
+  transform: translateY(0);
+}
+
+.sidebar__add-icon {
+  font-size: 18px;
+  font-weight: bold;
+}
+
+/* Стильная стрелка закрытия */
+.sidebar__close-btn {
+  background: linear-gradient(135deg, #374151 0%, #4b5563 100%);
+  border: none;
+  color: #d1d5db;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.sidebar__close-btn:hover {
+  background: linear-gradient(135deg, #4b5563 0%, #6b7280 100%);
+  color: #f3f4f6;
+  transform: translateX(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.sidebar__close-btn:active {
+  transform: translateX(0);
+}
+
+/* Список автомобилей */
+.sidebar__cars-list {
+  flex: 1;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  overflow-y: auto;
+}
+
+.sidebar__empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  text-align: center;
+  color: #6b7280;
+}
+
+.sidebar__empty-icon {
+  font-size: 64px;
+  margin-bottom: 20px;
+  opacity: 0.3;
+}
+
+.sidebar__empty-text {
+  margin: 0 0 12px 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #9ca3af;
+}
+
+.sidebar__empty-subtext {
+  margin: 0;
+  font-size: 14px;
+  color: #6b7280;
+  line-height: 1.5;
+}
+
+.sidebar__data-manager {
+  padding: 20px;
+  border-top: 1px solid #374151;
+  background: #1a2332;
+  margin-top: auto;
+}
+
+/* Мобильная версия */
+@media (max-width: 768px) {
+  .sidebar__header {
+    padding: 16px;
+    gap: 12px;
+  }
+  
+  .sidebar__title {
+    font-size: 18px;
+  }
+  
+  .sidebar__header-actions {
+    gap: 8px;
+  }
+  
+  .sidebar__delete-btn {
+    height: 36px;
+    padding: 8px 12px;
+    font-size: 14px;
+  }
+  
+  .sidebar__add-button {
+    height: 36px;
+    font-size: 13px;
+    padding: 8px 12px;
+  }
+  
+  .sidebar__close-btn {
+    width: 32px;
+    height: 32px;
+    font-size: 16px;
+  }
+  
+  .sidebar__cars-list {
+    padding: 16px;
+    gap: 10px;
+  }
+  
+  .sidebar__empty {
+    padding: 40px 20px;
+  }
+  
+  .sidebar__empty-icon {
+    font-size: 48px;
+  }
+  
+  .sidebar__empty-text {
+    font-size: 16px;
+  }
+}
+
+/* Очень маленькие экраны */
+@media (max-width: 480px) {
+  .sidebar__container {
+    width: 100vw;
+  }
+  
+  .sidebar__delete-btn span {
+    display: none;
+  }
+  
+  .sidebar__delete-btn {
+    width: 40px;
+    padding: 8px;
+  }
+}
+
+/* Безопасные зоны для iPhone */
+@supports(padding: max(0px)) {
+  .sidebar__container {
+    padding-left: max(0px, env(safe-area-inset-left));
+    padding-right: max(0px, env(safe-area-inset-right));
+  }
+  
+  .sidebar__header {
+    padding-top: max(20px, env(safe-area-inset-top));
+  }
+  
+  .sidebar__cars-list {
+    padding-bottom: max(20px, env(safe-area-inset-bottom));
+  }
+}
+
+/* Анимации */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.sidebar__container {
+  animation: slideIn 0.3s ease-out;
+}

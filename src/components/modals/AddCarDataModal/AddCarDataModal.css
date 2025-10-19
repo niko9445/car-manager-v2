@@ -1,0 +1,228 @@
+/* Добавляем новые стили для исправления автодополнения */
+
+.addcardatamodal__input-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.addcardatamodal__suggestions-button {
+  position: absolute;
+  right: var(--space-2);
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  padding: var(--space-1);
+  border-radius: var(--radius-sm);
+  transition: all var(--transition-fast);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+}
+
+.addcardatamodal__suggestions-button:hover {
+  background: var(--color-bg-tertiary);
+  color: var(--color-text-primary);
+}
+
+/* Улучшаем стили автодополнения */
+.addcardatamodal__suggestions {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border-secondary);
+  border-radius: var(--radius-lg);
+  max-height: 300px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  z-index: 1000;
+  box-shadow: var(--shadow-xl);
+  margin-top: var(--space-1);
+  min-width: 300px;
+}
+
+.addcardatamodal__suggestions-header {
+  padding: var(--space-3) var(--space-4);
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  border-bottom: 1px solid var(--color-border-primary);
+  background: var(--color-bg-tertiary);
+  font-weight: 500;
+}
+
+.addcardatamodal__suggestion-item {
+  padding: var(--space-3) var(--space-4);
+  cursor: pointer;
+  border-bottom: 1px solid var(--color-border-primary);
+  transition: all var(--transition-fast);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.addcardatamodal__suggestion-item:hover {
+  background: var(--color-bg-tertiary);
+}
+
+.addcardatamodal__suggestion-item:last-child {
+  border-bottom: none;
+}
+
+.addcardatamodal__suggestion-unit {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-xs);
+  font-weight: 400;
+}
+
+/* СТРОКА РУЧНОГО ВВОДА - В ВЕРХУ */
+.addcardatamodal__suggestion-item--manual {
+  background: var(--color-accent-blue);
+  color: var(--color-text-primary);
+  font-weight: 600;
+  border-bottom: 2px solid var(--color-border-primary);
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+.addcardatamodal__suggestion-item--manual:hover {
+  background: var(--color-accent-blue-hover);
+}
+
+.addcardatamodal__suggestion-item--empty {
+  color: var(--color-text-muted);
+  font-style: italic;
+  text-align: center;
+  cursor: default;
+}
+
+.addcardatamodal__suggestion-item--empty:hover {
+  background: transparent;
+}
+
+/* ИСПРАВЛЯЕМ СЕТКУ ПОЛЕЙ */
+.form__field-row {
+  display: grid;
+  grid-template-columns: 2fr 1.5fr 1fr auto;
+  gap: var(--space-3);
+  align-items: start;
+  min-height: 48px;
+}
+
+.form__field-row .form__input {
+  width: 100%;
+  min-width: 0;
+}
+
+/* Кнопка удаления */
+.form__remove-button {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 0 !important;
+  align-self: center;
+  flex-shrink: 0;
+  grid-row: 1;
+  grid-column: 4;
+}
+
+/* Гарантируем что все элементы в одной строке */
+.form__field-row > *:nth-child(1) { grid-column: 1; grid-row: 1; }
+.form__field-row > *:nth-child(2) { grid-column: 2; grid-row: 1; }
+.form__field-row > *:nth-child(3) { grid-column: 3; grid-row: 1; }
+.form__field-row > *:nth-child(4) { grid-column: 4; grid-row: 1; }
+
+/* ИСПРАВЛЯЕМ ОТСТУП КНОПКИ ДОБАВЛЕНИЯ */
+.addcardatamodal__form .form__add-button {
+  margin-top: var(--space-4) !important;
+  margin-bottom: var(--space-2) !important;
+}
+
+/* Убедимся что между полями есть отступы */
+.form__fields {
+  gap: var(--space-4);
+}
+
+/* ДЕСКТОПНАЯ ВЕРСИЯ - автодополнение при фокусе */
+@media (min-width: 769px) {
+  .addcardatamodal__field-with-suggestions {
+    position: relative;
+  }
+  
+  .addcardatamodal__field-with-suggestions input:focus ~ .addcardatamodal__suggestions {
+    display: block;
+  }
+}
+
+/* Мобильная адаптация */
+@media (max-width: 768px) {
+  .addcardatamodal__suggestions {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 90vw;
+    max-width: 500px;
+    max-height: 60vh;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-xl);
+    min-width: auto;
+  }
+
+  .addcardatamodal__suggestions-header {
+    padding: var(--space-2) var(--space-3);
+  }
+
+  .addcardatamodal__suggestion-item {
+    padding: var(--space-2) var(--space-3);
+  }
+
+  .form__field-row {
+    grid-template-columns: 1fr auto;
+    grid-template-rows: auto auto;
+    gap: var(--space-3);
+    min-height: auto;
+  }
+
+  .addcardatamodal__field-with-suggestions {
+    grid-column: 1 / -1;
+    grid-row: 1;
+  }
+
+  .form__field-row > *:nth-child(2) { grid-column: 1; grid-row: 2; }
+  .form__field-row > *:nth-child(3) { grid-column: 2; grid-row: 2; width: 120px; }
+  .form__field-row > *:nth-child(4) { grid-column: 3; grid-row: 2; width: 40px; }
+
+  .form__remove-button {
+    width: 40px;
+    height: 40px;
+  }
+}
+
+/* Очень маленькие экраны */
+@media (max-width: 480px) {
+  .addcardatamodal__suggestions {
+    width: 95vw;
+    max-width: none;
+  }
+
+  .form__field-row {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto auto auto;
+  }
+
+  .form__field-row > *:nth-child(1) { grid-column: 1; grid-row: 1; }
+  .form__field-row > *:nth-child(2) { grid-column: 1; grid-row: 2; }
+  .form__field-row > *:nth-child(3) { grid-column: 1; grid-row: 3; width: 100%; }
+  .form__field-row > *:nth-child(4) { grid-column: 1; grid-row: 4; width: 100%; height: 44px; }
+}

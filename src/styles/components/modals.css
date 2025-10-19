@@ -1,0 +1,277 @@
+/* ===== СИСТЕМА МОДАЛЬНЫХ ОКОН ===== */
+
+/* Оверлей модального окна */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--color-bg-overlay);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  padding: var(--space-5);
+  animation: modalFadeIn var(--transition-normal);
+  backdrop-filter: blur(4px);
+}
+
+@keyframes modalFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Основной контейнер модалки */
+.modal {
+  background: var(--color-bg-card);
+  border-radius: var(--radius-2xl);
+  border: 1px solid var(--color-border-primary);
+  max-width: 500px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  animation: modalSlideUp var(--transition-normal);
+  box-shadow: var(--shadow-xl);
+  display: flex;
+  flex-direction: column;
+}
+
+@keyframes modalSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Размеры модалок */
+.modal--sm {
+  max-width: 400px;
+}
+
+.modal--md {
+  max-width: 500px;
+}
+
+.modal--lg {
+  max-width: 600px;
+}
+
+.modal--xl {
+  max-width: 800px;
+}
+
+/* Хедер модалки */
+.modal__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-5) var(--space-6);
+  border-bottom: 1px solid var(--color-border-primary);
+  background: var(--color-bg-tertiary);
+  flex-shrink: 0;
+}
+
+.modal__title {
+  margin: 0;
+  color: var(--color-text-primary);
+  font-size: var(--font-size-xl);
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.modal__close {
+  background: none;
+  border: none;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-xl);
+  cursor: pointer;
+  padding: var(--space-1);
+  border-radius: var(--radius-sm);
+  transition: all var(--transition-fast);
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.modal__close:hover {
+  background: var(--color-bg-tertiary);
+  color: var(--color-text-primary);
+}
+
+/* Контент модалки */
+.modal__content {
+  padding: var(--space-6);
+  flex: 1;
+  overflow-y: auto;
+}
+
+/* Футер модалки */
+.modal__footer {
+  padding: var(--space-5) var(--space-6);
+  border-top: 1px solid var(--color-border-primary);
+  background: var(--color-bg-tertiary);
+  flex-shrink: 0;
+}
+
+/* Действия в модалке */
+.modal__actions {
+  display: flex;
+  gap: var(--space-3);
+  justify-content: flex-end;
+}
+
+.modal__actions--center {
+  justify-content: center;
+}
+
+.modal__actions--between {
+  justify-content: space-between;
+}
+
+/* Формы в модалках */
+.modal__form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+.modal__form-fields {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.modal__form-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.modal__label {
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--color-text-secondary);
+}
+
+.modal__input {
+  padding: var(--space-3) var(--space-3);
+  border: 1px solid var(--color-border-secondary);
+  border-radius: var(--radius-lg);
+  background: var(--color-bg-card);
+  color: var(--color-text-primary);
+  font-size: var(--font-size-sm);
+  transition: all var(--transition-fast);
+  width: 100%;
+}
+
+.modal__input:focus {
+  outline: none;
+  border-color: var(--color-accent-blue);
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+}
+
+.modal__input::placeholder {
+  color: var(--color-text-disabled);
+}
+
+/* Сетка для форм */
+.modal__form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-4);
+}
+
+/* Специальные стили для подтверждения удаления */
+.modal__warning {
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid var(--color-accent-red);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4);
+  margin-bottom: var(--space-4);
+}
+
+.modal__warning-text {
+  color: var(--color-accent-red);
+  font-size: var(--font-size-sm);
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* Мобильная адаптация */
+@media (max-width: 768px) {
+  .modal-overlay {
+    padding: var(--space-3);
+  }
+  
+  .modal {
+    max-width: 100%;
+    max-height: 95vh;
+    border-radius: var(--radius-xl);
+  }
+  
+  .modal--sm,
+  .modal--md,
+  .modal--lg,
+  .modal--xl {
+    max-width: 100%;
+  }
+  
+  .modal__header {
+    padding: var(--space-4) var(--space-5);
+  }
+  
+  .modal__content {
+    padding: var(--space-5);
+  }
+  
+  .modal__footer {
+    padding: var(--space-4) var(--space-5);
+  }
+  
+  .modal__actions {
+    flex-direction: column;
+  }
+  
+  .modal__form-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Очень маленькие экраны */
+@media (max-width: 480px) {
+  .modal-overlay {
+    padding: var(--space-2);
+  }
+  
+  .modal__header {
+    padding: var(--space-3) var(--space-4);
+  }
+  
+  .modal__content {
+    padding: var(--space-4);
+  }
+  
+  .modal__footer {
+    padding: var(--space-3) var(--space-4);
+  }
+  
+  .modal__title {
+    font-size: var(--font-size-lg);
+  }
+}
+
+/* Поддержка безопасных зон для iPhone */
+@supports(padding: max(0px)) {
+  .modal-overlay {
+    padding-top: max(var(--space-5), env(safe-area-inset-top));
+    padding-bottom: max(var(--space-5), env(safe-area-inset-bottom));
+  }
+}
