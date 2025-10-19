@@ -235,29 +235,30 @@ const AppContent = () => {
     <>
       <div className="app">
         {/* Сайдбар */}
-        <div className={
-          isMobile 
-            ? `sidebar-wrapper ${sidebarOpen ? 'sidebar-wrapper--open' : 'sidebar-wrapper--closed'}`
-            : 'sidebar-wrapper'
-        }>
-          <Sidebar 
-            cars={cars}
-            selectedCar={selectedCar}
-            setSelectedCar={setSelectedCar}
-            isMobile={isMobile}
-            onClose={() => setSidebarOpen(false)}
-            onAddCar={() => openModal('addCar')}
-            onDeleteCar={handleDeleteCar}
-          />
-        </div>
+          <div
+            className={`sidebar-wrapper ${
+              sidebarOpen ? 'sidebar-wrapper--open' : 'sidebar-wrapper--closed'
+            }`}
+          >
+            <Sidebar
+              cars={cars}
+              selectedCar={selectedCar}
+              setSelectedCar={setSelectedCar}
+              isMobile={isMobile}
+              onClose={() => setSidebarOpen(false)}
+              onAddCar={() => openModal('addCar')}
+              onDeleteCar={handleDeleteCar}
+            />
+          </div>
 
-        {/* Оверлей для мобильных */}
-        {isMobile && sidebarOpen && (
-          <div 
-            className="sidebar-overlay"
-            onClick={() => setSidebarOpen(false)}
-          />
-        )}
+          {/* Оверлей для мобильных */}
+          {isMobile && sidebarOpen && (
+            <div
+              className="sidebar-overlay"
+              onClick={() => setSidebarOpen(false)}
+            />
+          )}
+
 
         <div className="app__main">
           <MainContent 

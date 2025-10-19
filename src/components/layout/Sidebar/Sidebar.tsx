@@ -4,34 +4,31 @@ import CarCard from '../../ui/CarCard/CarCard';
 import DataManager from '../../DataManager/DataManager';
 import './Sidebar.css';
 
-const Sidebar: React.FC<SidebarProps> = ({ 
-  cars, 
-  selectedCar, 
-  setSelectedCar, 
-  isMobile = false, 
+const Sidebar: React.FC<SidebarProps> = ({
+  cars,
+  selectedCar,
+  setSelectedCar,
+  isMobile = false,
   onClose,
   onAddCar,
-  onDeleteCar
+  onDeleteCar,
 }) => {
   const handleCarSelect = (car: Car) => {
     setSelectedCar(car);
   };
 
   const handleDeleteClick = () => {
-    if (selectedCar) {
-      onDeleteCar(selectedCar);
-    }
+    if (selectedCar) onDeleteCar(selectedCar);
   };
 
   return (
-    <div className="sidebar__container">
+    <aside className="sidebar__container">
       <div className="sidebar__header">
         <h2 className="sidebar__title">Мои автомобили</h2>
-        
+
         <div className="sidebar__header-actions">
-          {/* Кнопка удаления */}
           {selectedCar && (
-            <button 
+            <button
               className="sidebar__delete-btn"
               onClick={handleDeleteClick}
               type="button"
@@ -40,20 +37,14 @@ const Sidebar: React.FC<SidebarProps> = ({
               🗑️
             </button>
           )}
-          
-          {/* Кнопка добавления */}
-          <button 
-            className="sidebar__add-button"
-            onClick={onAddCar}
-            type="button"
-          >
+
+          <button className="sidebar__add-button" onClick={onAddCar} type="button">
             <span className="sidebar__add-icon">+</span>
             Добавить авто
-            </button>
+          </button>
 
-          {/* Кнопка закрытия для мобильных */}
           {isMobile && (
-            <button 
+            <button
               className="sidebar__close-btn"
               onClick={onClose}
               aria-label="Закрыть меню"
@@ -65,11 +56,10 @@ const Sidebar: React.FC<SidebarProps> = ({
         </div>
       </div>
 
-      {/* Список автомобилей */}
       <div className="sidebar__cars-list">
         {cars.length === 0 ? (
           <div className="sidebar__empty">
-            <div className="sidebar__empty-icon">{"🚗"}</div>
+            <div className="sidebar__empty-icon">🚗</div>
             <p className="sidebar__empty-text">Нет автомобилей</p>
             <p className="sidebar__empty-subtext">Добавьте первый автомобиль</p>
           </div>
@@ -89,7 +79,7 @@ const Sidebar: React.FC<SidebarProps> = ({
       <div className="sidebar__data-manager">
         <DataManager />
       </div>
-    </div>
+    </aside>
   );
 };
 

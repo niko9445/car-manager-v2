@@ -93,9 +93,11 @@ p {
   right: 0;
   bottom: 0;
   background: var(--color-bg-overlay);
-  z-index: 999;
+  z-index: 1000;
   backdrop-filter: blur(2px);
+  inset: 0;
 }
+
 
 /* Утилитарные классы */
 .text-center { text-align: center; }
@@ -189,3 +191,4 @@ p {
     padding-right: max(0px, env(safe-area-inset-right));
   }
 }
+
