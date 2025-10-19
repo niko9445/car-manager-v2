@@ -4,31 +4,30 @@ import CarCard from '../../ui/CarCard/CarCard';
 import DataManager from '../../DataManager/DataManager';
 import './Sidebar.css';
 
-const Sidebar: React.FC<SidebarProps> = ({
-  cars,
-  selectedCar,
-  setSelectedCar,
-  isMobile = false,
+const Sidebar: React.FC<SidebarProps> = ({ 
+  cars, 
+  selectedCar, 
+  setSelectedCar, 
+  isMobile = false, 
   onClose,
   onAddCar,
-  onDeleteCar,
+  onDeleteCar
 }) => {
-  const handleCarSelect = (car: Car) => {
-    setSelectedCar(car);
-  };
+
+  const handleCarSelect = (car: Car) => setSelectedCar(car);
 
   const handleDeleteClick = () => {
     if (selectedCar) onDeleteCar(selectedCar);
   };
 
   return (
-    <aside className="sidebar__container">
+    <div className="sidebar__container">
       <div className="sidebar__header">
         <h2 className="sidebar__title">Мои автомобили</h2>
 
         <div className="sidebar__header-actions">
           {selectedCar && (
-            <button
+            <button 
               className="sidebar__delete-btn"
               onClick={handleDeleteClick}
               type="button"
@@ -38,13 +37,17 @@ const Sidebar: React.FC<SidebarProps> = ({
             </button>
           )}
 
-          <button className="sidebar__add-button" onClick={onAddCar} type="button">
+          <button 
+            className="sidebar__add-button"
+            onClick={onAddCar}
+            type="button"
+          >
             <span className="sidebar__add-icon">+</span>
             Добавить авто
           </button>
 
           {isMobile && (
-            <button
+            <button 
               className="sidebar__close-btn"
               onClick={onClose}
               aria-label="Закрыть меню"
@@ -79,7 +82,7 @@ const Sidebar: React.FC<SidebarProps> = ({
       <div className="sidebar__data-manager">
         <DataManager />
       </div>
-    </aside>
+    </div>
   );
 };
 

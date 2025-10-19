@@ -5,7 +5,6 @@
 @import './components/forms.css';
 @import './components/cards.css';
 
-
 /* ===== ОСНОВНЫЕ СТИЛИ ПРИЛОЖЕНИЯ ===== */
 
 /* Типография */
@@ -27,7 +26,7 @@ p {
   line-height: 1.6;
 }
 
-/* ОСНОВНАЯ СТРУКТУРА ЛАЙАУТА */
+/* Основная структура */
 .app {
   display: flex;
   height: 100vh;
@@ -44,20 +43,23 @@ p {
   padding: 0;
 }
 
+/* Sidebar wrapper */
 .sidebar-wrapper {
   position: relative;
+  z-index: 1000;
 }
 
-/* Отвечает за этот тупой отступ в котором у меня была постоянна проблема */
+/* Main content */
 .app__main {
   flex: 1;
   margin-left: 0;
   background: var(--color-bg-primary);
   height: 100vh;
   overflow: auto;
+  transition: margin-left 0.3s ease;
 }
 
-/* Стили для сайдбара */
+/* Sidebar edge для десктопа */
 .sidebar-edge {
   position: fixed;
   left: 0;
@@ -86,64 +88,12 @@ p {
   );
 }
 
+/* Overlay для мобильного */
 .sidebar-overlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: var(--color-bg-overlay);
-  z-index: 1000;
-  backdrop-filter: blur(2px);
   inset: 0;
-}
-
-
-/* Утилитарные классы */
-.text-center { text-align: center; }
-.text-left { text-align: left; }
-.text-right { text-align: right; }
-
-.mt-1 { margin-top: var(--space-1); }
-.mt-2 { margin-top: var(--space-2); }
-.mt-4 { margin-top: var(--space-4); }
-.mt-6 { margin-top: var(--space-6); }
-
-.mb-1 { margin-bottom: var(--space-1); }
-.mb-2 { margin-bottom: var(--space-2); }
-.mb-4 { margin-bottom: var(--space-4); }
-.mb-6 { margin-bottom: var(--space-6); }
-
-.p-4 { padding: var(--space-4); }
-.p-6 { padding: var(--space-6); }
-
-/* Скрытие скроллбаров но с сохранением функциональности */
-.scrollbar-hidden {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
-
-.scrollbar-hidden::-webkit-scrollbar {
-  display: none;
-}
-
-/* Кастомные скроллбары */
-.custom-scrollbar::-webkit-scrollbar {
-  width: 6px;
-}
-
-.custom-scrollbar::-webkit-scrollbar-track {
-  background: var(--color-bg-secondary);
-  border-radius: 3px;
-}
-
-.custom-scrollbar::-webkit-scrollbar-thumb {
-  background: var(--color-border-secondary);
-  border-radius: 3px;
-}
-
-.custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: var(--color-text-muted);
+  background: rgba(0, 0, 0, 0.3);
+  z-index: 1000;
 }
 
 /* Мобильная адаптация */
@@ -153,8 +103,9 @@ p {
     top: 0;
     left: 0;
     height: 100vh;
-    z-index: 1000;
+    width: 100%;
     transition: transform var(--transition-normal);
+    z-index: 1000;
   }
 
   .sidebar-wrapper--closed {
@@ -192,3 +143,30 @@ p {
   }
 }
 
+/* Сброс скроллбаров */
+.scrollbar-hidden {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hidden::-webkit-scrollbar {
+  display: none;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: var(--color-bg-secondary);
+  border-radius: 3px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: var(--color-border-secondary);
+  border-radius: 3px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: var(--color-text-muted);
+}
