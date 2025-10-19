@@ -76,7 +76,6 @@ const AddCarDataModal: React.FC<AddCarDataModalProps> = ({ onClose, onSave }) =>
   };
 
   const handleSuggestionMouseDown = (e: React.MouseEvent) => e.preventDefault();
-  const handleManualInputClick = () => setActiveSuggestionIndex(null);
 
   return (
     <Modal isOpen={true} onClose={onClose} title="Добавить данные об авто" size="md">
@@ -99,14 +98,6 @@ const AddCarDataModal: React.FC<AddCarDataModalProps> = ({ onClose, onSave }) =>
                 <div className={`addcardatamodal__suggestions ${activeSuggestionIndex === index ? 'show' : ''}`}>
                   <div className="addcardatamodal__suggestions-header">
                     Выберите параметр или введите свой
-                  </div>
-
-                  <div
-                    className="addcardatamodal__suggestion-item addcardatamodal__suggestion-item--manual"
-                    onMouseDown={handleSuggestionMouseDown}
-                    onClick={() => handleManualInputClick()}
-                  >
-                    ✏️ Ввести свой параметр
                   </div>
 
                   {filteredSuggestions.map((suggestion, idx) => (
