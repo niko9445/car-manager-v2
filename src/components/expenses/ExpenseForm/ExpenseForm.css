@@ -1,0 +1,117 @@
+.expense-form__category-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
+}
+
+.expense-form__category-option {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: var(--space-3);
+  border: 2px solid var(--color-border-secondary);
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  background: var(--color-bg-card);
+  text-align: center;
+}
+
+.expense-form__category-option:hover {
+  border-color: var(--color-accent-blue);
+  transform: translateY(-2px);
+}
+
+.expense-form__category-option--selected {
+  border-color: var(--color-accent-blue);
+  background: var(--color-bg-tertiary);
+  box-shadow: var(--shadow-accent-blue);
+}
+
+.expense-form__category-icon {
+  font-size: var(--font-size-2xl);
+  margin-bottom: var(--space-2);
+}
+
+.expense-form__category-label {
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--color-text-primary);
+}
+
+.expense-form__quick-amounts {
+  display: flex;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+  margin-bottom: var(--space-4);
+}
+
+.expense-form__quick-amount {
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--color-border-secondary);
+  border-radius: var(--radius-md);
+  background: var(--color-bg-tertiary);
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  font-size: var(--font-size-sm);
+}
+
+.expense-form__quick-amount:hover {
+  border-color: var(--color-accent-blue);
+  color: var(--color-text-primary);
+}
+
+.expense-form__quick-amount--selected {
+  border-color: var(--color-accent-blue);
+  background: var(--color-accent-blue);
+  color: var(--color-text-primary);
+}
+
+.expense-form__car-info {
+  background: var(--color-bg-tertiary);
+  padding: var(--space-3);
+  border-radius: var(--radius-lg);
+  margin-bottom: var(--space-4);
+  border-left: 3px solid var(--color-accent-blue);
+}
+
+.expense-form__car-name {
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-1);
+}
+
+.expense-form__car-details {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+@media (max-width: 768px) {
+  .expense-form__category-grid {
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: var(--space-2);
+  }
+  
+  .expense-form__category-option {
+    padding: var(--space-2);
+  }
+  
+  .expense-form__category-icon {
+    font-size: var(--font-size-xl);
+  }
+  
+  .expense-form__category-label {
+    font-size: var(--font-size-xs);
+  }
+  
+  .expense-form__quick-amounts {
+    gap: var(--space-1);
+  }
+  
+  .expense-form__quick-amount {
+    padding: var(--space-1) var(--space-2);
+    font-size: var(--font-size-xs);
+  }
+}

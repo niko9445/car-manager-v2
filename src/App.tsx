@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { AppProvider } from './contexts/AppContext';
+import { AppProvider, useApp } from './contexts/AppContext';
 import Sidebar from './components/layout/Sidebar/Sidebar';
 import MainContent from './components/layout/MainContent/MainContent';
 import AddCarModal from './components/modals/AddCarModal/AddCarModal';
 import EditCarModal from './components/modals/EditCarModal/EditCarModal';
 import AddMaintenanceModal from './components/modals/AddMaintenanceModal/AddMaintenanceModal';
 import AddCarDataModal from './components/modals/AddCarDataModal/AddCarDataModal';
+import AddExpenseModal from './components/modals/AddExpenseModal/AddExpenseModal';
 import ConfirmModal from './components/ui/ConfirmModal/ConfirmModal';
 import EditCarDataModal from './components/modals/EditCarDataModal/EditCarDataModal';
 import { useLocalStorage } from './hooks/useLocalStorage';
@@ -19,43 +20,54 @@ import {
   ConfirmType,
   ModalData,
   CarDataFormData,
-  CarDataField 
+  CarDataField,
+  SectionType 
 } from './types';
 import './styles/globals.css';
 
 const AppContent = () => {
   const [cars, setCars] = useLocalStorage<Car[]>('cars', []);
-  const [selectedCar, setSelectedCar] = useState<Car | null>(null);
-  const [activeSection, setActiveSection] = useState<'maintenance' | 'carData'>('maintenance');
-  const [isMobile, setIsMobile] = useState(false);
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-  
-  // Состояния для модальных окон
-  const [activeModal, setActiveModal] = useState<AppModalType | null>(null);
-  const [modalData, setModalData] = useState<ModalData>(null);
+  const { state, dispatch } = useApp();
+  const { selectedCar, activeSection, isMobile, sidebarOpen, modals, modalData } = state;
+
+  // Синхронизируем cars с контекстом
+  useEffect(() => {
+    dispatch({ type: 'SET_CARS', payload: cars });
+  }, [cars, dispatch]);
 
   // Определяем мобильное устройство
   useEffect(() => {
     const checkMobile = () => {
       const mobile = window.innerWidth <= 768;
-      setIsMobile(mobile);
-      setSidebarOpen(!mobile);
+      dispatch({ type: 'SET_IS_MOBILE', payload: mobile });
+      dispatch({ type: 'SET_SIDEBAR_OPEN', payload: !mobile });
     };
 
     checkMobile();
     window.addEventListener('resize', checkMobile);
     return () => window.removeEventListener('resize', checkMobile);
-  }, []);
+  }, [dispatch]);
 
   // Функции для модальных окон
   const openModal = (modalType: AppModalType, data?: ModalData) => {
-    setActiveModal(modalType);
-    setModalData(data || null);
+    dispatch({ type: 'OPEN_MODAL', payload: { modalType, data } });
   };
 
   const closeModal = () => {
-    setActiveModal(null);
-    setModalData(null);
+    if (modals.addExpense || modals.editExpense || modals.expenseReport) {
+      dispatch({ type: 'CLOSE_MODAL', payload: { modalType: 'addExpense' } });
+      dispatch({ type: 'CLOSE_MODAL', payload: { modalType: 'editExpense' } });
+      dispatch({ type: 'CLOSE_MODAL', payload: { modalType: 'expenseReport' } });
+    } else if (modals.confirmDelete) {
+      dispatch({ type: 'CLOSE_MODAL', payload: { modalType: 'confirmDelete' } });
+    } else {
+      // Закрываем любую активную модалку
+      Object.keys(modals).forEach(modalType => {
+        if (modals[modalType as AppModalType]) {
+          dispatch({ type: 'CLOSE_MODAL', payload: { modalType: modalType as AppModalType } });
+        }
+      });
+    }
   };
 
   // Функции для автомобилей
@@ -92,7 +104,7 @@ const AppContent = () => {
         const updatedCars = cars.filter(c => c.id !== car.id);
         setCars(updatedCars);
         if (selectedCar?.id === car.id) {
-          setSelectedCar(null);
+          dispatch({ type: 'SET_SELECTED_CAR', payload: null });
         }
         closeModal();
       }
@@ -231,37 +243,64 @@ const AppContent = () => {
     return car?.carData || [];
   };
 
+  // Обработчики для Sidebar и MainContent
+  const handleSetSelectedCar = (car: Car) => {
+    dispatch({ type: 'SET_SELECTED_CAR', payload: car });
+  };
+
+  const handleSetActiveSection = (section: SectionType) => {
+    dispatch({ type: 'SET_ACTIVE_SECTION', payload: section });
+  };
+
+  const handleSetSidebarOpen = (open: boolean) => {
+    dispatch({ type: 'SET_SIDEBAR_OPEN', payload: open });
+  };
+
+  // Type guards для modalData
+  const isCarModalData = (data: any): data is { car: Car } => {
+    return data && 'car' in data;
+  };
+
+  const isConfirmModalData = (data: any): data is { 
+    type: ConfirmType; 
+    title: string; 
+    message: string; 
+    onConfirm: () => void 
+  } => {
+    return data && 'type' in data && 'title' in data && 'message' in data && 'onConfirm' in data;
+  };
+
+  const isCarDataModalData = (data: any): data is { data: CarDataEntry } => {
+    return data && 'data' in data;
+  };
+
   return (
     <>
       <div className="app">
-
         {/* Оверлей для мобильных */}
-          {isMobile && sidebarOpen && (
-            <div
-              className="sidebar-overlay"
-              onClick={() => setSidebarOpen(false)}
-            />
-          )}
-
+        {isMobile && sidebarOpen && (
+          <div
+            className="sidebar-overlay"
+            onClick={() => handleSetSidebarOpen(false)}
+          />
+        )}
 
         {/* Сайдбар */}
-          <div
-            className={`sidebar-wrapper ${
-              sidebarOpen ? 'sidebar-wrapper--open' : 'sidebar-wrapper--closed'
-            }`}
-          >
-            <Sidebar
-              cars={cars}
-              selectedCar={selectedCar}
-              setSelectedCar={setSelectedCar}
-              isMobile={isMobile}
-              onClose={() => setSidebarOpen(false)}
-              onAddCar={() => openModal('addCar')}
-              onDeleteCar={handleDeleteCar}
-            />
-          </div>
-
-
+        <div
+          className={`sidebar-wrapper ${
+            sidebarOpen ? 'sidebar-wrapper--open' : 'sidebar-wrapper--closed'
+          }`}
+        >
+          <Sidebar
+            cars={cars}
+            selectedCar={selectedCar}
+            setSelectedCar={handleSetSelectedCar}
+            isMobile={isMobile}
+            onClose={() => handleSetSidebarOpen(false)}
+            onAddCar={() => openModal('addCar')}
+            onDeleteCar={handleDeleteCar}
+          />
+        </div>
 
         <div className="app__main">
           <MainContent 
@@ -269,7 +308,7 @@ const AppContent = () => {
             cars={cars}
             setCars={setCars}
             activeSection={activeSection}
-            setActiveSection={setActiveSection}
+            setActiveSection={handleSetActiveSection}
             onAddMaintenance={() => openModal('addMaintenance')}
             onAddCarData={() => openModal('addCarData')}
             onDeleteMaintenance={handleDeleteMaintenance}
@@ -277,20 +316,20 @@ const AppContent = () => {
             onEditCarData={(data) => openModal('editCarData', { data })}
             onEditCar={(car) => openModal('editCar', { car })}
             isMobile={isMobile}
-            onOpenSidebar={() => setSidebarOpen(true)}
+            onOpenSidebar={() => handleSetSidebarOpen(true)}
           />
         </div>
       </div>
 
       {/* Модальные окна */}
-      {activeModal === 'addCar' && (
+      {modals.addCar && (
         <AddCarModal
           onClose={closeModal}
           onSave={handleAddCar}
         />
       )}
 
-      {activeModal === 'editCar' && modalData && 'car' in modalData && (
+      {modals.editCar && isCarModalData(modalData) && (
         <EditCarModal
           car={modalData.car}
           carDataEntries={getCarDataEntries(modalData.car.id)}
@@ -301,21 +340,24 @@ const AppContent = () => {
         />
       )}
 
-      {activeModal === 'addMaintenance' && selectedCar && (
+      {modals.addMaintenance && selectedCar && (
         <AddMaintenanceModal
           onClose={closeModal}
           onSave={handleAddMaintenance}
         />
       )}
 
-      {activeModal === 'addCarData' && selectedCar && (
+      {modals.addCarData && selectedCar && (
         <AddCarDataModal
           onClose={closeModal}
           onSave={handleAddCarData}
         />
       )}
 
-      {activeModal === 'confirmDelete' && modalData && 'onConfirm' in modalData && (
+      {/* Модалки для расходов */}
+      <AddExpenseModal />
+
+      {modals.confirmDelete && isConfirmModalData(modalData) && (
         <ConfirmModal
           isOpen={true}
           onClose={closeModal}
@@ -326,7 +368,7 @@ const AppContent = () => {
         />
       )}
 
-      {activeModal === 'editCarData' && modalData && 'data' in modalData && (
+      {modals.editCarData && isCarDataModalData(modalData) && (
         <EditCarDataModal
           data={modalData.data}
           onClose={closeModal}

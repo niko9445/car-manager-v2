@@ -98,9 +98,12 @@ export type AppModalType =
   | 'confirmDelete' 
   | 'addMaintenance' 
   | 'addCarData'
-  | 'editCarData';
+  | 'editCarData'
+  | 'addExpense'       // ← ДОБАВЛЯЕМ
+  | 'editExpense'      // ← ДОБАВЛЯЕМ
+  | 'expenseReport';   // ← ДОБАВЛЯЕМ
 
-export type SectionType = 'maintenance' | 'carData';
+export type SectionType = 'maintenance' | 'carData' | 'expenses'; // ← ОБНОВЛЯЕМ
 
 export type ConfirmType = 'delete' | 'warning' | 'info';
 
@@ -112,9 +115,10 @@ export interface ConfirmModalProps {
   message?: string;
   confirmText?: string;
   cancelText?: string;
-  type?: ConfirmType; // ← МЕНЯЕМ НА ConfirmType
+  type?: ConfirmType;
 }
 
+// Упрощенный AppState без строгой типизации modalData
 export interface AppState {
   cars: Car[];
   selectedCar: Car | null;
@@ -122,23 +126,19 @@ export interface AppState {
   isMobile: boolean;
   sidebarOpen: boolean;
   modals: Record<AppModalType, boolean>;
-  modalData: {
-    carToEdit?: Car;
-    carToDelete?: Car;
-    maintenanceToDelete?: Maintenance;
-    dataToDelete?: CarDataEntry;
-  };
+  modalData: Record<string, any>; // ← УПРОЩАЕМ ДЛЯ ГИБКОСТИ
 }
 
 export type ModalData = 
-  | { car: Car } // для editCar
-  | { data: CarDataEntry } // ← ДОБАВЛЯЕМ для editCarData
+  | { car: Car }
+  | { data: CarDataEntry }
+  | { expense: Expense } // ← ДОБАВЛЯЕМ
   | { 
       type: ConfirmType;
       title: string;
       message: string;
       onConfirm: () => void;
-    } // для confirmDelete
+    }
   | null;
 
 export interface CarDataFormData {
@@ -202,14 +202,14 @@ export interface MainContentProps {
   selectedCar: Car | null;
   cars: Car[];
   setCars: (cars: Car[]) => void;
-  activeSection: 'maintenance' | 'carData';
-  setActiveSection: (section: 'maintenance' | 'carData') => void;
+  activeSection: SectionType; // ← ОБНОВЛЯЕМ
+  setActiveSection: (section: SectionType) => void; // ← ОБНОВЛЯЕМ
   onAddMaintenance: () => void;
   onAddCarData: () => void;
   onDeleteMaintenance: (maintenance: Maintenance) => void;
   onDeleteCarData: (data: CarDataEntry) => void;
   onEditCarData: (data: CarDataEntry) => void;
-  onEditCar: (car: Car) => void; // ← ДОБАВЬ ЭТУ СТРОЧКУ
+  onEditCar: (car: Car) => void;
   isMobile?: boolean;
   onOpenSidebar: () => void;
 }
@@ -231,4 +231,70 @@ export interface CarDataSectionProps {
   onDeleteCarData: (data: CarDataEntry) => void;
   onEditCarData: (data: CarDataEntry) => void;
   onEditCar: (car: Car) => void;
+}
+
+// ===== ТИПЫ ДЛЯ РАСХОДОВ И ОТЧЕТОВ =====
+
+export interface Expense {
+  id: string;
+  carId: string;
+  date: string;
+  category: ExpenseCategory;
+  amount: number;
+  description: string;
+  odometer?: number;
+  receiptPhoto?: string;
+  createdAt: string;
+}
+
+export type ExpenseCategory = 
+  | 'fuel'        // Заправка
+  | 'maintenance' // ТО
+  | 'repairs'     // Ремонт
+  | 'parts'       // Запчасти
+  | 'insurance'   // Страховка
+  | 'taxes'       // Налоги
+  | 'parking'     // Парковка
+  | 'washing'     // Мойка
+  | 'fines'       // Штрафы
+  | 'other';      // Прочее
+
+export interface ExpenseStats {
+  total: number;
+  byCategory: { [category: string]: number };
+  monthlyAverage: number;
+  lastMonthTotal: number;
+  trend: 'up' | 'down' | 'stable';
+}
+
+export interface ExpenseFilters {
+  carId?: string;
+  category?: ExpenseCategory;
+  dateFrom?: string;
+  dateTo?: string;
+  minAmount?: number;
+  maxAmount?: number;
+}
+
+export interface ExpenseFormData {
+  date: string;
+  category: ExpenseCategory;
+  amount: number;
+  description: string;
+  odometer?: number;
+}
+
+export interface ExpenseReport {
+  period: {
+    from: string;
+    to: string;
+  };
+  totalExpenses: number;
+  expensesByCategory: Array<{
+    category: ExpenseCategory;
+    amount: number;
+    percentage: number;
+  }>;
+  averagePerMonth: number;
+  comparisonWithPrevious: number;
 }

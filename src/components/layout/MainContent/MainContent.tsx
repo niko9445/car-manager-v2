@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import MaintenanceSection from '../../features/MaintenanceSection/MaintenanceSection';
 import CarDataSection from '../../features/CarDataSection/CarDataSection';
+import ExpenseTracker from '../../expenses/ExpenseTracker/ExpenseTracker';
 import EditMaintenanceModal from '../../modals/EditMaintenanceModal/EditMaintenanceModal';
-import { MainContentProps, Maintenance } from '../../../types';
+import { MainContentProps, Maintenance, SectionType } from '../../../types';
 import './MainContent.css';
 
 const MainContent: React.FC<MainContentProps> = ({ 
@@ -76,6 +77,41 @@ const MainContent: React.FC<MainContentProps> = ({
     );
   }
 
+  const renderSection = () => {
+    switch (activeSection) {
+      case 'maintenance':
+        return (
+          <MaintenanceSection 
+            car={selectedCar}
+            cars={cars}
+            setCars={setCars}
+            onAddMaintenance={onAddMaintenance}
+            onDeleteMaintenance={onDeleteMaintenance}
+            onEditMaintenance={handleEditMaintenance}
+          />
+        );
+      
+      case 'carData':
+        return (
+          <CarDataSection 
+            car={selectedCar}
+            cars={cars}
+            setCars={setCars}
+            onAddCarData={onAddCarData}
+            onDeleteCarData={onDeleteCarData}
+            onEditCarData={onEditCarData}
+            onEditCar={onEditCar}
+          />
+        );
+      
+      case 'expenses':
+        return <ExpenseTracker />;
+      
+      default:
+        return null;
+    }
+  };
+
   return (
     <div className="maincontent__container">
       <div className="maincontent__header">
@@ -119,32 +155,24 @@ const MainContent: React.FC<MainContentProps> = ({
             </svg>
             Данные об авто
           </button>
+
+          {/* НОВАЯ ВКЛАДКА РАСХОДОВ */}
+          <button
+            className={`maincontent__tab ${activeSection === 'expenses' ? 'maincontent__tab--active' : ''}`}
+            onClick={() => setActiveSection('expenses')}
+            type="button"
+          >
+            <svg className="maincontent__tab-icon" viewBox="0 0 24 24" fill="none">
+              <path d="M12 1v22M5 6h14a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2z" stroke="currentColor" strokeWidth="2"/>
+              <path d="M17 10h.01M7 10h.01" stroke="currentColor" strokeWidth="2"/>
+            </svg>
+            Учет расходов
+          </button>
         </div>
       </div>
 
       <div className="maincontent__content">
-        {activeSection === 'maintenance' && (
-          <MaintenanceSection 
-            car={selectedCar}
-            cars={cars}
-            setCars={setCars}
-            onAddMaintenance={onAddMaintenance}
-            onDeleteMaintenance={onDeleteMaintenance}
-            onEditMaintenance={handleEditMaintenance}
-          />
-        )}
-        
-        {activeSection === 'carData' && (
-            <CarDataSection 
-                car={selectedCar}
-                cars={cars}
-                setCars={setCars}
-                onAddCarData={onAddCarData}
-                onDeleteCarData={onDeleteCarData}
-                onEditCarData={onEditCarData} // ← ПРОСТО ПЕРЕДАЙ ПРОПС
-                onEditCar={onEditCar} // ← ПРОСТО ПЕРЕДАЙ ПРОПС
-                />
-            )}
+        {renderSection()}
       </div>
 
       {isEditMaintenanceModalOpen && editingMaintenance && (

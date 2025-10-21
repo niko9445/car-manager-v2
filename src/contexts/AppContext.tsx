@@ -1,12 +1,11 @@
 import React, { createContext, useContext, useReducer, ReactNode } from 'react';
-import { AppState, Car, AppModalType, ModalData } from '../types';
-
+import { AppState, Car, AppModalType, ModalData, SectionType } from '../types';
 
 // Типы для действий
 type AppAction =
   | { type: 'SET_CARS'; payload: Car[] }
   | { type: 'SET_SELECTED_CAR'; payload: Car | null }
-  | { type: 'SET_ACTIVE_SECTION'; payload: 'maintenance' | 'carData' }
+  | { type: 'SET_ACTIVE_SECTION'; payload: SectionType }
   | { type: 'SET_IS_MOBILE'; payload: boolean }
   | { type: 'SET_SIDEBAR_OPEN'; payload: boolean }
   | { type: 'OPEN_MODAL'; payload: { modalType: AppModalType; data?: ModalData } }
@@ -31,7 +30,10 @@ const initialState: AppState = {
     confirmDelete: false,
     addMaintenance: false,
     addCarData: false,
-    editCarData: false
+    editCarData: false,
+    addExpense: false,
+    editExpense: false,
+    expenseReport: false
   },
   modalData: {}
 };
@@ -42,11 +44,17 @@ function appReducer(state: AppState, action: AppAction): AppState {
       return { ...state, cars: action.payload };
     case 'SET_SELECTED_CAR':
       return { ...state, selectedCar: action.payload };
+    case 'SET_ACTIVE_SECTION':
+      return { ...state, activeSection: action.payload };
+    case 'SET_IS_MOBILE':
+      return { ...state, isMobile: action.payload };
+    case 'SET_SIDEBAR_OPEN':
+      return { ...state, sidebarOpen: action.payload };
     case 'OPEN_MODAL':
       return {
         ...state,
         modals: { ...state.modals, [action.payload.modalType]: true },
-        modalData: { ...state.modalData, ...action.payload.data }
+        modalData: action.payload.data ? { ...action.payload.data } : {}
       };
     case 'CLOSE_MODAL':
       return {
