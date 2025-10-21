@@ -3,7 +3,7 @@ import MaintenanceSection from '../../features/MaintenanceSection/MaintenanceSec
 import CarDataSection from '../../features/CarDataSection/CarDataSection';
 import ExpenseTracker from '../../expenses/ExpenseTracker/ExpenseTracker';
 import EditMaintenanceModal from '../../modals/EditMaintenanceModal/EditMaintenanceModal';
-import { MainContentProps, Maintenance, SectionType } from '../../../types';
+import { MainContentProps, Maintenance} from '../../../types';
 import './MainContent.css';
 
 const MainContent: React.FC<MainContentProps> = ({ 
