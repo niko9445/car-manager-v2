@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useCallback } from 'react';
 import { AppProvider, useApp } from './contexts/AppContext';
 import Sidebar from './components/layout/Sidebar/Sidebar';
 import MainContent from './components/layout/MainContent/MainContent';
@@ -49,22 +49,21 @@ const AppContent = () => {
   }, [dispatch]);
 
   // Обработчики для Sidebar и MainContent
-  const handleSetSelectedCar = (car: Car) => {
+  const handleSetSelectedCar = useCallback((car: Car) => {
     dispatch({ type: 'SET_SELECTED_CAR', payload: car });
-  };
+  }, [dispatch]);
 
-  const handleSetActiveSection = (section: SectionType) => {
+  const handleSetActiveSection = useCallback((section: SectionType) => {
     dispatch({ type: 'SET_ACTIVE_SECTION', payload: section });
-  };
+  }, [dispatch]);
 
-  const handleSetSidebarOpen = (open: boolean) => {
+  const handleSetSidebarOpen = useCallback((open: boolean) => {
     dispatch({ type: 'SET_SIDEBAR_OPEN', payload: open });
-  };
+  }, [dispatch]);
 
   // Обработчик клика вне sidebar для мобильных
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      const sidebar = document.querySelector('.sidebar-wrapper');
       const overlay = document.querySelector('.sidebar-overlay');
       
       if (isMobile && sidebarOpen && overlay && event.target === overlay) {
