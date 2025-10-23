@@ -39,7 +39,10 @@ export class ExpenseService {
 
   static async addExpense(expenseData: Omit<Expense, 'id' | 'createdAt'>): Promise<Expense> {
     try {
-      const expenses = await this.getExpenses();
+      // ПРОБЛЕМА БЫЛА ЗДЕСЬ: нужно читать из localStorage напрямую, а не через getExpenses
+      const expensesJson = localStorage.getItem(STORAGE_KEY);
+      const expenses: Expense[] = expensesJson ? JSON.parse(expensesJson) : [];
+      
       const newExpense: Expense = {
         ...expenseData,
         id: this.generateId(),
@@ -49,6 +52,7 @@ export class ExpenseService {
       expenses.unshift(newExpense);
       localStorage.setItem(STORAGE_KEY, JSON.stringify(expenses));
       
+      console.log('Expense added successfully:', newExpense); // Добавил лог
       return newExpense;
     } catch (error) {
       console.error('Error adding expense:', error);
@@ -58,7 +62,10 @@ export class ExpenseService {
 
   static async updateExpense(expenseId: string, updates: Partial<Expense>): Promise<Expense> {
     try {
-      const expenses = await this.getExpenses();
+      // ТА ЖЕ ПРОБЛЕМА: используем прямой доступ к localStorage
+      const expensesJson = localStorage.getItem(STORAGE_KEY);
+      const expenses: Expense[] = expensesJson ? JSON.parse(expensesJson) : [];
+      
       const index = expenses.findIndex(exp => exp.id === expenseId);
       
       if (index === -1) {
@@ -68,6 +75,7 @@ export class ExpenseService {
       expenses[index] = { ...expenses[index], ...updates };
       localStorage.setItem(STORAGE_KEY, JSON.stringify(expenses));
       
+      console.log('Expense updated successfully:', expenses[index]); // Добавил лог
       return expenses[index];
     } catch (error) {
       console.error('Error updating expense:', error);
@@ -77,15 +85,20 @@ export class ExpenseService {
 
   static async deleteExpense(expenseId: string): Promise<void> {
     try {
-      const expenses = await this.getExpenses();
+      const expensesJson = localStorage.getItem(STORAGE_KEY);
+      const expenses: Expense[] = expensesJson ? JSON.parse(expensesJson) : [];
+      
       const filteredExpenses = expenses.filter(exp => exp.id !== expenseId);
       localStorage.setItem(STORAGE_KEY, JSON.stringify(filteredExpenses));
+      
+      console.log('Expense deleted successfully:', expenseId); // Добавил лог
     } catch (error) {
       console.error('Error deleting expense:', error);
       throw new Error('Failed to delete expense');
     }
   }
 
+  // Остальные методы остаются без изменений
   static async getExpenseStats(carId: string): Promise<ExpenseStats> {
     try {
       const expenses = await this.getExpenses({ carId });

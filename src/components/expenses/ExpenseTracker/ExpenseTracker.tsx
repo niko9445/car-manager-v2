@@ -1,36 +1,77 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useApp } from '../../../contexts/AppContext';
-import { Expense, ExpenseFilters as ExpenseFiltersType } from '../../../types';
+import { Expense, ExpenseFilters as ExpenseFiltersType, ExpenseStats } from '../../../types';
 import { ExpenseService } from '../../../services/expenseService';
 import ExpenseList from '../ExpenseList/ExpenseList';
 import ExpenseFilters from '../ExpenseFilters/ExpenseFilters';
-import ExpenseCharts from '../ExpenseCharts/ExpenseCharts';
 import './ExpenseTracker.css';
-
-// Локальный интерфейс для статистики
-interface ExpenseStats {
-  total: number;
-  byCategory: { [category: string]: number };
-  monthlyAverage: number;
-  lastMonthTotal: number;
-  trend: 'up' | 'down' | 'stable';
-}
 
 const ExpenseTracker: React.FC = () => {
   const { state, dispatch } = useApp();
-  const { selectedCar } = state;
+  const { selectedCar, modals } = state;
   
   const [expenses, setExpenses] = useState<Expense[]>([]);
-  const [stats, setStats] = useState<ExpenseStats | null>(null);
   const [loading, setLoading] = useState(true);
-  const [activeView, setActiveView] = useState<'list' | 'charts'>('list');
   const [currentFilters, setCurrentFilters] = useState<ExpenseFiltersType>({});
 
-  // useCallback чтобы избежать бесконечных ререндеров
+  // Функция для расчета статистики
+  const calculateStats = useCallback((): ExpenseStats | null => {
+    if (expenses.length === 0) return null;
+
+    const total = expenses.reduce((sum, expense) => sum + expense.amount, 0);
+    
+    // Группировка по категориям
+    const byCategory = expenses.reduce((acc, expense) => {
+      acc[expense.category] = (acc[expense.category] || 0) + expense.amount;
+      return acc;
+    }, {} as { [category: string]: number });
+
+    // Расчет среднего в месяц
+    const monthlyAverage = total / 12;
+    
+    // Расчет за последний месяц
+    const now = new Date();
+    const lastMonthStart = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+    const lastMonthEnd = new Date(now.getFullYear(), now.getMonth(), 0);
+    
+    const lastMonthTotal = expenses
+      .filter(expense => {
+        const expenseDate = new Date(expense.date);
+        return expenseDate >= lastMonthStart && expenseDate <= lastMonthEnd;
+      })
+      .reduce((sum, expense) => sum + expense.amount, 0);
+
+    // Простой расчет тренда (сравниваем последние 2 месяца)
+    const currentMonthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+    const prevMonthStart = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+    
+    const currentMonthTotal = expenses
+      .filter(expense => new Date(expense.date) >= currentMonthStart)
+      .reduce((sum, expense) => sum + expense.amount, 0);
+      
+    const prevMonthTotal = expenses
+      .filter(expense => {
+        const expenseDate = new Date(expense.date);
+        return expenseDate >= prevMonthStart && expenseDate < currentMonthStart;
+      })
+      .reduce((sum, expense) => sum + expense.amount, 0);
+
+    let trend: 'up' | 'down' | 'stable' = 'stable';
+    if (currentMonthTotal > prevMonthTotal * 1.1) trend = 'up';
+    else if (currentMonthTotal < prevMonthTotal * 0.9) trend = 'down';
+
+    return {
+      total,
+      byCategory,
+      monthlyAverage,
+      lastMonthTotal,
+      trend
+    };
+  }, [expenses]);
+
   const loadExpenses = useCallback(async (filters?: ExpenseFiltersType) => {
     if (!selectedCar) {
       setExpenses([]);
-      setStats(null);
       setLoading(false);
       return;
     }
@@ -41,10 +82,8 @@ const ExpenseTracker: React.FC = () => {
         carId: selectedCar.id,
         ...filters 
       });
-      const statsData = await ExpenseService.getExpenseStats(selectedCar.id);
       
       setExpenses(expensesData);
-      setStats(statsData);
     } catch (error) {
       console.error('Error loading expenses:', error);
     } finally {
@@ -52,15 +91,22 @@ const ExpenseTracker: React.FC = () => {
     }
   }, [selectedCar]);
 
-  // Загружаем расходы при изменении selectedCar
+  
   useEffect(() => {
-    loadExpenses(currentFilters);
-  }, [selectedCar, loadExpenses, currentFilters]);
+    console.log('Modal state changed:', { 
+      addExpense: modals.addExpense, 
+      editExpense: modals.editExpense 
+    });
+    
+    // Перезагружаем данные когда модальные окна закрываются
+    if (!modals.addExpense && !modals.editExpense) {
+      console.log('Expense modals closed, reloading data...');
+      loadExpenses(currentFilters);
+    }
+  }, [modals.addExpense, modals.editExpense, loadExpenses, currentFilters]);
 
-  // Обработчик изменения фильтров
   const handleFilterChange = useCallback((filters: ExpenseFiltersType) => {
     setCurrentFilters(filters);
-    // Не вызываем loadExpenses здесь - это сделает useEffect
   }, []);
 
   const handleAddExpense = () => {
@@ -85,21 +131,12 @@ const ExpenseTracker: React.FC = () => {
   const handleDeleteExpense = async (expense: Expense) => {
     try {
       await ExpenseService.deleteExpense(expense.id);
-      await loadExpenses(currentFilters); // Перезагружаем с текущими фильтрами
+      await loadExpenses(currentFilters); // Перезагружаем после удаления
     } catch (error) {
       console.error('Error deleting expense:', error);
     }
   };
 
-  const handleGenerateReport = () => {
-    // Пока просто открываем модалку отчета
-    dispatch({ 
-      type: 'OPEN_MODAL', 
-      payload: { modalType: 'expenseReport' } 
-    });
-  };
-
-  // Если автомобиль не выбран, показываем сообщение
   if (!selectedCar) {
     return (
       <div className="section">
@@ -117,42 +154,17 @@ const ExpenseTracker: React.FC = () => {
   return (
     <div className="section">
       <div className="section__header">
-        <div>
-          <h2 className="section__title">Учет расходов</h2>
-          <p className="section__subtitle">
-            {selectedCar.brand} {selectedCar.model} • {selectedCar.year}
-          </p>
-        </div>
-        
+        <h2 className="section__title">Учет расходов</h2>
         <div className="section__header-actions">
-          <div className="expense-tracker__view-switcher">
-            <button
-              className={`btn btn--ghost ${activeView === 'list' ? 'btn--primary' : ''}`}
-              onClick={() => setActiveView('list')}
-            >
-              📋 Список
-            </button>
-            <button
-              className={`btn btn--ghost ${activeView === 'charts' ? 'btn--primary' : ''}`}
-              onClick={() => setActiveView('charts')}
-            >
-              📊 Графики
-            </button>
-          </div>
-          
-          <button
-            className="btn btn--primary"
+          <button 
+            className="section__action-button section__action-button--add"
             onClick={handleAddExpense}
+            title="Добавить расход"
+            type="button"
           >
-            + Добавить расход
-          </button>
-          
-          <button
-            className="btn btn--outline"
-            onClick={handleGenerateReport}
-            disabled={expenses.length === 0}
-          >
-            📄 Отчет
+            <svg className="section__action-icon" viewBox="0 0 24 24" fill="none">
+              <path d="M12 5v14m-7-7h14" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+            </svg>
           </button>
         </div>
       </div>
@@ -166,35 +178,28 @@ const ExpenseTracker: React.FC = () => {
         </div>
       ) : expenses.length === 0 ? (
         <div className="section__empty">
-          <div className="section__empty-icon">💰</div>
-          <h3 className="section__empty-text">Нет данных о расходах</h3>
-          <p className="section__empty-subtext">
-            Добавьте первый расход для отслеживания затрат на автомобиль
-          </p>
-          <button
-            className="btn btn--primary"
-            onClick={handleAddExpense}
-          >
-            + Добавить первый расход
-          </button>
+          <div className="section__empty-content">
+            <div className="section__empty-icon">💰</div>
+            <h3 className="section__empty-text">Нет данных о расходах</h3>
+            <p className="section__empty-subtext">
+              Начните отслеживать затраты на ваш автомобиль
+            </p>
+            <button
+              className="btn btn--primary"
+              onClick={handleAddExpense}
+            >
+              Добавить расход
+            </button>
+          </div>
         </div>
       ) : (
-        <>
-          {activeView === 'list' ? (
-            <ExpenseList
-              expenses={expenses}
-              stats={stats}
-              onEditExpense={handleEditExpense}
-              onDeleteExpense={handleDeleteExpense}
-              onRefresh={() => loadExpenses(currentFilters)}
-            />
-          ) : (
-            <ExpenseCharts
-              expenses={expenses}
-              stats={stats}
-            />
-          )}
-        </>
+        <ExpenseList
+          expenses={expenses}
+          stats={calculateStats()}
+          onEditExpense={handleEditExpense}
+          onDeleteExpense={handleDeleteExpense}
+          onRefresh={() => loadExpenses(currentFilters)}
+        />
       )}
     </div>
   );

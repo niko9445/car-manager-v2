@@ -57,6 +57,15 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({
         description: expense.description,
         odometer: expense.odometer
       });
+    } else {
+      // Режим добавления - сбрасываем форму
+      setFormData({
+        date: new Date().toISOString().split('T')[0],
+        category: 'fuel',
+        amount: 0,
+        description: '',
+        odometer: undefined
+      });
     }
   }, [expense]);
 
@@ -114,21 +123,30 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({
     setLoading(true);
 
     try {
+      console.log('Saving expense...', formData);
+      
       if (expense) {
         // Режим редактирования
-        await ExpenseService.updateExpense(expense.id, {
+        const result = await ExpenseService.updateExpense(expense.id, {
           ...formData,
           carId: selectedCar.id
         });
+        console.log('Expense updated:', result);
       } else {
         // Режим добавления
-        await ExpenseService.addExpense({
+        const result = await ExpenseService.addExpense({
           ...formData,
           carId: selectedCar.id
         });
+        console.log('Expense added:', result);
       }
       
-      onSave();
+      // Добавляем небольшую задержку чтобы убедиться что данные сохранились
+      setTimeout(() => {
+        console.log('Calling onSave...');
+        onSave();
+      }, 100);
+      
     } catch (error) {
       console.error('Error saving expense:', error);
       alert('Ошибка при сохранении расхода');

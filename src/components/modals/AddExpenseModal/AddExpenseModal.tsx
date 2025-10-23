@@ -10,7 +10,11 @@ const AddExpenseModal: React.FC = () => {
 
   const isOpen = modals.addExpense || modals.editExpense;
   const isEditMode = modals.editExpense;
-  const expense = modalData.expenseToEdit;
+  
+  // Правильно получаем expense для редактирования
+  const expense = isEditMode && modalData && 'expense' in modalData 
+    ? modalData.expense 
+    : undefined;
 
   const handleClose = () => {
     if (isEditMode) {
@@ -21,9 +25,14 @@ const AddExpenseModal: React.FC = () => {
   };
 
   const handleSave = () => {
+    // При сохранении закрываем модальное окно
+    // Данные автоматически перезагрузятся в ExpenseTracker из-за изменения состояния modal
     handleClose();
-    // Можно добавить callback для обновления списка расходов
-    // Например, dispatch({ type: 'REFRESH_EXPENSES' });
+  };
+
+  // Обработчик успешного сохранения формы
+  const handleFormSave = () => {
+    handleSave();
   };
 
   if (!isOpen) return null;
@@ -37,7 +46,7 @@ const AddExpenseModal: React.FC = () => {
     >
       <ExpenseForm
         expense={expense}
-        onSave={handleSave}
+        onSave={handleFormSave}
         onCancel={handleClose}
       />
     </Modal>
