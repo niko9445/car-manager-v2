@@ -152,7 +152,7 @@ const ExpenseTracker: React.FC = () => {
   }
 
   return (
-    <div className="section">
+    <div className="section expense-tracker"> {/* ← ДОБАВЬ КЛАСС */}
       <div className="section__header">
         <h2 className="section__title">Учет расходов</h2>
         <div className="section__header-actions">
