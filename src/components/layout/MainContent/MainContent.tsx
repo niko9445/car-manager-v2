@@ -61,7 +61,7 @@ const MainContent: React.FC<MainContentProps> = ({
         </p>
         {isMobile ? (
           <button 
-            className="maincontent__empty-button"
+            className="btn btn--primary"
             onClick={onOpenSidebar}
             type="button"
           >

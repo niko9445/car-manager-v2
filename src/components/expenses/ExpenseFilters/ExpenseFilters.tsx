@@ -103,7 +103,8 @@ const ExpenseFilters: React.FC<ExpenseFiltersProps> = ({ onFilterChange }) => {
                   value={filters.dateFrom || ''}
                   onChange={(e) => handleDateChange('dateFrom', e.target.value)}
                   className="expense-filters__date-input"
-                  placeholder="С"
+                  placeholder="Дата с"
+                  title="Фильтр по дате начала периода"
                 />
               </div>
               
@@ -113,7 +114,8 @@ const ExpenseFilters: React.FC<ExpenseFiltersProps> = ({ onFilterChange }) => {
                   value={filters.dateTo || ''}
                   onChange={(e) => handleDateChange('dateTo', e.target.value)}
                   className="expense-filters__date-input"
-                  placeholder="По"
+                  placeholder="Дата по"
+                  title="Фильтр по дате окончания периода"
                 />
               </div>
             </div>

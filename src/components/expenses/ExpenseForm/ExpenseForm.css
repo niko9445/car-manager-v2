@@ -1,3 +1,63 @@
+/* Убираем горизонтальную прокрутку в модальном окне */
+.form {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+.form__fields {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  max-width: 100%;
+}
+
+.form__group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  min-width: 0; /* Важно для предотвращения переполнения */
+}
+
+/* Исправляем ширину поля даты */
+.form__input[type="date"] {
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+/* Обеспечиваем что все поля влезают */
+.form__input,
+.form__select,
+.form__textarea {
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+/* Мобильная версия для формы */
+@media (max-width: 768px) {
+  .form__fields {
+    gap: var(--space-3);
+  }
+  
+  .form__input,
+  .form__select,
+  .form__textarea {
+    font-size: var(--font-size-base); /* Увеличиваем для удобства на мобильных */
+  }
+  
+  .form__input[type="date"] {
+    /* На мобильных браузеры сами управляют размером поля даты */
+    min-height: 44px; /* Минимальная высота для удобного касания */
+  }
+}
+
+/* Очень маленькие экраны */
+@media (max-width: 480px) {
+  .form__fields {
+    gap: var(--space-2);
+  }
+}
+
+/* Остальные стили остаются без изменений */
 .expense-form__category-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));

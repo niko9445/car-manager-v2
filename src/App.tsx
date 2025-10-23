@@ -48,6 +48,34 @@ const AppContent = () => {
     return () => window.removeEventListener('resize', checkMobile);
   }, [dispatch]);
 
+  // Обработчики для Sidebar и MainContent
+  const handleSetSelectedCar = (car: Car) => {
+    dispatch({ type: 'SET_SELECTED_CAR', payload: car });
+  };
+
+  const handleSetActiveSection = (section: SectionType) => {
+    dispatch({ type: 'SET_ACTIVE_SECTION', payload: section });
+  };
+
+  const handleSetSidebarOpen = (open: boolean) => {
+    dispatch({ type: 'SET_SIDEBAR_OPEN', payload: open });
+  };
+
+  // Обработчик клика вне sidebar для мобильных
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const sidebar = document.querySelector('.sidebar-wrapper');
+      const overlay = document.querySelector('.sidebar-overlay');
+      
+      if (isMobile && sidebarOpen && overlay && event.target === overlay) {
+        handleSetSidebarOpen(false);
+      }
+    };
+
+    document.addEventListener('click', handleClickOutside);
+    return () => document.removeEventListener('click', handleClickOutside);
+  }, [isMobile, sidebarOpen, handleSetSidebarOpen]);
+
   // Функции для модальных окон
   const openModal = (modalType: AppModalType, data?: ModalData) => {
     dispatch({ type: 'OPEN_MODAL', payload: { modalType, data } });
@@ -243,19 +271,6 @@ const AppContent = () => {
     return car?.carData || [];
   };
 
-  // Обработчики для Sidebar и MainContent
-  const handleSetSelectedCar = (car: Car) => {
-    dispatch({ type: 'SET_SELECTED_CAR', payload: car });
-  };
-
-  const handleSetActiveSection = (section: SectionType) => {
-    dispatch({ type: 'SET_ACTIVE_SECTION', payload: section });
-  };
-
-  const handleSetSidebarOpen = (open: boolean) => {
-    dispatch({ type: 'SET_SIDEBAR_OPEN', payload: open });
-  };
-
   // Type guards для modalData
   const isCarModalData = (data: any): data is { car: Car } => {
     return data && 'car' in data;
@@ -282,6 +297,16 @@ const AppContent = () => {
           <div
             className="sidebar-overlay"
             onClick={() => handleSetSidebarOpen(false)}
+            style={{
+              position: 'fixed',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              background: 'rgba(0, 0, 0, 0.5)',
+              zIndex: 1001, // Должен быть ниже sidebar но выше основного контента
+              animation: 'fadeIn 0.2s ease-out'
+            }}
           />
         )}
 

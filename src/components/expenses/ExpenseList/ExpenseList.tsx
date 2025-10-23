@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Expense } from '../../../types';
+import ConfirmModal from '../../ui/ConfirmModal/ConfirmModal';
 import './ExpenseList.css';
 
 interface ExpenseStats {
@@ -12,7 +13,7 @@ interface ExpenseStats {
 
 interface ExpenseListProps {
   expenses: Expense[];
-  stats?: ExpenseStats | null; // Сделал опциональным
+  stats?: ExpenseStats | null;
   onEditExpense: (expense: Expense) => void;
   onDeleteExpense: (expense: Expense) => void;
   onRefresh: () => void;
@@ -26,9 +27,30 @@ const ExpenseList: React.FC<ExpenseListProps> = ({
   onRefresh
 }) => {
   const [activeCardId, setActiveCardId] = useState<string | null>(null);
+  const [expenseToDelete, setExpenseToDelete] = useState<Expense | null>(null);
+  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
 
   const handleToggleActive = (cardId: string) => {
     setActiveCardId(activeCardId === cardId ? null : cardId);
+  };
+
+  const handleDeleteClick = (expense: Expense, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setExpenseToDelete(expense);
+    setIsConfirmModalOpen(true);
+  };
+
+  const handleConfirmDelete = () => {
+    if (expenseToDelete) {
+      onDeleteExpense(expenseToDelete);
+      setExpenseToDelete(null);
+    }
+    setIsConfirmModalOpen(false);
+  };
+
+  const handleCancelDelete = () => {
+    setExpenseToDelete(null);
+    setIsConfirmModalOpen(false);
   };
 
   const getCategoryIcon = (category: string): string => {
@@ -169,10 +191,7 @@ const ExpenseList: React.FC<ExpenseListProps> = ({
                   </button>
                   <button
                     className="card__action card__action--delete"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      onDeleteExpense(expense);
-                    }}
+                    onClick={(e) => handleDeleteClick(expense, e)}
                     aria-label="Удалить расход"
                     title="Удалить"
                   >
@@ -187,6 +206,18 @@ const ExpenseList: React.FC<ExpenseListProps> = ({
           </div>
         ))}
       </div>
+
+      {/* Модальное окно подтверждения удаления */}
+      <ConfirmModal
+        isOpen={isConfirmModalOpen}
+        onClose={handleCancelDelete}
+        onConfirm={handleConfirmDelete}
+        title="Удалить расход"
+        message={expenseToDelete ? `Вы уверены, что хотите удалить расход "${expenseToDelete.description}" на сумму ${formatAmount(expenseToDelete.amount)}?` : "Вы уверены, что хотите удалить этот расход?"}
+        confirmText="Удалить"
+        cancelText="Отмена"
+        type="delete"
+      />
     </div>
   );
 };

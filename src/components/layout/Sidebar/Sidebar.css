@@ -7,6 +7,7 @@
   height: 100vh;
   overflow-y: auto;
   z-index: 1002; /* чтобы быть поверх overlay */
+  position: relative; /* Важно для z-index */
 }
 
 .sidebar__header {
