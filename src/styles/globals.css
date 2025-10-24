@@ -1,9 +1,14 @@
-@import './variables.css';
+@import './base/variables.css';
 @import './reset.css';
-@import './components/buttons.css';
-@import './components/modals.css';
-@import './components/forms.css';
-@import './components/cards.css';
+@import './components-v2/buttons.css';
+@import './components-v2/cards.css';
+@import './components-v2/layout.css';
+@import './components-v2/modals.css';
+@import './components-v2/notification.css';
+
+
+
+
 
 /* ===== ОСНОВНЫЕ СТИЛИ ПРИЛОЖЕНИЯ ===== */
 
@@ -39,6 +44,18 @@ p {
   overflow-x: hidden;
   transform: none !important;
 }
+
+/* Утилитарные классы */
+.text-primary { color: var(--color-text-primary); }
+.text-secondary { color: var(--color-text-secondary); }
+.text-muted { color: var(--color-text-muted); }
+
+.bg-primary { background: var(--color-bg-primary); }
+.bg-secondary { background: var(--color-bg-secondary); }
+.bg-card { background: var(--color-bg-card); }
+
+.border-primary { border-color: var(--color-border-primary); }
+.border-secondary { border-color: var(--color-border-secondary); }
 
 html, body {
   max-width: 100%;

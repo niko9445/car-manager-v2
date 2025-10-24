@@ -2,7 +2,6 @@ import React, { useState, useMemo } from 'react';
 import Modal from '../../ui/Modal/Modal';
 import { CarFormData } from '../../../types';
 import { carBrands, engineTypes, transmissionTypes } from '../../../data/carBrands';
-import './AddCarModal.css';
 
 interface AddCarModalProps {
   onClose: () => void;
@@ -58,121 +57,107 @@ const AddCarModal: React.FC<AddCarModalProps> = ({ onClose, onSave }) => {
 
   return (
     <Modal isOpen={true} onClose={onClose} title="Добавить автомобиль" size="md">
-      <form className="addcarmodal__form" onSubmit={handleSubmit}>
-        {/* Поле марки с автодополнением */}
-        <div className="form__group">
-          <label className="form__label form__label--required">Марка</label>
-          <input
-            className="form__input"
-            type="text"
-            value={formData.brand}
-            onChange={(e) => setFormData({...formData, brand: e.target.value})}
-            onFocus={() => setShowBrandSuggestions(true)}
-            onBlur={() => setTimeout(() => setShowBrandSuggestions(false), 200)}
-            required
-          />
-          {showBrandSuggestions && filteredBrands.length > 0 && (
-            <div className="addcarmodal__suggestions">
-              {filteredBrands.map(brand => (
-                <div
-                  key={brand}
-                  className="addcarmodal__suggestion-item"
-                  onMouseDown={() => handleBrandSelect(brand)}
-                >
+      <form className="modal__form" onSubmit={handleSubmit}>
+        <div className="modal__form-grid">
+          
+          {/* Поле марки с автодополнением */}
+          <div className="modal__form-group">
+            <label className="modal__label modal__label--required">Марка</label>
+            <select
+              className="modal__input"
+              value={formData.brand}
+              onChange={(e) => setFormData({...formData, brand: e.target.value, model: ''})}
+              required
+            >
+              <option value="">Выберите марку</option>
+              {Object.keys(carBrands).map(brand => (
+                <option key={brand} value={brand}>
                   {brand}
-                </div>
+                </option>
               ))}
-            </div>
-          )}
-        </div>
+            </select>
+          </div>
 
-        {/* Поле модели с автодополнением */}
-        <div className="form__group">
-          <label className="form__label form__label--required">Модель</label>
-          <input
-            className="form__input"
-            type="text"
-            value={formData.model}
-            onChange={(e) => setFormData({...formData, model: e.target.value})}
-            onFocus={() => setShowModelSuggestions(true)}
-            onBlur={() => setTimeout(() => setShowModelSuggestions(false), 200)}
-            required
-            disabled={!formData.brand}
-          />
-          {showModelSuggestions && filteredModels.length > 0 && (
-            <div className="addcarmodal__suggestions">
-              {filteredModels.map(model => (
-                <div
-                  key={model}
-                  className="addcarmodal__suggestion-item"
-                  onMouseDown={() => handleModelSelect(model)}
-                >
+          {/* Поле модели с автодополнением */}
+          <div className="modal__form-group">
+            <label className="modal__label modal__label--required">Модель</label>
+            <select
+              className="modal__input"
+              value={formData.model}
+              onChange={(e) => setFormData({...formData, model: e.target.value})}
+              required
+              disabled={!formData.brand}
+            >
+              <option value="">Выберите модель</option>
+              {formData.brand && carBrands[formData.brand as keyof typeof carBrands]?.map(model => (
+                <option key={model} value={model}>
                   {model}
-                </div>
+                </option>
               ))}
-            </div>
-          )}
+            </select>
+          </div>
+
+          {/* Год выпуска */}
+          <div className="modal__form-group">
+            <label className="modal__label modal__label--required">Год выпуска</label>
+            <input
+              className="modal__input"
+              type="number"
+              value={formData.year}
+              onChange={(e) => setFormData({...formData, year: parseInt(e.target.value)})}
+              required
+              min="1950"
+              max={new Date().getFullYear()}
+            />
+          </div>
+
+          {/* Тип двигателя */}
+          <div className="modal__form-group">
+            <label className="modal__label">Двигатель</label>
+            <select
+              className="modal__input"
+              value={formData.engineType}
+              onChange={(e) => setFormData({...formData, engineType: e.target.value as any})}
+            >
+              {engineTypes.map(type => (
+                <option key={type.value} value={type.value}>
+                  {type.label}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Коробка передач */}
+          <div className="modal__form-group">
+            <label className="modal__label">Коробка передач</label>
+            <select
+              className="modal__input"
+              value={formData.transmission}
+              onChange={(e) => setFormData({...formData, transmission: e.target.value as any})}
+            >
+              {transmissionTypes.map(type => (
+                <option key={type.value} value={type.value}>
+                  {type.label}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* VIN-код */}
+          <div className="modal__form-group">
+            <label className="modal__label">VIN-код</label>
+            <input
+              className="modal__input"
+              type="text"
+              value={formData.vin}
+              onChange={(e) => setFormData({...formData, vin: e.target.value})}
+              placeholder="Необязательно"
+            />
+          </div>
+
         </div>
 
-        {/* Год выпуска */}
-        <div className="form__group">
-          <label className="form__label form__label--required">Год выпуска</label>
-          <input
-            className="form__input"
-            type="number"
-            value={formData.year}
-            onChange={(e) => setFormData({...formData, year: parseInt(e.target.value)})}
-            required
-            min="1950"
-            max={new Date().getFullYear()}
-          />
-        </div>
-
-        {/* Тип двигателя */}
-        <div className="form__group">
-          <label className="form__label">Двигатель</label>
-          <select
-            className="form__select"
-            value={formData.engineType}
-            onChange={(e) => setFormData({...formData, engineType: e.target.value as any})}
-          >
-            {engineTypes.map(type => (
-              <option key={type.value} value={type.value}>
-                {type.label}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        {/* Коробка передач */}
-        <div className="form__group">
-          <label className="form__label">Коробка передач</label>
-          <select
-            className="form__select"
-            value={formData.transmission}
-            onChange={(e) => setFormData({...formData, transmission: e.target.value as any})}
-          >
-            {transmissionTypes.map(type => (
-              <option key={type.value} value={type.value}>
-                {type.label}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        {/* VIN-код */}
-        <div className="form__group">
-          <label className="form__label">VIN-код</label>
-          <input
-            className="form__input"
-            type="text"
-            value={formData.vin}
-            onChange={(e) => setFormData({...formData, vin: e.target.value})}
-            placeholder="Необязательно"
-          />
-        </div>
-
-        <div className="form__actions">
+        <div className="modal__actions modal__actions--between">
           <button 
             type="button" 
             className="btn btn--secondary" 
@@ -183,8 +168,9 @@ const AddCarModal: React.FC<AddCarModalProps> = ({ onClose, onSave }) => {
           <button 
             type="submit" 
             className="btn btn--primary"
+            disabled={!formData.brand || !formData.model}
           >
-            Добавить авто
+            Добавить автомобиль
           </button>
         </div>
       </form>

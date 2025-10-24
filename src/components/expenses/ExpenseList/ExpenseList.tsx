@@ -1,23 +1,6 @@
 import React, { useState } from 'react';
-import { Expense } from '../../../types';
+import { Expense, ExpenseStats, ExpenseListProps } from '../../../types';
 import ConfirmModal from '../../ui/ConfirmModal/ConfirmModal';
-import './ExpenseList.css';
-
-interface ExpenseStats {
-  total: number;
-  byCategory: { [category: string]: number };
-  monthlyAverage: number;
-  lastMonthTotal: number;
-  trend: 'up' | 'down' | 'stable';
-}
-
-interface ExpenseListProps {
-  expenses: Expense[];
-  stats?: ExpenseStats | null;
-  onEditExpense: (expense: Expense) => void;
-  onDeleteExpense: (expense: Expense) => void;
-  onRefresh: () => void;
-}
 
 const ExpenseList: React.FC<ExpenseListProps> = ({
   expenses,
@@ -26,13 +9,8 @@ const ExpenseList: React.FC<ExpenseListProps> = ({
   onDeleteExpense,
   onRefresh
 }) => {
-  const [activeCardId, setActiveCardId] = useState<string | null>(null);
   const [expenseToDelete, setExpenseToDelete] = useState<Expense | null>(null);
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
-
-  const handleToggleActive = (cardId: string) => {
-    setActiveCardId(activeCardId === cardId ? null : cardId);
-  };
 
   const handleDeleteClick = (expense: Expense, e: React.MouseEvent) => {
     e.stopPropagation();
@@ -53,156 +31,107 @@ const ExpenseList: React.FC<ExpenseListProps> = ({
     setIsConfirmModalOpen(false);
   };
 
-  const getCategoryIcon = (category: string): string => {
-    const icons: { [key: string]: string } = {
-      fuel: '⛽',
-      maintenance: '🔧',
-      repairs: '🛠️',
-      parts: '⚙️',
-      insurance: '🛡️',
-      taxes: '📄',
-      parking: '🅿️',
-      washing: '🧼',
-      fines: '🚨',
-      other: '💰'
-    };
-    return icons[category] || '💰';
-  };
-
   const formatDate = (dateString: string): string => {
     return new Date(dateString).toLocaleDateString('ru-RU');
   };
 
   const formatAmount = (amount: number): string => {
     return new Intl.NumberFormat('ru-RU', {
-      style: 'currency',
-      currency: 'RUB'
-    }).format(amount);
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0
+    }).format(amount) + ' ₽';
+  };
+
+  const formatNumber = (num: number): string => {
+    return num.toLocaleString('ru-RU');
   };
 
   return (
-    <div className="expense-list">
-      {/* Статистика показывается только если передана */}
+    <div className="expense-list-container">
+      {/* Статистика */}
       {stats && (
-        <div className="expense-list__stats">
-          <div className="expense-list__stat">
-            <div className="expense-list__stat-value">
-              {formatAmount(stats.total)}
+        <div className="expense-stats">
+          <div className="expense-stats__grid">
+            <div className="expense-stat-card">
+              <div className="expense-stat-card__value">{formatAmount(stats.total)}</div>
+              <div className="expense-stat-card__label">Всего расходов</div>
             </div>
-            <div className="expense-list__stat-label">Всего расходов</div>
-          </div>
-          <div className="expense-list__stat">
-            <div className="expense-list__stat-value">
-              {formatAmount(stats.monthlyAverage)}
+            <div className="expense-stat-card">
+              <div className="expense-stat-card__value">{formatAmount(stats.monthlyAverage)}</div>
+              <div className="expense-stat-card__label">В среднем в месяц</div>
             </div>
-            <div className="expense-list__stat-label">В среднем в месяц</div>
-          </div>
-          <div className="expense-list__stat">
-            <div className="expense-list__stat-value">
-              {formatAmount(stats.lastMonthTotal)}
+            <div className="expense-stat-card">
+              <div className="expense-stat-card__value">{formatAmount(stats.lastMonthTotal)}</div>
+              <div className="expense-stat-card__label">За последний месяц</div>
             </div>
-            <div className="expense-list__stat-label">За последний месяц</div>
-          </div>
-          <div className="expense-list__stat">
-            <div className="expense-list__stat-value">
-              {stats.trend === 'up' ? '📈' : stats.trend === 'down' ? '📉' : '➡️'}
+            <div className="expense-stat-card">
+              <div className="expense-stat-card__value">
+                {stats.trend === 'up' ? '📈' : stats.trend === 'down' ? '📉' : '➡️'}
+              </div>
+              <div className="expense-stat-card__label">Тренд</div>
             </div>
-            <div className="expense-list__stat-label">Тренд</div>
           </div>
         </div>
       )}
 
-      <div className="section__list">
+      {/* Список расходов */}
+      <div className="expense-list">
         {expenses.map((expense, index) => (
           <div 
             key={expense.id}
-            className={`card card--expense ${activeCardId === expense.id ? 'card--active' : ''}`}
-            onClick={() => handleToggleActive(expense.id)}
+            className="expense-card"
             style={{ animationDelay: `${index * 0.05}s` }}
           >
-            <div className="card__header">
-              <div className="expense-list__main-info">
-                <div className="expense-list__category-badge">
-                  <span className="expense-list__category-icon">
-                    {getCategoryIcon(expense.category)}
-                  </span>
-                  <span className="expense-list__category-name">
-                    {getCategoryName(expense.category)}
-                  </span>
-                </div>
-                <div className="expense-list__description-wrapper">
-                  <h3 className="expense-list__description">
-                    {expense.description}
-                  </h3>
-                  <div className="expense-list__meta">
-                    <span className="expense-list__date">
-                      {formatDate(expense.date)}
-                    </span>
-                    {expense.odometer && (
-                      <span className="expense-list__odometer">
-                        • 🛣️ {expense.odometer.toLocaleString('ru-RU')} км
-                      </span>
-                    )}
-                  </div>
-                </div>
-              </div>
-              
-              <div className="expense-list__amount-section">
-                <div className="expense-list__amount">
-                  {formatAmount(expense.amount)}
-                </div>
-              </div>
+            {/* Заголовок карточки */}
+            <div className="expense-card__header">
+              <h3 className="expense-card__title">{expense.description}</h3>
+              <span className="expense-card__amount">{formatAmount(expense.amount)}</span>
+            </div>
+            
+            {/* Мета-информация */}
+            <div className="expense-card__meta">
+              <span className={`expense-card__category expense-card__category--${expense.category}`}>
+                {getCategoryName(expense.category)}
+              </span>
+              <span className="expense-card__date">{formatDate(expense.date)}</span>
+              {expense.odometer && (
+                <span className="expense-card__odometer">{formatNumber(expense.odometer)} км</span>
+              )}
             </div>
 
-            {/* Дополнительная информация (показывается при активации) */}
-            {activeCardId === expense.id && (
-              <div className="card__content card__content--expanded">
-                <div className="expense-list__details">
-                  {expense.odometer && (
-                    <div className="expense-list__detail">
-                      <span className="expense-list__detail-label">Пробег:</span>
-                      <span className="expense-list__detail-value">
-                        {expense.odometer.toLocaleString('ru-RU')} км
-                      </span>
-                    </div>
-                  )}
-                  <div className="expense-list__detail">
-                    <span className="expense-list__detail-label">Дата добавления:</span>
-                    <span className="expense-list__detail-value">
-                      {formatDate(expense.createdAt)}
-                    </span>
-                  </div>
-                </div>
-
-                <div className="card__actions">
-                  <button
-                    className="card__action card__action--edit"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      onEditExpense(expense);
-                    }}
-                    aria-label="Редактировать расход"
-                    title="Редактировать"
-                  >
-                    <svg className="card__action-icon" viewBox="0 0 24 24" fill="none">
-                      <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" stroke="currentColor" strokeWidth="2"/>
-                      <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" stroke="currentColor" strokeWidth="2"/>
-                    </svg>
-                  </button>
-                  <button
-                    className="card__action card__action--delete"
-                    onClick={(e) => handleDeleteClick(expense, e)}
-                    aria-label="Удалить расход"
-                    title="Удалить"
-                  >
-                    <svg className="card__action-icon" viewBox="0 0 24 24" fill="none">
-                      <path d="M3 6h18m-2 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" stroke="currentColor" strokeWidth="2"/>
-                      <path d="M10 11v6m4-6v6" stroke="currentColor" strokeWidth="2"/>
-                    </svg>
-                  </button>
-                </div>
+            {/* Детали расхода */}
+            <div className="expense-card__details">
+              <div className="expense-card__detail">
+                <span className="expense-card__detail-label">Категория</span>
+                <span className="expense-card__detail-value">{getCategoryName(expense.category)}</span>
               </div>
-            )}
+              <div className="expense-card__detail">
+                <span className="expense-card__detail-label">Дата</span>
+                <span className="expense-card__detail-value">{formatDate(expense.date)}</span>
+              </div>
+              {expense.odometer && (
+                <div className="expense-card__detail">
+                  <span className="expense-card__detail-label">Пробег</span>
+                  <span className="expense-card__detail-value">{formatNumber(expense.odometer)} км</span>
+                </div>
+              )}
+            </div>
+            
+            {/* Кнопки действий */}
+            <div className="expense-card__actions">
+              <button 
+                className="btn btn--secondary btn--sm"
+                onClick={() => onEditExpense(expense)}
+              >
+                Редактировать
+              </button>
+              <button 
+                className="btn btn--danger btn--sm"
+                onClick={(e) => handleDeleteClick(expense, e)}
+              >
+                Удалить
+              </button>
+            </div>
           </div>
         ))}
       </div>

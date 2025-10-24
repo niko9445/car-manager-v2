@@ -1,48 +1,33 @@
 import React from 'react';
 import { CarCardProps } from '../../../types';
-import './CarCard.css';
 
-const CarCard: React.FC<CarCardProps> = ({ 
-  car, 
-  isSelected, 
-  onSelect, 
-  position = 0 
+const CarCard: React.FC<CarCardProps> = ({
+  car,
+  isSelected,
+  onSelect,
+  position,
+  isMobile = false
 }) => {
-  const handleKeyDown = (e: React.KeyboardEvent): void => {
-    if (e.key === 'Enter' || e.key === ' ') {
-      e.preventDefault();
-      onSelect();
-    }
-  };
-
   return (
     <div 
-      className={`carcard__container ${isSelected ? 'carcard__container--selected' : ''}`}
+      className={`card card--compact card--interactive ${isSelected ? 'card--selected' : ''}`}
       onClick={onSelect}
-      onKeyDown={handleKeyDown}
-      style={{ animationDelay: `${position * 0.1}s` }}
-      role="button"
-      tabIndex={0}
-      aria-label={`Выбрать автомобиль ${car.brand} ${car.model} ${car.year} года`}
+      style={{ 
+        animationDelay: position ? `${position * 0.05}s` : '0s' 
+      }}
     >
-      <div className="carcard__content">
-        <div className="carcard__main-info">
-          <h3 className="carcard__title">
+      <div className="card__header">
+        <div className="card__main-info">
+          <h3 className="card__title">
             {car.brand} {car.model}
           </h3>
-          <p className="carcard__year">
-            {car.year} год
+          <p className="card__description">
+            {car.year} • {car.engineType === 'petrol' ? 'Бензин' : 
+                         car.engineType === 'diesel' ? 'Дизель' : 
+                         car.engineType === 'electric' ? 'Электро' : 
+                         car.engineType === 'hybrid' ? 'Гибрид' : 'Другой'}
           </p>
         </div>
-        
-        {/* Индикатор выбора вместо кнопок действий */}
-        {isSelected && (
-          <div className="carcard__selection-indicator">
-            <svg viewBox="0 0 24 24" fill="none" width="16" height="16">
-              <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" fill="currentColor"/>
-            </svg>
-          </div>
-        )}
       </div>
     </div>
   );

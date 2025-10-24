@@ -1,6 +1,5 @@
 import React from 'react';
 import { CarDataEntry } from '../../../types';
-import './DataCard.css';
 
 interface DataCardProps {
   data: CarDataEntry;
@@ -13,14 +12,14 @@ const DataCard: React.FC<DataCardProps> = ({
 }) => {
   return (
     <div 
-      className="datacard" 
+      className="card" 
       style={{ animationDelay: `${position * 0.1}s` }}
     >
-      <div className="datacard__grid">
+      <div className="card__grid">
         {data.fields.map((field, index) => (
-          <div key={index} className="datacard__item">
-            <span className="datacard__label">{field.name}</span>
-            <span className="datacard__value">
+          <div key={index} className="card__grid-item">
+            <span className="card__grid-label">{field.name}</span>
+            <span className="card__grid-value">
               {field.value} {field.unit && ` ${field.unit}`}
             </span>
           </div>

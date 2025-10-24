@@ -1,5 +1,4 @@
 import React, { useEffect, useRef } from 'react';
-import './Modal.css';
 
 interface ModalProps {
   isOpen: boolean;
@@ -58,7 +57,7 @@ const Modal: React.FC<ModalProps> = ({
 
   return (
     <div 
-      className="modal__overlay" 
+      className="modal" 
       onClick={handleOverlayClick}
       role="dialog"
       aria-modal="true"
@@ -66,7 +65,7 @@ const Modal: React.FC<ModalProps> = ({
     >
       <div 
         ref={modalRef}
-        className={`modal__container modal__container--${size}`}
+        className={`modal__container modal--${size}`}
         onClick={(e) => e.stopPropagation()}
         onKeyDown={handleKeyDown}
         tabIndex={-1}
@@ -79,12 +78,12 @@ const Modal: React.FC<ModalProps> = ({
             {title}
           </h2>
           <button 
-            className="modal__close-button"
+            className="modal__close"
             onClick={onClose}
             type="button"
             aria-label="Закрыть модальное окно"
           >
-            <svg className="modal__close-icon" viewBox="0 0 24 24" fill="none">
+            <svg viewBox="0 0 24 24" fill="none" width="16" height="16">
               <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" strokeWidth="2"/>
             </svg>
           </button>

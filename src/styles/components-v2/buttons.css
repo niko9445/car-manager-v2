@@ -1,0 +1,260 @@
+/* ===== МИНИМАЛИСТИЧНАЯ СИСТЕМА КНОПОК ===== */
+
+.btn {
+  padding: var(--space-3) var(--space-5);
+  border: 1px solid var(--color-border-secondary);
+  border-radius: var(--radius-md);
+  background: var(--color-bg-card);
+  color: var(--color-text-primary);
+  cursor: pointer;
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  transition: all var(--transition-fast);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  font-family: inherit;
+  line-height: 1;
+  min-width: 100px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Варианты кнопок */
+.btn--primary {
+  background: var(--color-accent);
+  border-color: var(--color-border-accent);
+}
+
+.btn--secondary {
+  background: transparent;
+  color: var(--color-text-secondary);
+  border-color: var(--color-border-secondary);
+}
+
+.btn--danger {
+  background: var(--color-accent-red);
+  border-color: var(--color-accent-red);
+}
+
+.btn--success {
+  background: var(--color-accent-green);
+  border-color: var(--color-accent-green);
+}
+
+/* Состояния */
+.btn:hover {
+  transform: translateY(-1px);
+  border-color: var(--color-border-accent);
+}
+
+.btn:active {
+  transform: translateY(0);
+}
+
+.btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Размеры */
+.btn--sm {
+  padding: var(--space-2) var(--space-3);
+  font-size: var(--font-size-xs);
+  min-width: 80px;
+}
+
+.btn--lg {
+  padding: var(--space-4) var(--space-6);
+  font-size: var(--font-size-base);
+  min-width: 120px;
+}
+
+.btn--full {
+  width: 100%;
+}
+
+/* Иконки */
+.btn__icon {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+/* Мобильная адаптация */
+@media (max-width: 768px) {
+  .btn {
+    min-width: 120px;
+  }
+  
+  .btn--full-mobile {
+    width: 100%;
+  }
+}
+
+/* Поддержка reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .btn {
+    transition: none;
+  }
+  
+  .btn:hover {
+    transform: none;
+  }
+}
+
+/* Кнопки только с иконками */
+.btn--icon-only {
+  min-width: auto;
+  width: 32px;
+  padding: var(--space-2);
+}
+
+.btn--icon-only .btn__icon {
+  margin: 0;
+}
+
+/* Компактные кнопки как бургер */
+.btn--compact {
+  width: 32px;
+  height: 32px;
+  padding: 6px;
+  min-width: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn--compact .btn__icon {
+  width: 16px;
+  height: 16px;
+  margin: 0;
+}
+
+.btn--super-compact {
+  width: 24px;
+  height: 24px;
+  padding: 4px;
+  min-width: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-sm);
+}
+
+.btn--super-compact .btn__icon {
+  width: 12px;
+  height: 12px;
+  margin: 0;
+}
+
+/* ===== СТИЛИ ДЛЯ КНОПОК В УГЛУ КАРТОЧКИ ===== */
+
+/* Контейнер для кнопок в углу */
+.card__corner-actions {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  display: flex;
+  gap: 4px;
+  z-index: 2;
+}
+
+/* Кнопки в углу */
+.card__corner-action {
+  width: 28px;
+  height: 28px;
+  padding: 6px;
+  border: 1px solid var(--color-border-secondary);
+  border-radius: var(--radius-sm);
+  background: var(--color-bg-card);
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--transition-fast);
+  opacity: 0;
+}
+
+.card:hover .card__corner-action {
+  opacity: 1;
+}
+
+.card__corner-action:hover {
+  border-color: var(--color-border-accent);
+  background: var(--color-bg-tertiary);
+  color: var(--color-text-primary);
+}
+
+/* Опасная кнопка (удалить) */
+.card__corner-action--danger:hover {
+  border-color: var(--color-accent-red);
+  background: var(--color-accent-red);
+  color: var(--color-text-primary);
+}
+
+/* Заголовок карточки с отступом для кнопок */
+.card__header {
+  position: relative;
+  padding-right: 60px; /* Место для кнопок */
+}
+
+.card__main-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.card__main-info .card__title {
+  margin: 0 0 4px 0;
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  color: var(--color-text-primary);
+  line-height: 1.3;
+}
+
+.card__main-info .card__description {
+  margin: 0;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  opacity: 0.8;
+}
+
+/* Мобильная адаптация */
+@media (max-width: 768px) {
+  .card__corner-actions {
+    top: 8px;
+    right: 8px;
+    gap: 3px;
+  }
+  
+  .card__corner-action {
+    width: 26px;
+    height: 26px;
+    padding: 5px;
+    opacity: 0.7; /* Всегда видимы на мобильных */
+  }
+  
+  .card__header {
+    padding-right: 55px;
+  }
+}
+
+@media (max-width: 480px) {
+  .card__corner-actions {
+    top: 6px;
+    right: 6px;
+  }
+  
+  .card__corner-action {
+    width: 24px;
+    height: 24px;
+    padding: 4px;
+  }
+  
+  .card__header {
+    padding-right: 50px;
+  }
+}

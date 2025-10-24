@@ -2,7 +2,6 @@ import React from 'react';
 import { useApp } from '../../../contexts/AppContext';
 import Modal from '../../ui/Modal/Modal';
 import ExpenseForm from '../../expenses/ExpenseForm/ExpenseForm';
-import './AddExpenseModal.css';
 
 const AddExpenseModal: React.FC = () => {
   const { state, dispatch } = useApp();

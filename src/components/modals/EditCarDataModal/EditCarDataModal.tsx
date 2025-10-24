@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import Modal from '../../ui/Modal/Modal';
 import { CarDataEntry, CarDataField } from '../../../types';
-import './EditCarDataModal.css';
 
 interface EditCarDataModalProps {
   data: CarDataEntry;
@@ -35,55 +34,67 @@ const EditCarDataModal: React.FC<EditCarDataModalProps> = ({ data, onClose, onSa
 
   return (
     <Modal isOpen={true} onClose={onClose} title="Редактировать данные" size="lg">
-      <form className="form form--gap-lg" onSubmit={handleSubmit}>
-        <div className="form__section">
-          <h3 className="form__subtitle">Редактирование данных</h3>
-          <div className="form__fields">
-            {fields.map((field, index) => (
-              <div key={index} className="form__field-row">
-                <input
-                  type="text"
-                  placeholder="Название параметра"
-                  value={field.name}
-                  onChange={(e) => updateField(index, { name: e.target.value })}
-                  className="form__input"
-                />
-                <input
-                  type="text"
-                  placeholder="Значение"
-                  value={field.value}
-                  onChange={(e) => updateField(index, { value: e.target.value })}
-                  className="form__input"
-                />
-                <input
-                  type="text"
-                  placeholder="Ед. измерения"
-                  value={field.unit}
-                  onChange={(e) => updateField(index, { unit: e.target.value })}
-                  className="form__input"
-                />
-                <button
-                  type="button"
-                  onClick={() => removeField(index)}
-                  className="form__remove-button"
-                  disabled={fields.length === 1}
-                >
-                  ×
-                </button>
-              </div>
-            ))}
+      <form className="modal__form" onSubmit={handleSubmit}>
+        
+        {/* Редактирование данных */}
+        <div className="card card--compact">
+          <div className="card__header">
+            <h3 className="card__title card__title--sm">Редактирование данных</h3>
           </div>
+          <div className="card__content">
+            
+            {/* Поля для редактирования */}
+            <div className="modal__edit-fields">
+              {fields.map((field, index) => (
+                <div key={index} className="modal__field-row">
+                  <input
+                    type="text"
+                    placeholder="Название параметра"
+                    value={field.name}
+                    onChange={(e) => updateField(index, { name: e.target.value })}
+                    className="modal__input"
+                  />
+                  <input
+                    type="text"
+                    placeholder="Значение"
+                    value={field.value}
+                    onChange={(e) => updateField(index, { value: e.target.value })}
+                    className="modal__input"
+                  />
+                  <input
+                    type="text"
+                    placeholder="Ед. измерения"
+                    value={field.unit}
+                    onChange={(e) => updateField(index, { unit: e.target.value })}
+                    className="modal__input"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => removeField(index)}
+                    className="btn btn--danger btn--sm modal__remove-button"
+                    disabled={fields.length === 1}
+                  >
+                    ×
+                  </button>
+                </div>
+              ))}
+            </div>
 
-          <button
-            type="button"
-            onClick={addField}
-            className="form__add-button"
-          >
-            + Добавить поле
-          </button>
+            {/* Кнопка добавления поля */}
+            <div className="modal__actions">
+              <button
+                type="button"
+                onClick={addField}
+                className="btn btn--secondary btn--sm"
+              >
+                + Добавить поле
+              </button>
+            </div>
+          </div>
         </div>
 
-        <div className="form__actions">
+        {/* Кнопки действий */}
+        <div className="modal__actions modal__actions--between">
           <button type="button" className="btn btn--secondary" onClick={onClose}>
             Отмена
           </button>

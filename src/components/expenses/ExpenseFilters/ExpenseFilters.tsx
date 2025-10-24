@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { ExpenseCategory } from '../../../types';
-import './ExpenseFilters.css';
 
 interface ExpenseFiltersType {
   carId?: string;
@@ -58,34 +57,29 @@ const ExpenseFilters: React.FC<ExpenseFiltersProps> = ({ onFilterChange }) => {
 
   return (
     <div className="expense-filters">
-      <div className="expense-filters__categories">
-        <div className="expense-filters__category-list">
+      {/* Основные фильтры - категории в сетку */}
+      <div className="expense-filters__main">
+        <div className="expense-filters__categories">
           {categoryOptions.map(option => (
             <button
               key={option.value}
               className={`expense-filters__category-btn ${
-                filters.category === option.value ? 'expense-filters__category-btn--active' : ''
-              } ${option.value === 'all' && !filters.category ? 'expense-filters__category-btn--active' : ''}`}
+                filters.category === option.value || (option.value === 'all' && !filters.category) 
+                  ? 'expense-filters__category-btn--active' 
+                  : ''
+              }`}
               onClick={() => handleCategoryChange(option.value)}
             >
               {option.label}
             </button>
           ))}
         </div>
-        
-        {hasActiveFilters && (
-          <button
-            className="expense-filters__clear-btn"
-            onClick={clearFilters}
-          >
-            Сбросить
-          </button>
-        )}
       </div>
 
-      <div className="expense-filters__expand-section">
+      {/* Дополнительные фильтры */}
+      <div className="expense-filters__advanced">
         <button
-          className="expense-filters__expand-btn"
+          className="btn btn--secondary btn--sm expense-filters__expand-btn"
           onClick={() => setIsExpanded(!isExpanded)}
         >
           <span className="expense-filters__expand-icon">
@@ -96,8 +90,9 @@ const ExpenseFilters: React.FC<ExpenseFiltersProps> = ({ onFilterChange }) => {
 
         {isExpanded && (
           <div className="expense-filters__expanded-content">
-            <div className="expense-filters__date-fields">
-              <div className="expense-filters__date-field">
+            <div className="expense-filters__date-grid">
+              <div className="expense-filters__date-group">
+                <label className="expense-filters__date-label">Дата с</label>
                 <input
                   type="date"
                   value={filters.dateFrom || ''}
@@ -108,7 +103,8 @@ const ExpenseFilters: React.FC<ExpenseFiltersProps> = ({ onFilterChange }) => {
                 />
               </div>
               
-              <div className="expense-filters__date-field">
+              <div className="expense-filters__date-group">
+                <label className="expense-filters__date-label">Дата по</label>
                 <input
                   type="date"
                   value={filters.dateTo || ''}
@@ -122,6 +118,18 @@ const ExpenseFilters: React.FC<ExpenseFiltersProps> = ({ onFilterChange }) => {
           </div>
         )}
       </div>
+
+      {/* Кнопка сброса - ТЕПЕРЬ ВНИЗУ */}
+      {hasActiveFilters && (
+        <div className="expense-filters__reset">
+          <button
+            className="btn btn--secondary btn--sm expense-filters__reset-btn"
+            onClick={clearFilters}
+          >
+            Сбросить фильтры
+          </button>
+        </div>
+      )}
     </div>
   );
 };

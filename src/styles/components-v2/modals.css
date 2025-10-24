@@ -1,0 +1,1297 @@
+/* ===== УНИФИЦИРОВАННАЯ СИСТЕМА МОДАЛЬНЫХ ОКОН ===== */
+
+/* Базовые стили модального окна */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  padding: 20px;
+  backdrop-filter: blur(2px);
+  animation: modalFadeIn 0.3s ease-out;
+}
+
+.modal__container {
+  background: #1a1a1a;
+  border-radius: 8px;
+  border: 1px solid #333333;
+  max-width: 500px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  animation: modalSlideUp 0.3s ease-out;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+  display: flex;
+  flex-direction: column;
+}
+
+/* Размеры модалок */
+.modal--sm .modal__container { max-width: 400px; }
+.modal--md .modal__container { max-width: 500px; }
+.modal--lg .modal__container { max-width: 600px; }
+.modal--xl .modal__container { max-width: 800px; }
+
+/* Хедер модалки */
+.modal__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  border-bottom: 1px solid #333333;
+  background: #1f1f1f;
+  flex-shrink: 0;
+}
+
+.modal__title {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+  color: #ffffff;
+  line-height: 1.3;
+}
+
+.modal__close {
+  background: none;
+  border: none;
+  color: #888888;
+  font-size: 20px;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  transition: all 0.15s ease;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.modal__close:hover {
+  background: #333333;
+  color: #ffffff;
+}
+
+/* Контент модалки */
+.modal__content {
+  padding: 20px;
+  flex: 1;
+  overflow-y: auto;
+}
+
+/* Футер модалки */
+.modal__footer {
+  padding: 20px;
+  border-top: 1px solid #333333;
+  background: #1f1f1f;
+  flex-shrink: 0;
+}
+
+.modal__actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+}
+
+.modal__actions--center {
+  justify-content: center;
+}
+
+.modal__actions--between {
+  justify-content: space-between;
+}
+
+/* Формы в модалках */
+.modal__form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.modal__form-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.modal__form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.modal__label {
+  font-size: 14px;
+  font-weight: 500;
+  color: #888888;
+}
+
+.modal__input {
+  padding: 12px;
+  border: 1px solid #333333;
+  border-radius: 6px;
+  background: #1a1a1a;
+  color: #ffffff;
+  font-size: 14px;
+  transition: all 0.15s ease;
+  width: 100%;
+}
+
+.modal__input:focus {
+  outline: none;
+  border-color: #444444;
+}
+
+.modal__input::placeholder {
+  color: #555555;
+}
+
+/* Анимации */
+@keyframes modalFadeIn {
+  from { 
+    opacity: 0; 
+    backdrop-filter: blur(0px);
+  }
+  to { 
+    opacity: 1; 
+    backdrop-filter: blur(2px);
+  }
+}
+
+@keyframes modalSlideUp {
+  from {
+    opacity: 0;
+    transform: scale(0.9) translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* Мобильная адаптация */
+@media (max-width: 768px) {
+  .modal {
+    padding: 10px;
+    backdrop-filter: blur(1px);
+  }
+  
+  .modal__container {
+    max-width: 100%;
+    max-height: 95vh;
+    border-radius: 8px;
+  }
+  
+  .modal--sm .modal__container,
+  .modal--md .modal__container,
+  .modal--lg .modal__container,
+  .modal--xl .modal__container {
+    max-width: 100%;
+  }
+  
+  .modal__header {
+    padding: 16px;
+  }
+  
+  .modal__content {
+    padding: 16px;
+  }
+  
+  .modal__footer {
+    padding: 16px;
+  }
+  
+  .modal__actions {
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 480px) {
+  .modal {
+    padding: 8px;
+  }
+  
+  .modal__header {
+    padding: 12px;
+  }
+  
+  .modal__content {
+    padding: 12px;
+  }
+  
+  .modal__footer {
+    padding: 12px;
+  }
+  
+  .modal__title {
+    font-size: 18px;
+  }
+}
+
+/* Стили для автодополнения в модалках */
+.modal__field-with-suggestions {
+  position: relative;
+  width: 100%;
+}
+
+.modal__suggestions {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: #1a1a1a;
+  border: 1px solid #333333;
+  border-radius: 6px;
+  max-height: 200px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  z-index: 10001;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+  margin-top: 4px;
+  opacity: 0;
+  transform: translateY(-5px);
+  pointer-events: none;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.modal__field-with-suggestions input:focus ~ .modal__suggestions,
+.modal__suggestions.show {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.modal__suggestion-item {
+  padding: 12px 16px;
+  cursor: pointer;
+  border-bottom: 1px solid #333333;
+  font-size: 14px;
+  color: #ffffff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: background 0.15s ease;
+}
+
+.modal__suggestion-item:hover {
+  background: #333333;
+}
+
+.modal__suggestion-item:last-child {
+  border-bottom: none;
+}
+
+.modal__label--required::after {
+  content: " *";
+  color: #ef4444;
+}
+
+/* Стили для number input в модалках */
+.modal__input[type="number"] {
+  -moz-appearance: textfield;
+  appearance: textfield; /* Стандартное свойство */
+}
+
+.modal__input[type="number"]::-webkit-outer-spin-button,
+.modal__input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Мобильная адаптация для автодополнения */
+@media (max-width: 768px) {
+  .modal__suggestions {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    width: 100%;
+    max-height: 150px;
+    border-radius: 6px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+  }
+  
+  .modal__suggestion-item {
+    padding: 16px;
+    font-size: 16px;
+  }
+}
+
+/* Стили для Confirm Modal */
+.modal__content--centered {
+  text-align: center;
+  padding: 32px;
+}
+
+.modal__header--centered {
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  border-bottom: none;
+  background: transparent;
+  padding: 0 0 20px 0;
+}
+
+.modal__icon {
+  width: 64px;
+  height: 64px;
+  margin-bottom: 16px;
+}
+
+.modal__icon--delete {
+  color: #ef4444;
+}
+
+.modal__icon--warning {
+  color: #f59e0b;
+}
+
+.modal__icon--info {
+  color: #3b82f6;
+}
+
+.modal__message {
+  margin: 0 0 28px 0;
+  font-size: 15px;
+  line-height: 1.5;
+  color: #888888;
+  text-align: center;
+}
+
+/* Мобильная адаптация для Confirm Modal */
+@media (max-width: 768px) {
+  .modal__content--centered {
+    padding: 24px;
+  }
+  
+  .modal__icon {
+    width: 48px;
+    height: 48px;
+    margin-bottom: 12px;
+  }
+  
+  .modal__message {
+    font-size: 14px;
+    margin-bottom: 24px;
+  }
+}
+
+@media (max-width: 480px) {
+  .modal__content--centered {
+    padding: 20px;
+  }
+  
+  .modal__header--centered {
+    padding: 0 0 16px 0;
+  }
+  
+  .modal__message {
+    font-size: 14px;
+    margin-bottom: 20px;
+  }
+}
+
+/* ===== ДОПОЛНИТЕЛЬНЫЕ СТИЛИ ДЛЯ ФОРМ В МОДАЛКАХ ===== */
+
+/* Сетка для форм */
+.modal__form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: var(--space-4);
+  width: 100%;
+}
+
+/* Группа полей формы */
+.modal__form-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.modal__label {
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  display: block;
+}
+
+.modal__label--required::after {
+  content: " *";
+  color: #ef4444;
+}
+
+/* Списки данных в модалках */
+.modal__data-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.modal__data-item {
+  border: 1px solid var(--color-border-primary);
+  border-radius: var(--radius-lg);
+  background: var(--color-bg-tertiary);
+}
+
+/* Поля данных */
+.modal__data-fields {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.modal__data-field {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-2) 0;
+  border-bottom: 1px solid var(--color-border-secondary);
+}
+
+.modal__data-field:last-child {
+  border-bottom: none;
+}
+
+.modal__field-name {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  font-weight: 500;
+  flex: 1;
+}
+
+.modal__field-value {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-primary);
+  font-weight: 600;
+  text-align: right;
+}
+
+.modal__field-unit {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  font-weight: 400;
+  margin-left: var(--space-1);
+}
+
+/* Мета-информация */
+.modal__data-meta {
+  margin-top: var(--space-3);
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--color-border-primary);
+}
+
+.modal__data-date {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+}
+
+/* Режим редактирования */
+.modal__edit-mode {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.modal__edit-fields {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.modal__field-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 80px 40px;
+  gap: var(--space-2);
+  align-items: start;
+}
+
+.modal__remove-button {
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+}
+
+.modal__field-actions {
+  display: flex;
+  gap: var(--space-2);
+  align-items: center;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+  .modal__form-grid {
+    grid-template-columns: 1fr;
+    gap: var(--space-3);
+  }
+  
+  .modal__field-row {
+    grid-template-columns: 1fr;
+    gap: var(--space-2);
+  }
+  
+  .modal__data-field {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-1);
+  }
+  
+  .modal__field-value {
+    text-align: left;
+  }
+  
+  .modal__actions--between {
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+  
+  .modal__field-actions {
+    flex-direction: column;
+    width: 100%;
+  }
+  
+  .modal__field-actions .btn {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .modal__form-grid {
+    gap: var(--space-2);
+  }
+  
+  .modal__data-field {
+    padding: var(--space-1) 0;
+  }
+  
+  .modal__edit-fields {
+    gap: var(--space-2);
+  }
+}
+
+/* Улучшенные стили для карточек внутри модалок */
+.card--compact .card__content {
+  padding: 0;
+}
+
+.card--compact .card__header {
+  margin-bottom: var(--space-4);
+}
+
+.card__title--sm {
+  font-size: var(--font-size-base);
+  font-weight: 600;
+}
+
+/* Специфичные стили для полей ввода в модалках */
+.modal__input--sm {
+  padding: var(--space-2) var(--space-3);
+  font-size: var(--font-size-sm);
+}
+
+/* Стили для select в модалках */
+.modal__input select {
+  background: var(--color-bg-primary);
+  border: 1px solid var(--color-border-primary);
+  border-radius: var(--radius-md);
+  padding: var(--space-3);
+  color: var(--color-text-primary);
+  font-size: var(--font-size-sm);
+  width: 100%;
+  cursor: pointer;
+}
+
+.modal__input select:focus {
+  outline: none;
+  border-color: var(--color-border-accent);
+}
+
+.modal__input select option {
+  background: var(--color-bg-primary);
+  color: var(--color-text-primary);
+  padding: var(--space-3);
+}
+
+/* ===== СТИЛИ ДЛЯ ФОРМ ДОБАВЛЕНИЯ/РЕДАКТИРОВАНИЯ ===== */
+
+/* Сетка для добавления элементов */
+.modal__add-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 100px auto;
+  gap: var(--space-3);
+  align-items: start;
+  margin-bottom: var(--space-4);
+  padding: var(--space-4);
+  background: var(--color-bg-tertiary);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border-secondary);
+}
+
+/* Список элементов */
+.modal__items-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
+}
+
+.modal__item-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-3);
+}
+
+.modal__item-text {
+  flex: 1;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-primary);
+  word-break: break-word;
+}
+
+.modal__item-remove {
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.modal__item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  background: var(--color-bg-secondary);
+  border: 1px solid var(--color-border-secondary);
+  border-radius: var(--radius-md);
+  transition: all var(--transition-fast);
+}
+
+.modal__item:hover {
+  border-color: var(--color-border-accent);
+  background: var(--color-bg-tertiary);
+}
+
+.modal__item-text {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-primary);
+  flex: 1;
+}
+
+.modal__item-remove {
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+/* Адаптивность для сетки добавления */
+@media (max-width: 768px) {
+  .modal__add-grid {
+    grid-template-columns: 1fr;
+    gap: var(--space-2);
+    padding: var(--space-3);
+  }
+
+  .modal__add-grid .btn {
+    width: 100%;
+    margin-top: var(--space-2);
+  }
+  
+    .modal__item {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--space-2);
+    padding: var(--space-3);
+  }
+
+    .modal__item-content {
+    flex-direction: column;        /* ← ВЕРТИКАЛЬНОЕ РАСПОЛОЖЕНИЕ */
+    align-items: stretch;          /* ← РАСТЯГИВАЕМ НА ВСЮ ШИРИНУ */
+    gap: var(--space-2);
+    padding: var(--space-3);
+  }
+
+    .modal__item-text {
+    text-align: center;            /* ← ЦЕНТРИРУЕМ ТЕКСТ */
+    padding: var(--space-2) 0;
+  }
+  
+   .modal__item-remove {
+    width: 100%;                   /* ← КНОПКА НА ВСЮ ШИРИНУ */
+    margin-top: var(--space-1);    /* ← ОТСТУП СВЕРХУ */
+  }
+
+  .modal__items-list {
+    gap: var(--space-2);
+  }
+
+  /* Кнопка удаления в модалке - на всю ширину */
+  .modal__remove-button {
+    width: 100%;
+    height: 36px;
+    margin-top: var(--space-2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: var(--font-size-base);
+    font-weight: 600;
+  }
+
+  /* Поля ввода в модалке на мобильных */
+  .modal__field-row {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    margin-bottom: var(--space-3);
+  }
+  
+  .modal__field-row > * {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .modal__add-grid {
+    padding: var(--space-2);
+  }
+  
+  .modal__items-list {
+    gap: var(--space-1);
+  }
+  
+  .modal__item {
+    padding: var(--space-2);
+  }
+}
+
+/* Специфичные стили для компактных карточек */
+.card--compact .card__content {
+  padding: 0;
+}
+
+.card--compact .card__header {
+  margin-bottom: var(--space-4);
+  padding-bottom: var(--space-3);
+  border-bottom: 1px solid var(--color-border-primary);
+}
+
+.card__title--sm {
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  margin: 0;
+}
+
+.card__description {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  margin: var(--space-1) 0 0 0;
+  line-height: 1.4;
+}
+
+/* Улучшенные стили для полей ввода в модалках */
+.modal__input::placeholder {
+  color: var(--color-text-muted);
+  opacity: 0.7;
+}
+
+.modal__input:focus::placeholder {
+  opacity: 0.5;
+}
+
+/* Стили для disabled кнопок */
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.btn:disabled:hover {
+  transform: none;
+  border-color: var(--color-border-secondary);
+}
+
+/* ===== СТИЛИ ДЛЯ АВТОДОПОЛНЕНИЯ В МОДАЛКАХ ===== */
+
+/* Контейнер для поля с автодополнением */
+.modal__field-with-suggestions {
+  position: relative;
+  width: 100%;
+}
+
+/* Выпадающий список подсказок */
+.modal__suggestions {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: var(--color-bg-primary);
+  border: 1px solid var(--color-border-accent);
+  border-radius: var(--radius-md);
+  max-height: 200px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  z-index: 10001;
+  box-shadow: var(--shadow-lg);
+  margin-top: var(--space-1);
+  opacity: 0;
+  transform: translateY(-5px);
+  pointer-events: none;
+  transition: all var(--transition-fast);
+}
+
+.modal__field-with-suggestions input:focus ~ .modal__suggestions,
+.modal__suggestions.show {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+/* Заголовок списка подсказок */
+.modal__suggestions-header {
+  padding: var(--space-3) var(--space-4);
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  font-weight: 500;
+  border-bottom: 1px solid var(--color-border-secondary);
+  background: var(--color-bg-tertiary);
+}
+
+/* Элементы подсказок */
+.modal__suggestion-item {
+  padding: var(--space-3) var(--space-4);
+  cursor: pointer;
+  border-bottom: 1px solid var(--color-border-secondary);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: background var(--transition-fast);
+}
+
+.modal__suggestion-item:hover {
+  background: var(--color-bg-tertiary);
+}
+
+.modal__suggestion-item:last-child {
+  border-bottom: none;
+}
+
+/* Единицы измерения в подсказках */
+.modal__suggestion-unit {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  font-weight: 400;
+  margin-left: var(--space-1);
+}
+
+/* Пустой список подсказок */
+.modal__suggestion-item--empty {
+  color: var(--color-text-muted);
+  font-style: italic;
+  cursor: default;
+}
+
+.modal__suggestion-item--empty:hover {
+  background: transparent;
+}
+
+/* Адаптивность для автодополнения */
+@media (max-width: 768px) {
+  .modal__suggestions {
+    position: fixed;
+    top: auto;
+    bottom: 0;
+    left: var(--space-3);
+    right: var(--space-3);
+    max-height: 50vh;
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    margin-top: 0;
+  }
+  
+  .modal__suggestions-header {
+    padding: var(--space-4);
+    font-size: var(--font-size-sm);
+  }
+  
+  .modal__suggestion-item {
+    padding: var(--space-4);
+    font-size: var(--font-size-base);
+  }
+}
+
+@media (max-width: 480px) {
+  .modal__suggestions {
+    left: var(--space-2);
+    right: var(--space-2);
+  }
+  
+  .modal__suggestions-header {
+    padding: var(--space-3);
+  }
+  
+  .modal__suggestion-item {
+    padding: var(--space-3);
+  }
+}
+
+/* Улучшенные стили для строк полей */
+.modal__field-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 100px auto;
+  gap: var(--space-3);
+  align-items: start;
+  margin-bottom: var(--space-3);
+}
+
+.modal__remove-button {
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+/* Адаптивность для строк полей */
+@media (max-width: 768px) {
+  .modal__field-row {
+    grid-template-columns: 1fr;
+    gap: var(--space-2);
+    margin-bottom: var(--space-4);
+  }
+  
+  .modal__remove-button {
+    align-self: flex-end;
+    margin-top: var(--space-1);
+  }
+}
+
+/* ===== СТИЛИ ДЛЯ ФИЛЬТРОВ И ФОРМ РАСХОДОВ ===== */
+
+/* Фильтры категорий */
+.modal__filters-categories {
+  margin-bottom: var(--space-4);
+}
+
+.modal__filters-category-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-bottom: var(--space-3);
+}
+
+/* Расширяемые фильтры */
+.modal__filters-expand {
+  border-top: 1px solid var(--color-border-primary);
+  padding-top: var(--space-4);
+}
+
+.modal__filters-expand-btn {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  width: 100%;
+  justify-content: center;
+}
+
+.modal__filters-expand-icon {
+  font-size: var(--font-size-xs);
+  transition: transform var(--transition-fast);
+}
+
+.modal__filters-expanded {
+  margin-top: var(--space-4);
+  animation: slideDown 0.2s ease-out;
+}
+
+.modal__filters-date-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-4);
+}
+
+/* Стили для ошибок форм */
+.modal__input--error {
+  border-color: #ef4444 !important;
+}
+
+.modal__error {
+  color: #ef4444;
+  font-size: var(--font-size-xs);
+  margin-top: var(--space-1);
+  display: block;
+}
+
+/* Полноширинные поля форм */
+.modal__form-group--full {
+  grid-column: 1 / -1;
+}
+
+.modal__input--textarea {
+  resize: vertical;
+  min-height: 80px;
+  font-family: inherit;
+  line-height: 1.4;
+}
+
+/* Анимации */
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Адаптивность для фильтров */
+@media (max-width: 768px) {
+  .modal__filters-category-list {
+    gap: var(--space-1);
+  }
+  
+  .modal__filters-category-list .btn {
+    flex: 1;
+    min-width: calc(50% - var(--space-1));
+    font-size: var(--font-size-xs);
+  }
+  
+  .modal__filters-date-grid {
+    grid-template-columns: 1fr;
+    gap: var(--space-3);
+  }
+}
+
+@media (max-width: 480px) {
+  .modal__filters-category-list .btn {
+    min-width: 100%;
+  }
+  
+  .modal__filters-expand-btn {
+    font-size: var(--font-size-sm);
+  }
+}
+
+/* Стили для загрузки в ExpenseTracker */
+.expense-tracker__loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-8);
+  gap: var(--space-4);
+}
+
+.expense-tracker__spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid var(--color-border-secondary);
+  border-top: 3px solid var(--color-border-accent);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* ===== ИСПРАВЛЕНИЕ ПОЛЕЙ ВВОДА В МОДАЛЬНЫХ ОКНАХ ===== */
+
+/* Контейнер для полей ввода в модалках */
+.modal__form-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  width: 100%;
+}
+
+.modal__label {
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  display: block;
+}
+
+/* Поля ввода в модалках */
+.modal__input {
+  width: 100%;
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--color-border-secondary);
+  border-radius: var(--radius-md);
+  background: var(--color-bg-card);
+  color: var(--color-text-primary);
+  font-size: var(--font-size-sm);
+  transition: all var(--transition-fast);
+  box-sizing: border-box; /* Важно! */
+  min-width: 0; /* Предотвращает выход за границы */
+}
+
+.modal__input:focus {
+  outline: none;
+  border-color: var(--color-border-accent);
+}
+
+/* Специфичные стили для полей даты */
+.modal__input[type="date"] {
+  /* Убираем стандартный вид и делаем консистентным */
+  appearance: none;
+  -webkit-appearance: none;
+  min-height: 44px; /* Для удобства касания на мобильных */
+}
+
+/* Сетка для форм в модалках */
+.modal__form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: var(--space-4);
+  width: 100%;
+}
+
+/* Контейнер модалки */
+.modal__container {
+  background: #1a1a1a;
+  border-radius: 8px;
+  border: 1px solid #333333;
+  max-width: 500px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  animation: modalSlideUp 0.3s ease-out;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+  display: flex;
+  flex-direction: column;
+}
+
+.modal__content {
+  padding: 20px;
+  flex: 1;
+  overflow-y: auto;
+  box-sizing: border-box;
+}
+
+/* Стили для ExpenseForm */
+.expense-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  width: 100%;
+}
+
+.expense-form__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--space-4);
+  width: 100%;
+}
+
+.expense-form__group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  width: 100%;
+}
+
+.expense-form__label {
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--color-text-secondary);
+}
+
+.expense-form__input {
+  width: 100%;
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--color-border-secondary);
+  border-radius: var(--radius-md);
+  background: var(--color-bg-card);
+  color: var(--color-text-primary);
+  font-size: var(--font-size-sm);
+  transition: all var(--transition-fast);
+  box-sizing: border-box;
+  min-width: 0;
+}
+
+.expense-form__input:focus {
+  outline: none;
+  border-color: var(--color-border-accent);
+}
+
+/* Мобильная адаптация для модалок */
+@media (max-width: 768px) {
+  .modal__container {
+    max-width: 100%;
+    max-height: 95vh;
+    margin: 10px;
+  }
+  
+  .modal__content {
+    padding: 16px;
+  }
+  
+  .modal__form-grid {
+    grid-template-columns: 1fr;
+    gap: var(--space-3);
+  }
+  
+  .modal__input {
+    padding: var(--space-3);
+    font-size: 16px; /* Предотвращает зум на iOS */
+  }
+  
+  .expense-form__grid {
+    grid-template-columns: 1fr;
+    gap: var(--space-3);
+  }
+  
+  .expense-form__input {
+    padding: var(--space-3);
+    font-size: 16px;
+  }
+  
+  /* Убеждаемся, что поля даты не выходят за границы */
+  .modal__input[type="date"],
+  .expense-form__input[type="date"] {
+    width: 100%;
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .modal__container {
+    margin: 8px;
+  }
+  
+  .modal__content {
+    padding: 12px;
+  }
+  
+  .modal__input {
+    padding: var(--space-2) var(--space-3);
+  }
+  
+  .expense-form__input {
+    padding: var(--space-2) var(--space-3);
+  }
+}

@@ -2,7 +2,6 @@ import React, { useRef, useState } from 'react';
 import { exportData, importData } from '../../utils/database';
 import Notification from '../ui/Notification/Notification';
 import { DataManagerProps, NotificationState, NotificationType } from '../../types';
-import './DataManager.css';
 
 const DataManager: React.FC<DataManagerProps> = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -102,19 +101,19 @@ const DataManager: React.FC<DataManagerProps> = () => {
 
   return (
     <>
-      <div className="datamanager__container">
-        <h3 className="datamanager__title">Управление данными</h3>
-        <p className="datamanager__description">
+      <div className="card">
+        <h3 className="card__title">Управление данными</h3>
+        <p className="card__description">
           Экспортируйте данные для резервного копирования или импортируйте для переноса на другой компьютер
         </p>
         
-        <div className="datamanager__actions">
+        <div className="card__actions">
           <button 
-            className="datamanager__button datamanager__button--export"
+            className="btn btn--success"
             onClick={handleExport}
             type="button"
           >
-            <svg className="datamanager__icon" viewBox="0 0 24 24" fill="none">
+            <svg className="btn__icon" viewBox="0 0 24 24" fill="none" width="16" height="16">
               <path d="M12 16L12 8" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
               <path d="M9 13L12 16L15 13" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
               <path d="M8 12H6a2 2 0 00-2 2v4a2 2 0 002 2h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2" stroke="currentColor" strokeWidth="2"/>
@@ -123,11 +122,11 @@ const DataManager: React.FC<DataManagerProps> = () => {
           </button>
           
           <button 
-            className="datamanager__button datamanager__button--import"
+            className="btn btn--primary"
             onClick={handleImportClick}
             type="button"
           >
-            <svg className="datamanager__icon" viewBox="0 0 24 24" fill="none">
+            <svg className="btn__icon" viewBox="0 0 24 24" fill="none" width="16" height="16">
               <path d="M12 8L12 16" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
               <path d="M9 11L12 8L15 11" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
               <path d="M8 12H6a2 2 0 00-2 2v4a2 2 0 002 2h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2" stroke="currentColor" strokeWidth="2"/>

@@ -64,7 +64,7 @@ const AppContent = () => {
   // Обработчик клика вне sidebar для мобильных
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      const overlay = document.querySelector('.sidebar-overlay');
+      const overlay = document.querySelector('.overlay');
       
       if (isMobile && sidebarOpen && overlay && event.target === overlay) {
         handleSetSidebarOpen(false);
@@ -81,20 +81,12 @@ const AppContent = () => {
   };
 
   const closeModal = () => {
-    if (modals.addExpense || modals.editExpense || modals.expenseReport) {
-      dispatch({ type: 'CLOSE_MODAL', payload: { modalType: 'addExpense' } });
-      dispatch({ type: 'CLOSE_MODAL', payload: { modalType: 'editExpense' } });
-      dispatch({ type: 'CLOSE_MODAL', payload: { modalType: 'expenseReport' } });
-    } else if (modals.confirmDelete) {
-      dispatch({ type: 'CLOSE_MODAL', payload: { modalType: 'confirmDelete' } });
-    } else {
-      // Закрываем любую активную модалку
-      Object.keys(modals).forEach(modalType => {
-        if (modals[modalType as AppModalType]) {
-          dispatch({ type: 'CLOSE_MODAL', payload: { modalType: modalType as AppModalType } });
-        }
-      });
-    }
+    // Просто закрываем все активные модалки
+    Object.keys(modals).forEach(modalType => {
+      if (modals[modalType as AppModalType]) {
+        dispatch({ type: 'CLOSE_MODAL', payload: { modalType: modalType as AppModalType } });
+      }
+    });
   };
 
   // Функции для автомобилей
@@ -294,39 +286,24 @@ const AppContent = () => {
         {/* Оверлей для мобильных */}
         {isMobile && sidebarOpen && (
           <div
-            className="sidebar-overlay"
+            className="overlay"
             onClick={() => handleSetSidebarOpen(false)}
-            style={{
-              position: 'fixed',
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: 0,
-              background: 'rgba(0, 0, 0, 0.5)',
-              zIndex: 1001, // Должен быть ниже sidebar но выше основного контента
-              animation: 'fadeIn 0.2s ease-out'
-            }}
           />
         )}
 
         {/* Сайдбар */}
-        <div
-          className={`sidebar-wrapper ${
-            sidebarOpen ? 'sidebar-wrapper--open' : 'sidebar-wrapper--closed'
-          }`}
-        >
-          <Sidebar
-            cars={cars}
-            selectedCar={selectedCar}
-            setSelectedCar={handleSetSelectedCar}
-            isMobile={isMobile}
-            onClose={() => handleSetSidebarOpen(false)}
-            onAddCar={() => openModal('addCar')}
-            onDeleteCar={handleDeleteCar}
-          />
-        </div>
+        <Sidebar
+          cars={cars}
+          selectedCar={selectedCar}
+          setSelectedCar={handleSetSelectedCar}
+          isMobile={isMobile}
+          onClose={() => handleSetSidebarOpen(false)}
+          onAddCar={() => openModal('addCar')}
+          onDeleteCar={handleDeleteCar}
+          className={sidebarOpen ? 'sidebar--open' : ''}
+        />
 
-        <div className="app__main">
+        <div className="main-content">
           <MainContent 
             selectedCar={selectedCar}
             cars={cars}
@@ -349,7 +326,7 @@ const AppContent = () => {
       {modals.addCar && (
         <AddCarModal
           onClose={closeModal}
-          onSave={handleAddCar}
+          onSave={handleAddCar as any}
         />
       )}
 

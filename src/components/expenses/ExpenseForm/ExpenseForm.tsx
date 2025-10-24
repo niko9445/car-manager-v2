@@ -2,9 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useApp } from '../../../contexts/AppContext';
 import { Expense, ExpenseCategory } from '../../../types';
 import { ExpenseService } from '../../../services/expenseService';
-import './ExpenseForm.css';
 
-// Локальный интерфейс для формы
 interface ExpenseFormData {
   date: string;
   category: ExpenseCategory;
@@ -13,7 +11,6 @@ interface ExpenseFormData {
   odometer?: number;
 }
 
-// Интерфейс для ошибок с правильными типами
 interface ExpenseFormErrors {
   date?: string;
   category?: string;
@@ -23,7 +20,7 @@ interface ExpenseFormErrors {
 }
 
 interface ExpenseFormProps {
-  expense?: Expense; // Если передано - режим редактирования
+  expense?: Expense;
   onSave: () => void;
   onCancel: () => void;
 }
@@ -49,7 +46,6 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({
 
   useEffect(() => {
     if (expense) {
-      // Режим редактирования - заполняем форму данными
       setFormData({
         date: expense.date,
         category: expense.category,
@@ -58,7 +54,6 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({
         odometer: expense.odometer
       });
     } else {
-      // Режим добавления - сбрасываем форму
       setFormData({
         date: new Date().toISOString().split('T')[0],
         category: 'fuel',
@@ -81,7 +76,6 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({
         : value
     }));
     
-    // Очищаем ошибку при изменении поля
     if (errors[name as keyof ExpenseFormErrors]) {
       setErrors(prev => ({
         ...prev,
@@ -126,14 +120,12 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({
       console.log('Saving expense...', formData);
       
       if (expense) {
-        // Режим редактирования
         const result = await ExpenseService.updateExpense(expense.id, {
           ...formData,
           carId: selectedCar.id
         });
         console.log('Expense updated:', result);
       } else {
-        // Режим добавления
         const result = await ExpenseService.addExpense({
           ...formData,
           carId: selectedCar.id
@@ -141,7 +133,6 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({
         console.log('Expense added:', result);
       }
       
-      // Добавляем небольшую задержку чтобы убедиться что данные сохранились
       setTimeout(() => {
         console.log('Calling onSave...');
         onSave();
@@ -169,10 +160,10 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({
   ];
 
   return (
-    <form className="form" onSubmit={handleSubmit}>
-      <div className="form__fields">
-        <div className="form__group">
-          <label htmlFor="date" className="form__label form__label--required">
+    <form className="modal__form" onSubmit={handleSubmit}>
+      <div className="modal__form-grid">
+        <div className="modal__form-group">
+          <label htmlFor="date" className="modal__label modal__label--required">
             Дата расхода
           </label>
           <input
@@ -181,14 +172,14 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({
             type="date"
             value={formData.date}
             onChange={handleInputChange}
-            className={`form__input ${errors.date ? 'form__input--error' : ''}`}
+            className={`modal__input ${errors.date ? 'modal__input--error' : ''}`}
             required
           />
-          {errors.date && <span className="form__error">{errors.date}</span>}
+          {errors.date && <span className="modal__error">{errors.date}</span>}
         </div>
 
-        <div className="form__group">
-          <label htmlFor="category" className="form__label form__label--required">
+        <div className="modal__form-group">
+          <label htmlFor="category" className="modal__label modal__label--required">
             Категория
           </label>
           <select
@@ -196,7 +187,7 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({
             name="category"
             value={formData.category}
             onChange={handleInputChange}
-            className="form__select"
+            className="modal__input"
           >
             {categoryOptions.map(option => (
               <option key={option.value} value={option.value}>
@@ -206,8 +197,8 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({
           </select>
         </div>
 
-        <div className="form__group">
-          <label htmlFor="amount" className="form__label form__label--required">
+        <div className="modal__form-group">
+          <label htmlFor="amount" className="modal__label modal__label--required">
             Сумма (₽)
           </label>
           <input
@@ -218,15 +209,15 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({
             min="0"
             value={formData.amount || ''}
             onChange={handleInputChange}
-            className={`form__input ${errors.amount ? 'form__input--error' : ''}`}
+            className={`modal__input ${errors.amount ? 'modal__input--error' : ''}`}
             placeholder="0.00"
             required
           />
-          {errors.amount && <span className="form__error">{errors.amount}</span>}
+          {errors.amount && <span className="modal__error">{errors.amount}</span>}
         </div>
 
-        <div className="form__group">
-          <label htmlFor="odometer" className="form__label">
+        <div className="modal__form-group">
+          <label htmlFor="odometer" className="modal__label">
             Пробег (км)
           </label>
           <input
@@ -236,14 +227,14 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({
             min="0"
             value={formData.odometer || ''}
             onChange={handleInputChange}
-            className={`form__input ${errors.odometer ? 'form__input--error' : ''}`}
+            className={`modal__input ${errors.odometer ? 'modal__input--error' : ''}`}
             placeholder="Необязательно"
           />
-          {errors.odometer && <span className="form__error">{errors.odometer}</span>}
+          {errors.odometer && <span className="modal__error">{errors.odometer}</span>}
         </div>
 
-        <div className="form__group">
-          <label htmlFor="description" className="form__label form__label--required">
+        <div className="modal__form-group modal__form-group--full">
+          <label htmlFor="description" className="modal__label modal__label--required">
             Описание
           </label>
           <textarea
@@ -251,19 +242,19 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({
             name="description"
             value={formData.description}
             onChange={handleInputChange}
-            className={`form__textarea ${errors.description ? 'form__textarea--error' : ''}`}
+            className={`modal__input modal__input--textarea ${errors.description ? 'modal__input--error' : ''}`}
             placeholder="Краткое описание расхода..."
             rows={3}
             required
           />
-          {errors.description && <span className="form__error">{errors.description}</span>}
+          {errors.description && <span className="modal__error">{errors.description}</span>}
         </div>
       </div>
 
-      <div className="form__actions">
+      <div className="modal__actions modal__actions--between">
         <button
           type="button"
-          className="btn btn--outline"
+          className="btn btn--secondary"
           onClick={onCancel}
           disabled={loading}
         >

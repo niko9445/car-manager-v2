@@ -1,6 +1,5 @@
 import React, { useEffect, useRef } from 'react';
 import { ConfirmModalProps} from '../../../types';
-import './ConfirmModal.css';
 
 const ConfirmModal: React.FC<ConfirmModalProps> = ({ 
   isOpen, 
@@ -66,10 +65,12 @@ const ConfirmModal: React.FC<ConfirmModalProps> = ({
       case 'delete':
         return (
           <svg 
-            className="confirmmodal__icon confirmmodal__icon--delete" 
+            className="modal__icon modal__icon--delete" 
             viewBox="0 0 24 24" 
             fill="none"
             aria-hidden="true"
+            width="64"
+            height="64"
           >
             <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z" stroke="currentColor" strokeWidth="2"/>
             <path d="M15 9l-6 6M9 9l6 6" stroke="currentColor" strokeWidth="2"/>
@@ -78,10 +79,12 @@ const ConfirmModal: React.FC<ConfirmModalProps> = ({
       case 'warning':
         return (
           <svg 
-            className="confirmmodal__icon confirmmodal__icon--warning" 
+            className="modal__icon modal__icon--warning" 
             viewBox="0 0 24 24" 
             fill="none"
             aria-hidden="true"
+            width="64"
+            height="64"
           >
             <path d="M12 9v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" stroke="currentColor" strokeWidth="2"/>
           </svg>
@@ -89,10 +92,12 @@ const ConfirmModal: React.FC<ConfirmModalProps> = ({
       case 'info':
         return (
           <svg 
-            className="confirmmodal__icon confirmmodal__icon--info" 
+            className="modal__icon modal__icon--info" 
             viewBox="0 0 24 24" 
             fill="none"
             aria-hidden="true"
+            width="64"
+            height="64"
           >
             <path d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" stroke="currentColor" strokeWidth="2"/>
           </svg>
@@ -107,7 +112,7 @@ const ConfirmModal: React.FC<ConfirmModalProps> = ({
 
   return (
     <div 
-      className="confirmmodal__overlay" 
+      className="modal" 
       onClick={onClose}
       role="dialog"
       aria-modal="true"
@@ -116,16 +121,16 @@ const ConfirmModal: React.FC<ConfirmModalProps> = ({
     >
       <div 
         ref={modalRef}
-        className="confirmmodal__container"
+        className="modal__container modal--sm"
         onClick={(e) => e.stopPropagation()}
         onKeyDown={handleKeyDown}
       >
-        <div className="confirmmodal__content">
-          <div className="confirmmodal__header">
+        <div className="modal__content modal__content--centered">
+          <div className="modal__header modal__header--centered">
             {getIcon()}
             <h3 
               id="confirm-modal-title"
-              className="confirmmodal__title"
+              className="modal__title"
             >
               {title}
             </h3>
@@ -133,14 +138,14 @@ const ConfirmModal: React.FC<ConfirmModalProps> = ({
           
           <p 
             id="confirm-modal-description"
-            className="confirmmodal__message"
+            className="modal__message"
           >
             {message}
           </p>
           
-          <div className="confirmmodal__actions">
+          <div className="modal__actions modal__actions--center">
             <button 
-              className="confirmmodal__button confirmmodal__button--cancel"
+              className="btn btn--secondary"
               onClick={onClose}
               type="button"
             >
@@ -148,7 +153,7 @@ const ConfirmModal: React.FC<ConfirmModalProps> = ({
             </button>
             <button 
               ref={confirmButtonRef}
-              className={`confirmmodal__button confirmmodal__button--${type}`}
+              className={`btn btn--${type === 'delete' ? 'danger' : type === 'warning' ? 'warning' : 'primary'}`}
               onClick={handleConfirm}
               type="button"
               autoFocus

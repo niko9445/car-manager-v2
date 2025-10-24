@@ -17,26 +17,30 @@ const MaintenanceSection: React.FC<MaintenanceSectionProps> = ({
   };
 
   return (
-    <div className="section">
-      {/* ЗАГОЛОВОК С КНОПКОЙ + СПРАВА */}
-      <div className="section__header">
-        <h2 className="section__title">Техническое обслуживание</h2>
-        <div className="section__header-actions">
-          <button 
-            className="section__action-button section__action-button--add"
-            onClick={onAddMaintenance}
-            title="Добавить ТО"
-            type="button"
-          >
-            <svg className="section__action-icon" viewBox="0 0 24 24" fill="none">
-              <path d="M12 5v14m-7-7h14" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-            </svg>
-          </button>
+    <div className="maintenance-section">
+      {/* ФИКСИРОВАННЫЙ ЗАГОЛОВОК РАЗДЕЛА */}
+      <div className="section-header">
+        <div className="section-title">
+          <h2 className="section-title__text">
+            Техническое обслуживание
+          </h2>
+          <div className="section-title__actions">
+            <button 
+              className="btn btn--primary btn--super-compact"
+              onClick={onAddMaintenance}
+              title="Добавить ТО"
+              type="button"
+            >
+              <svg className="btn__icon" viewBox="0 0 24 24" fill="none">
+                <path d="M12 5v14m-7-7h14" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+              </svg>
+            </button>
+          </div>
         </div>
       </div>
 
-      {/* СПИСОК ТО */}
-      <div className="section__content">
+      {/* ПРОКРУЧИВАЕМЫЙ КОНТЕНТ */}
+      <div className="section-content">
         {currentCar.maintenance && currentCar.maintenance.length > 0 ? (
           <div className="section__list">
             {currentCar.maintenance.map((maintenance, index) => (
@@ -55,10 +59,18 @@ const MaintenanceSection: React.FC<MaintenanceSectionProps> = ({
         ) : (
           <div className="section__empty">
             <div className="section__empty-icon">🔧</div>
-            <p className="section__empty-text">Нет записей о техническом обслуживании</p>
+            <h3 className="section__empty-text">Нет записей о техническом обслуживании</h3>
             <p className="section__empty-subtext">
               Добавьте первую запись ТО для отслеживания обслуживания автомобиля
             </p>
+            <div className="section__empty-actions">
+              <button 
+                className="btn btn--primary"
+                onClick={onAddMaintenance}
+              >
+                Добавить ТО
+              </button>
+            </div>
           </div>
         )}
       </div>

@@ -18,6 +18,7 @@ export interface CarCardProps {
   onSelect: () => void;
   position?: number;
   isMobile?: boolean;
+  onDelete?: (car: Car) => void;
 }
 
 export interface SidebarProps {
@@ -29,6 +30,7 @@ export interface SidebarProps {
   onAddCar: () => void;
   onEditCar?: (car: Car) => void;
   onDeleteCar: (car: Car) => void;
+  className?: string;
 }
 
 export interface Maintenance {
@@ -81,8 +83,11 @@ export interface MaintenanceFormData {
 
 export interface EditCarModalProps {
   car: Car;
+  carDataEntries: CarDataEntry[];
   onClose: () => void;
   onSave: (carId: string, carData: CarFormData) => void;
+  onEditCarData: (carId: string, dataId: string, updatedData: { fields: CarDataField[] }) => void;
+  onDeleteCarData: (carId: string, dataId: string) => void;
 }
 
 export interface EditMaintenanceModalProps {
@@ -151,19 +156,16 @@ export interface CarDataFormData {
 
 // Дополняем существующие типы если нужно
 export interface AddCarModalProps {
-  isOpen: boolean;
   onClose: () => void;
   onSave: (carData: CarFormData) => void;
 }
 
 export interface AddMaintenanceModalProps {
-  isOpen: boolean;
   onClose: () => void;
   onSave: (maintenanceData: MaintenanceFormData) => void;
 }
 
 export interface AddCarDataModalProps {
-  isOpen: boolean;
   onClose: () => void;
   onSave: (carData: CarDataFormData) => void;
 }
@@ -297,4 +299,18 @@ export interface ExpenseReport {
   }>;
   averagePerMonth: number;
   comparisonWithPrevious: number;
+}
+
+// Добавь это в конец файла types/index.ts
+
+export interface ExpenseListProps {
+  expenses: Expense[];
+  stats?: ExpenseStats | null;
+  onEditExpense: (expense: Expense) => void;
+  onDeleteExpense: (expense: Expense) => void;
+  onRefresh: () => void;
+}
+
+export interface ExpenseFiltersProps {
+  onFilterChange: (filters: ExpenseFilters) => void;
 }

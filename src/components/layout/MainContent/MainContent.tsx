@@ -4,7 +4,6 @@ import CarDataSection from '../../features/CarDataSection/CarDataSection';
 import ExpenseTracker from '../../expenses/ExpenseTracker/ExpenseTracker';
 import EditMaintenanceModal from '../../modals/EditMaintenanceModal/EditMaintenanceModal';
 import { MainContentProps, Maintenance} from '../../../types';
-import './MainContent.css';
 
 const MainContent: React.FC<MainContentProps> = ({ 
   selectedCar, 
@@ -53,26 +52,80 @@ const MainContent: React.FC<MainContentProps> = ({
 
   if (!selectedCar) {
     return (
-      <div className="maincontent__empty">
-        <div className="maincontent__empty-icon">🚗</div>
-        <h3 className="maincontent__empty-title">Выберите автомобиль</h3>
-        <p className="maincontent__empty-text">
-          У вас пока нет выбранного автомобиля. Выберите авто из списка или добавьте новый.
-        </p>
-        {isMobile ? (
-          <button 
-            className="btn btn--primary"
-            onClick={onOpenSidebar}
-            type="button"
-          >
-            <span className="maincontent__empty-button-icon">📋</span>
-            Открыть список авто
-          </button>
-        ) : (
-          <p className="maincontent__empty-text" style={{color: '#60a5fa', fontSize: '14px'}}>
-            Выберите автомобиль из списка слева ↓
-          </p>
-        )}
+      <div className="main-content__welcome-screen">
+        <div className="welcome-container">
+          {/* Анимированный фон */}
+          <div className="welcome-background">
+            <div className="welcome-grid"></div>
+          </div>
+          
+          {/* Основной контент */}
+          <div className="welcome-content">
+            <div className="welcome-icon">
+              <svg viewBox="0 0 64 64" fill="none">
+                <path 
+                  d="M48 16H16C12.6863 16 10 18.6863 10 22V42C10 45.3137 12.6863 48 16 48H48C51.3137 48 54 45.3137 54 42V22C54 18.6863 51.3137 16 48 16Z" 
+                  stroke="currentColor" 
+                  strokeWidth="2" 
+                  strokeLinecap="round"
+                  className="welcome-car"
+                />
+                <path 
+                  d="M10 32H54" 
+                  stroke="currentColor" 
+                  strokeWidth="2" 
+                  strokeLinecap="round"
+                  className="welcome-line"
+                />
+                <circle 
+                  cx="18" 
+                  cy="42" 
+                  r="2" 
+                  fill="currentColor"
+                  className="welcome-wheel"
+                />
+                <circle 
+                  cx="46" 
+                  cy="42" 
+                  r="2" 
+                  fill="currentColor"
+                  className="welcome-wheel"
+                />
+              </svg>
+            </div>
+            
+            <h1 className="welcome-title">
+              Car Manager
+            </h1>
+            
+            <p className="welcome-subtitle">
+              Управляйте вашими автомобилями
+            </p>
+
+            {/* Призыв к действию */}
+            <div className="welcome-action">
+              {isMobile ? (
+                <button 
+                  className="btn btn--primary btn--lg welcome-btn"
+                  onClick={onOpenSidebar}
+                  type="button"
+                >
+                  <svg className="btn__icon" viewBox="0 0 24 24" fill="none" width="18" height="18">
+                    <path d="M3 12h18M3 6h18M3 18h18" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                  </svg>
+                  Выбрать автомобиль
+                </button>
+              ) : (
+                <div className="welcome-hint">
+                  <svg viewBox="0 0 24 24" fill="none" width="20" height="20">
+                    <path d="M14 5l7 7m0 0l-7 7m7-7H3" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                  </svg>
+                  <span>Выберите автомобиль из списка слева</span>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
       </div>
     );
   }
@@ -113,65 +166,69 @@ const MainContent: React.FC<MainContentProps> = ({
   };
 
   return (
-    <div className="maincontent__container">
-      <div className="maincontent__header">
-        <div className="maincontent__header-top">
+    <div className="main-content">
+      <div className="main-content__header">
+        <div className="main-content__header-top">
           {isMobile && (
             <button 
-              className="maincontent__menu-toggle"
+              className="menu-toggle-compact"
               onClick={onOpenSidebar}
               type="button"
               aria-label="Открыть меню"
             >
-              ☰
+              <span className="menu-toggle-compact__line"></span>
+              <span className="menu-toggle-compact__line"></span>
+              <span className="menu-toggle-compact__line"></span>
             </button>
           )}
-          <h1 className="maincontent__title">
-            {selectedCar.brand} {selectedCar.model} ({selectedCar.year})
+          <h1 className="main-content__title">
+            {selectedCar.brand} {selectedCar.model}
+            {selectedCar.year && (
+              <span className="car-year-badge">{selectedCar.year}</span>
+            )}
           </h1>
         </div>
         
-        <div className="maincontent__tabs">
+        <div className="main-content__tabs">
           <button
-            className={`maincontent__tab ${activeSection === 'maintenance' ? 'maincontent__tab--active' : ''}`}
+            className={`btn btn--secondary btn--sm ${activeSection === 'maintenance' ? 'btn--primary' : ''}`}
             onClick={() => setActiveSection('maintenance')}
             type="button"
           >
-            <svg className="maincontent__tab-icon" viewBox="0 0 24 24" fill="none">
+            <svg className="btn__icon" viewBox="0 0 24 24" fill="none" width="14" height="14">
               <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" stroke="currentColor" strokeWidth="2"/>
               <path d="M14 2v6h6M16 13H8M16 17H8M10 9H8" stroke="currentColor" strokeWidth="2"/>
             </svg>
-            Техническое обслуживание
+            ТО
           </button>
           
           <button
-            className={`maincontent__tab ${activeSection === 'carData' ? 'maincontent__tab--active' : ''}`}
+            className={`btn btn--secondary btn--sm ${activeSection === 'carData' ? 'btn--primary' : ''}`}
             onClick={() => setActiveSection('carData')}
             type="button"
           >
-            <svg className="maincontent__tab-icon" viewBox="0 0 24 24" fill="none">
+            <svg className="btn__icon" viewBox="0 0 24 24" fill="none" width="14" height="14">
               <path d="M12 11a5 5 0 0 1 5 5v6H7v-6a5 5 0 0 1 5-5z" stroke="currentColor" strokeWidth="2"/>
               <path d="M16 7a4 4 0 1 1-8 0 4 4 0 0 1 8 0z" stroke="currentColor" strokeWidth="2"/>
             </svg>
-            Данные об авто
+            Данные
           </button>
 
-          {/* НОВАЯ ВКЛАДКА РАСХОДОВ */}
           <button
-            className={`maincontent__tab ${activeSection === 'expenses' ? 'maincontent__tab--active' : ''}`}
+            className={`btn btn--secondary btn--sm ${activeSection === 'expenses' ? 'btn--primary' : ''}`}
             onClick={() => setActiveSection('expenses')}
             type="button"
           >
-            <svg className="maincontent__tab-icon" viewBox="0 0 24 24" fill="none">
+            <svg className="btn__icon" viewBox="0 0 24 24" fill="none" width="14" height="14">
               <path d="M12 1v22M5 6h14a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2z" stroke="currentColor" strokeWidth="2"/>
               <path d="M17 10h.01M7 10h.01" stroke="currentColor" strokeWidth="2"/>
             </svg>
-            Учет расходов
+            Расходы
           </button>
         </div>
       </div>
 
-      <div className="maincontent__content">
+      <div className="main-content__content">
         {renderSection()}
       </div>
 
