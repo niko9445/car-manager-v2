@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState } from 'react';
 import Modal from '../../ui/Modal/Modal';
 import { CarFormData } from '../../../types';
 import { carBrands, engineTypes, transmissionTypes } from '../../../data/carBrands';
