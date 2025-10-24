@@ -18,25 +18,7 @@ const AddCarModal: React.FC<AddCarModalProps> = ({ onClose, onSave }) => {
     vin: ''
   });
 
-  const [showBrandSuggestions, setShowBrandSuggestions] = useState(false);
-  const [showModelSuggestions, setShowModelSuggestions] = useState(false);
 
-  // Фильтрация марок по вводу
-  const filteredBrands = useMemo(() => {
-    return Object.keys(carBrands).filter(brand =>
-      brand.toLowerCase().includes(formData.brand.toLowerCase())
-    );
-  }, [formData.brand]);
-
-  // Фильтрация моделей по выбранной марке
-  const filteredModels = useMemo(() => {
-    if (!formData.brand || !carBrands[formData.brand as keyof typeof carBrands]) {
-      return [];
-    }
-    return carBrands[formData.brand as keyof typeof carBrands].filter(model =>
-      model.toLowerCase().includes(formData.model.toLowerCase())
-    );
-  }, [formData.brand, formData.model]);
 
   const handleSubmit = (e: React.FormEvent): void => {
     e.preventDefault();
@@ -45,15 +27,6 @@ const AddCarModal: React.FC<AddCarModalProps> = ({ onClose, onSave }) => {
     }
   };
 
-  const handleBrandSelect = (brand: string) => {
-    setFormData({ ...formData, brand, model: '' });
-    setShowBrandSuggestions(false);
-  };
-
-  const handleModelSelect = (model: string) => {
-    setFormData({ ...formData, model });
-    setShowModelSuggestions(false);
-  };
 
   return (
     <Modal isOpen={true} onClose={onClose} title="Добавить автомобиль" size="md">

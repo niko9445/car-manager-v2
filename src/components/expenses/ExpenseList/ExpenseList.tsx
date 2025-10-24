@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Expense, ExpenseStats, ExpenseListProps } from '../../../types';
+import { Expense, ExpenseListProps } from '../../../types';
 import ConfirmModal from '../../ui/ConfirmModal/ConfirmModal';
 
 const ExpenseList: React.FC<ExpenseListProps> = ({
