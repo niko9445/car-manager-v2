@@ -903,8 +903,17 @@
   }
 }
 
+
 @media (max-width: 480px) {
   .expense-stats__grid {
-    grid-template-columns: 1fr; /* Одна колонка на мобильных */
+    grid-template-columns: repeat(2, 1fr); /* Две колонки на мобильных */
+    gap: var(--space-2);
+  }
+}
+
+/* Только для очень маленьких экранов - одна колонка */
+@media (max-width: 360px) {
+  .expense-stats__grid {
+    grid-template-columns: 1fr; /* Одна колонка на очень маленьких */
   }
 }
