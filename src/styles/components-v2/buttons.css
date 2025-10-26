@@ -43,6 +43,32 @@
   border-color: var(--color-accent-green);
 }
 
+/* Кнопка без границ */
+.btn--borderless {
+  border: none !important;
+  background: transparent !important;
+  min-width: auto;
+}
+
+.btn--borderless:hover {
+  background: var(--color-bg-tertiary) !important;
+  transform: none;
+}
+
+/* Специально для кнопки Отмена */
+.btn--cancel {
+  color: #d32f2f !important;
+  border-color: var(--color-accent-red) !important;
+  background: transparent !important;
+}
+
+.btn--cancel:hover {
+  background: var(--color-accent-red) !important;
+  color: var(--color-text-primary) !important;
+}
+
+
+
 /* Состояния */
 .btn:hover {
   transform: translateY(-1px);

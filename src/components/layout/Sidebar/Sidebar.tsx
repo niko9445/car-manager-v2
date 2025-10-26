@@ -1,6 +1,7 @@
 import React from 'react';
 import { SidebarProps } from '../../../types';
 import CarCard from '../../ui/CarCard/CarCard';
+import DataManager from '../../DataManager/DataManager'; // Добавьте этот импорт
 
 const Sidebar: React.FC<SidebarProps> = ({
   cars,
@@ -91,6 +92,11 @@ const Sidebar: React.FC<SidebarProps> = ({
             ))}
           </div>
         )}
+      </div>
+
+      {/* 👇 ДОБАВЬТЕ ЭТОТ БЛОК - DataManager */}
+      <div className="sidebar__footer">
+        <DataManager />
       </div>
     </div>
   );

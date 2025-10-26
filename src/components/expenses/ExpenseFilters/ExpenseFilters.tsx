@@ -79,7 +79,7 @@ const ExpenseFilters: React.FC<ExpenseFiltersProps> = ({ onFilterChange }) => {
       {/* Дополнительные фильтры */}
       <div className="expense-filters__advanced">
         <button
-          className="btn btn--secondary btn--sm expense-filters__expand-btn"
+          className="btn btn--secondary btn--sm btn--borderless expense-filters__expand-btn"
           onClick={() => setIsExpanded(!isExpanded)}
         >
           <span className="expense-filters__expand-icon">

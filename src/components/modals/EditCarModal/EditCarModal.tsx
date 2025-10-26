@@ -245,7 +245,7 @@ const EditCarModal: React.FC<EditCarModalProps> = ({
                             <button
                               type="button"
                               onClick={cancelEditingData}
-                              className="btn btn--secondary btn--sm"
+                              className="btn btn--cancel btn--sm"
                             >
                               Отмена
                             </button>
@@ -310,7 +310,7 @@ const EditCarModal: React.FC<EditCarModalProps> = ({
           <button 
             type="button" 
             onClick={onClose}
-            className="btn btn--secondary"
+            className="btn btn--cancel"
           >
             Отмена
           </button>

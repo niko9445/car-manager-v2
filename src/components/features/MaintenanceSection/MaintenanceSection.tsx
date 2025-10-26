@@ -18,7 +18,6 @@ const MaintenanceSection: React.FC<MaintenanceSectionProps> = ({
 
   return (
     <div className="maintenance-section">
-      {/* ФИКСИРОВАННЫЙ ЗАГОЛОВОК РАЗДЕЛА */}
       <div className="section-header">
         <div className="section-title">
           <h2 className="section-title__text">
@@ -26,7 +25,7 @@ const MaintenanceSection: React.FC<MaintenanceSectionProps> = ({
           </h2>
           <div className="section-title__actions">
             <button 
-              className="btn btn--primary btn--super-compact"
+              className="btn btn--primary btn--compact"
               onClick={onAddMaintenance}
               title="Добавить ТО"
               type="button"

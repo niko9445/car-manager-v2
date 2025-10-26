@@ -53,7 +53,7 @@ const CarDataSection: React.FC<CarDataSectionProps> = ({
           </h2>
           <div className="section-title__actions">
             <button 
-              className="btn btn--secondary btn--super-compact"
+              className="btn btn--primary btn--compact"
               onClick={() => onEditCar(currentCar)}
               type="button"
               title="Редактировать автомобиль"
@@ -64,7 +64,7 @@ const CarDataSection: React.FC<CarDataSectionProps> = ({
               </svg>
             </button>
             <button 
-              className="btn btn--primary btn--super-compact"
+              className="btn btn--primary btn--compact"
               onClick={onAddCarData}
               type="button"
               title="Добавить данные"

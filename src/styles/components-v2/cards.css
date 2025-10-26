@@ -675,7 +675,7 @@
 /* Статистика */
 .expense-stats__grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  grid-template-columns: repeat(2, 1fr); /* Две колонки всегда */
   gap: var(--space-4);
 }
 
@@ -859,7 +859,7 @@
 /* Мобильная адаптация */
 @media (max-width: 768px) {
   .expense-stats__grid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, 1fr); /* Две колонки на планшетах */
     gap: var(--space-3);
   }
   
@@ -905,6 +905,6 @@
 
 @media (max-width: 480px) {
   .expense-stats__grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr; /* Одна колонка на мобильных */
   }
 }

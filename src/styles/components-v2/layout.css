@@ -155,6 +155,8 @@
   width: 100%;
   display: flex;
   flex-direction: column;
+  min-height: 0; /* ДОБАВИТЬ */
+  height: 100%; /* ДОБАВИТЬ */
 }
 
 /* Empty states */
@@ -198,11 +200,14 @@
   border-bottom: 1px solid var(--color-border-primary);
   padding: var(--space-3) var(--space-5);
   position: sticky;
-  top: 0; /* Высота основной шапки */
+  top: 80px; /* ИЗМЕНИТЬ: было 0 */
   z-index: 90;
   margin: 0;
   width: 100%;
   box-sizing: border-box;
+  left: 0;
+  right: 0;
+  flex-shrink: 0; /* ДОБАВИТЬ */
 }
 
 /* Заголовки разделов - стильные */
@@ -248,9 +253,10 @@
   margin: 0;
   width: 100%;
   box-sizing: border-box;
-  /* Убеждаемся, что контент прокручивается */
-  flex: 1;
-  overflow-y: auto;
+  flex: 1; /* ДОБАВИТЬ */
+  min-height: 0; /* ДОБАВИТЬ */
+  overflow-y: auto; /* ДОБАВИТЬ */
+  height: 0; /* ДОБАВИТЬ */
 }
 
 /* Мобильная адаптация */
@@ -858,13 +864,6 @@
   transition: all var(--transition-fast);
 }
 
-.maintenance-section,
-.car-data-section,
-.expense-tracker {
-  width: 100%;
-  margin: 0;
-  padding: 0;
-}
 
 /* ===== ИСПРАВЛЕНИЕ РАСПОЛОЖЕНИЯ КОНТЕЙНЕРОВ РАЗДЕЛОВ ===== */
 
@@ -877,34 +876,12 @@
   padding: 0;
   display: flex;
   flex-direction: column;
+  height: 100%; /* ДОБАВИТЬ */
+  min-height: 0; /* ДОБАВИТЬ */
 }
 
-/* Заголовок раздела - исправляем позиционирование */
-.section-header {
-  background: var(--color-bg-tertiary);
-  border-bottom: 1px solid var(--color-border-primary);
-  padding: var(--space-3) var(--space-5);
-  position: sticky;
-  top: 80px; /* Высота основной шапки */
-  z-index: 90;
-  margin: 0;
-  width: 100%;
-  box-sizing: border-box;
-  /* Добавляем эти свойства */
-  left: 0;
-  right: 0;
-}
 
-/* Контент раздела - исправляем отступы */
-.section-content {
-  padding: var(--space-4) var(--space-5);
-  margin: 0;
-  width: 100%;
-  box-sizing: border-box;
-  /* Добавляем эти свойства */
-  flex: 1;
-  min-height: 0;
-}
+
 
 /* Убираем любые отступы у родительских контейнеров */
 .main-content__content > * {
@@ -949,6 +926,8 @@
   box-sizing: border-box;
   max-width: 100%;
 }
+
+
 
 /* Основные фильтры - категории в сетку */
 .expense-filters__main {
@@ -1157,13 +1136,6 @@
   }
 }
 
-/* Дополнительная защита для родительских контейнеров */
-.section-content {
-  width: 100%;
-  box-sizing: border-box;
-  max-width: 100%;
-  overflow-x: hidden; /* Скрываем горизонтальный скролл */
-}
 
 .card__content {
   width: 100%;
@@ -1171,3 +1143,45 @@
   max-width: 100%;
   overflow-x: hidden;
 }
+
+.sidebar__footer {
+  margin-top: auto;
+  padding: 16px;
+  border-top: 1px solid var(--border-color);
+  background: var(--card-bg);
+}
+
+/* === УНИФИКАЦИЯ СТИЛЕЙ КОНТЕЙНЕРОВ РАЗДЕЛОВ === */
+
+/* ОСНОВНОЙ СТИЛЬ КОНТЕЙНЕРА КАК В УЧЕТЕ РАСХОДОВ */
+.maintenance-section .section-content,
+.car-data-section .section-content {
+  background: var(--color-bg-secondary);
+  border-radius: var(--radius-lg);
+  margin: 0;
+  padding: var(--space-4);
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  height: 0;
+}
+
+/* Исправляем отступы для пустых состояний в унифицированных контейнерах */
+.maintenance-section .section__empty,
+.car-data-section .section__empty {
+  margin: 0;
+  background: transparent;
+  border: none;
+  padding: var(--space-8) var(--space-4);
+}
+
+/* Исправляем сетку в CarDataSection для нового контейнера */
+.car-data-section .card__grid {
+  margin: 0;
+}
+
+/* Исправляем списки в MaintenanceSection для нового контейнера */
+.maintenance-section .section__list {
+  margin: 0;
+}
+
