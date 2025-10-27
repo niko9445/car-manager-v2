@@ -1185,3 +1185,643 @@
   margin: 0;
 }
 
+/* ===== ОБНОВЛЕННЫЕ СТИЛИ SIDEBAR ===== */
+
+.sidebar {
+  width: 280px;
+  background: var(--color-bg-secondary);
+  border-right: 1px solid var(--color-border-primary);
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow-y: auto;
+  position: relative;
+}
+
+.sidebar__header {
+  padding: var(--space-4);
+  border-bottom: 1px solid var(--color-border-primary);
+  background: var(--color-bg-tertiary);
+  flex-shrink: 0;
+}
+
+.sidebar__header-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-3);
+  gap: var(--space-2);
+}
+
+.sidebar__title {
+  margin: 0;
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.sidebar__close-btn {
+  width: 28px;
+  height: 28px;
+  padding: var(--space-1);
+  border: 1px solid var(--color-border-secondary);
+  border-radius: var(--radius-sm);
+  background: var(--color-bg-card);
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--transition-fast);
+  flex-shrink: 0;
+}
+
+.sidebar__close-btn:hover {
+  border-color: var(--color-border-accent);
+  color: var(--color-text-primary);
+}
+
+/* Основные действия */
+.sidebar__actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.sidebar__actions-row {
+  display: flex;
+  gap: var(--space-2);
+  align-items: stretch;
+  width: 100%;
+}
+
+/* Кнопка добавления авто */
+.sidebar__actions-row .btn--full {
+  flex: 1;
+  min-width: 0;
+  height: auto;
+}
+
+/* Кнопка калькулятора - такая же высота как у кнопки добавления */
+.sidebar__calculator-btn {
+  width: 44px;
+  height: auto;
+  padding: var(--space-2) var(--space-1);
+  border: 1px solid var(--color-border-primary);
+  border-radius: var(--radius-md);
+  background: var(--color-bg-tertiary);
+  color: #ffffff !important;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--transition-fast);
+  flex-shrink: 0;
+}
+
+.sidebar__calculator-btn:hover {
+  background: var(--color-bg-card);
+  border-color: #ffffff;
+  color: var(--color-text-primary);
+  transform: translateY(-1px);
+}
+
+.sidebar__calculator-btn svg {
+  width: 18px;
+  height: 18px;
+  color: #ffffff !important;
+}
+
+/* Контент сайдбара */
+.sidebar__content {
+  flex: 1;
+  padding: var(--space-4);
+  overflow-y: auto;
+  min-height: 0;
+}
+
+.sidebar__empty {
+  text-align: center;
+  padding: var(--space-8) var(--space-4);
+}
+
+.sidebar__empty-text {
+  margin: 0;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+.sidebar__cars {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+/* Футер с DataManager */
+.sidebar__footer {
+  margin-top: auto;
+  padding: var(--space-4);
+  border-top: 1px solid var(--color-border-primary);
+  background: var(--color-bg-tertiary);
+  flex-shrink: 0;
+}
+
+/* Мобильная адаптация */
+@media (max-width: 768px) {
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 300px;
+    max-width: 85vw;
+    z-index: 1001;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+  }
+  
+  .sidebar--open {
+    transform: translateX(0);
+  }
+  
+  .sidebar__header {
+    padding: var(--space-3);
+  }
+  
+  .sidebar__content {
+    padding: var(--space-3);
+  }
+  
+  .sidebar__footer {
+    padding: var(--space-3);
+  }
+  
+  .sidebar__actions-row {
+    gap: var(--space-1);
+  }
+  
+  .sidebar__calculator-btn {
+    width: 40px;
+    padding: var(--space-2) var(--space-1);
+  }
+  
+  .sidebar__calculator-btn svg {
+    width: 16px;
+    height: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .sidebar {
+    width: 280px;
+    max-width: 90vw;
+  }
+  
+  .sidebar__header {
+    padding: var(--space-2);
+  }
+  
+  .sidebar__content {
+    padding: var(--space-2);
+  }
+  
+  .sidebar__footer {
+    padding: var(--space-2);
+  }
+  
+  .sidebar__calculator-btn {
+    width: 36px;
+  }
+  
+  .sidebar__calculator-btn svg {
+    width: 14px;
+    height: 14px;
+  }
+}
+
+/* ===== СТИЛИ ДЛЯ КАРТОЧКИ РАСХОДА ТОПЛИВА ===== */
+
+.expense-stat-card--fuel {
+  text-align: left;
+  grid-column: 1 / -1; /* Занимает всю ширину на мобильных */
+}
+
+.expense-stat-card__title {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-3);
+  text-align: center;
+}
+
+.expense-stat-card__consumption {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin-bottom: var(--space-2);
+}
+
+.expense-stat-card__consumption-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.expense-stat-card__consumption-label {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+  flex: 1;
+}
+
+.expense-stat-card__consumption-value {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-text-primary);
+  flex-shrink: 0;
+}
+
+.expense-stat-card__fuel-meta {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  text-align: center;
+  margin-top: var(--space-2);
+  padding-top: var(--space-2);
+  border-top: 1px solid var(--color-border-secondary);
+}
+
+/* Адаптивность для карточки расхода топлива */
+@media (max-width: 768px) {
+  .expense-stat-card--fuel {
+    grid-column: 1 / -1;
+  }
+  
+  .expense-stat-card__consumption-item {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--space-1);
+  }
+  
+  .expense-stat-card__consumption-value {
+    text-align: left;
+  }
+}
+
+@media (max-width: 480px) {
+  .expense-stat-card__title {
+    font-size: var(--font-size-xs);
+  }
+  
+  .expense-stat-card__consumption-label,
+  .expense-stat-card__consumption-value {
+    font-size: var(--font-size-xs);
+  }
+}
+
+/* ===== ОБНОВЛЕННЫЕ СТИЛИ ДЛЯ КАРТОЧЕК ===== */
+
+.expense-stats__grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr; /* Три колонки для обычных карточек */
+  gap: var(--space-4);
+}
+
+.expense-stat-card--fuel {
+  grid-column: 1 / -1; /* Занимает всю ширину */
+  text-align: center;
+}
+
+.expense-stat-card__title {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-3);
+}
+
+/* 👇 ТЕПЕРЬ В ОДНУ СТРОКУ */
+.expense-stat-card__consumption-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: var(--space-6);
+  margin-bottom: var(--space-2);
+}
+
+.expense-stat-card__consumption-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.expense-stat-card__consumption-label {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+  text-align: center;
+}
+
+.expense-stat-card__consumption-value {
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.expense-stat-card__fuel-meta {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  text-align: center;
+  margin-top: var(--space-2);
+  padding-top: var(--space-2);
+  border-top: 1px solid var(--color-border-secondary);
+}
+
+/* Мобильная адаптация */
+@media (max-width: 768px) {
+  .expense-stats__grid {
+    grid-template-columns: 1fr; /* Одна колонка на мобильных */
+    gap: var(--space-3);
+  }
+  
+  .expense-stat-card--fuel {
+    grid-column: 1;
+    order: -1; /* Первая карточка */
+  }
+  
+  .expense-stat-card__consumption-row {
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+  
+  .expense-stat-card {
+    padding: var(--space-3);
+  }
+  
+  .expense-stat-card__value {
+    font-size: var(--font-size-lg);
+  }
+}
+
+@media (max-width: 480px) {
+  .expense-stats__grid {
+    gap: var(--space-2);
+  }
+  
+  .expense-stat-card {
+    padding: var(--space-2);
+  }
+  
+  .expense-stat-card__title {
+    font-size: var(--font-size-xs);
+  }
+  
+  .expense-stat-card__consumption-label {
+    font-size: var(--font-size-xs);
+  }
+  
+  .expense-stat-card__consumption-value {
+    font-size: var(--font-size-sm);
+  }
+  
+  .expense-stat-card__value {
+    font-size: var(--font-size-base);
+  }
+}
+
+/* Для очень маленьких экранов */
+@media (max-width: 360px) {
+  .expense-stat-card__consumption-row {
+    gap: var(--space-2);
+  }
+}
+
+/* ===== ОБНОВЛЕННЫЕ СТИЛИ ДЛЯ КАРТОЧЕК ===== */
+
+.expense-stats__grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr; /* Три колонки для обычных карточек */
+  gap: var(--space-4);
+}
+
+.expense-stat-card--fuel {
+  grid-column: 1 / -1; /* Занимает всю ширину */
+  text-align: center;
+}
+
+.expense-stat-card__title {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-3);
+}
+
+/* 👇 ТЕПЕРЬ В ОДНУ СТРОКУ */
+.expense-stat-card__consumption-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: var(--space-6);
+  margin-bottom: var(--space-2);
+}
+
+.expense-stat-card__consumption-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.expense-stat-card__consumption-label {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+  text-align: center;
+}
+
+.expense-stat-card__consumption-value {
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.expense-stat-card__fuel-meta {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  text-align: center;
+  margin-top: var(--space-2);
+  padding-top: var(--space-2);
+  border-top: 1px solid var(--color-border-secondary);
+}
+
+/* Мобильная адаптация - ИСПРАВЛЕНО */
+@media (max-width: 768px) {
+  .expense-stats__grid {
+    grid-template-columns: 1fr 1fr 1fr; /* ТРИ КАРТОЧКИ В ОДНУ СТРОКУ */
+    gap: var(--space-3);
+  }
+  
+  .expense-stat-card--fuel {
+    grid-column: 1 / -1; /* Карточка расхода топлива на всю ширину */
+    order: -1; /* Первая карточка */
+    margin-bottom: var(--space-3);
+  }
+  
+  .expense-stat-card__consumption-row {
+    flex-direction: row; /* В ОДНУ СТРОКУ НА МОБИЛЬНЫХ */
+    justify-content: space-around;
+    gap: var(--space-4);
+  }
+  
+  .expense-stat-card {
+    padding: var(--space-3);
+  }
+  
+  .expense-stat-card__value {
+    font-size: var(--font-size-base);
+  }
+  
+  .expense-stat-card__label {
+    font-size: var(--font-size-xs);
+  }
+}
+
+@media (max-width: 480px) {
+  .expense-stats__grid {
+    grid-template-columns: 1fr 1fr 1fr; /* ВСЕГДА ТРИ В СТРОКУ */
+    gap: var(--space-2);
+  }
+  
+  .expense-stat-card {
+    padding: var(--space-2);
+  }
+  
+  .expense-stat-card__title {
+    font-size: var(--font-size-xs);
+  }
+  
+  .expense-stat-card__consumption-row {
+    gap: var(--space-3);
+  }
+  
+  .expense-stat-card__consumption-label {
+    font-size: var(--font-size-xs);
+  }
+  
+  .expense-stat-card__consumption-value {
+    font-size: var(--font-size-sm);
+  }
+  
+  .expense-stat-card__value {
+    font-size: var(--font-size-sm);
+  }
+  
+  .expense-stat-card__label {
+    font-size: var(--font-size-xs);
+  }
+}
+
+/* Для очень маленьких экранов */
+@media (max-width: 360px) {
+  .expense-stats__grid {
+    grid-template-columns: 1fr 1fr 1fr; /* ТРИ КАРТОЧКИ ДАЖЕ НА 360px */
+    gap: var(--space-1);
+  }
+  
+  .expense-stat-card {
+    padding: var(--space-1);
+  }
+  
+  .expense-stat-card__consumption-row {
+    gap: var(--space-2);
+  }
+  
+  .expense-stat-card__consumption-label,
+  .expense-stat-card__consumption-value,
+  .expense-stat-card__value,
+  .expense-stat-card__label {
+    font-size: 0.6rem;
+  }
+}
+
+/* ===== ОБНОВЛЕННЫЕ СТИЛИ ДЛЯ КАРТОЧЕК ===== */
+
+.expense-stats__grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* ДВЕ КАРТОЧКИ В СТРОКУ */
+  gap: var(--space-4);
+}
+
+.expense-stat-card--fuel {
+  grid-column: 1 / -1; /* Карточка расхода на всю ширину */
+  text-align: center;
+}
+
+.expense-stat-card__title {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-3);
+}
+
+.expense-stat-card__consumption-single {
+  margin-bottom: var(--space-2);
+}
+
+.expense-stat-card__consumption-value {
+  font-size: var(--font-size-xl);
+  font-weight: 700;
+  color: var(--color-text-primary);
+}
+
+.expense-stat-card__fuel-meta {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  text-align: center;
+  margin-top: var(--space-2);
+  padding-top: var(--space-2);
+  border-top: 1px solid var(--color-border-secondary);
+}
+
+/* Мобильная адаптация */
+@media (max-width: 768px) {
+  .expense-stats__grid {
+    grid-template-columns: 1fr 1fr; /* ДВЕ КАРТОЧКИ В СТРОКУ НА МОБИЛЬНЫХ */
+    gap: var(--space-3);
+  }
+  
+  .expense-stat-card--fuel {
+    grid-column: 1 / -1;
+  }
+  
+  .expense-stat-card {
+    padding: var(--space-3);
+  }
+  
+  .expense-stat-card__consumption-value {
+    font-size: var(--font-size-lg);
+  }
+  
+  .expense-stat-card__value {
+    font-size: var(--font-size-base);
+  }
+}
+
+@media (max-width: 480px) {
+  .expense-stats__grid {
+    gap: var(--space-2);
+  }
+  
+  .expense-stat-card {
+    padding: var(--space-2);
+  }
+  
+  .expense-stat-card__title {
+    font-size: var(--font-size-xs);
+  }
+  
+  .expense-stat-card__consumption-value {
+    font-size: var(--font-size-base);
+  }
+  
+  .expense-stat-card__value {
+    font-size: var(--font-size-sm);
+  }
+}

@@ -1,4 +1,4 @@
-import { Expense, ExpenseFilters, ExpenseStats } from '../types';
+import { Expense, ExpenseFilters, ExpenseStats, FuelData } from '../types';
 
 const STORAGE_KEY = 'car_expenses';
 
@@ -39,12 +39,17 @@ export class ExpenseService {
 
   static async addExpense(expenseData: Omit<Expense, 'id' | 'createdAt'>): Promise<Expense> {
     try {
-      // ПРОБЛЕМА БЫЛА ЗДЕСЬ: нужно читать из localStorage напрямую, а не через getExpenses
       const expensesJson = localStorage.getItem(STORAGE_KEY);
       const expenses: Expense[] = expensesJson ? JSON.parse(expensesJson) : [];
       
-      const newExpense: Expense = {
+      // Очищаем fuelData если категория не fuel
+      const cleanedExpenseData = {
         ...expenseData,
+        fuelData: expenseData.category === 'fuel' ? expenseData.fuelData : undefined
+      };
+      
+      const newExpense: Expense = {
+        ...cleanedExpenseData,
         id: this.generateId(),
         createdAt: new Date().toISOString()
       };
@@ -52,7 +57,7 @@ export class ExpenseService {
       expenses.unshift(newExpense);
       localStorage.setItem(STORAGE_KEY, JSON.stringify(expenses));
       
-      console.log('Expense added successfully:', newExpense); // Добавил лог
+      console.log('Expense added successfully:', newExpense);
       return newExpense;
     } catch (error) {
       console.error('Error adding expense:', error);
@@ -62,7 +67,6 @@ export class ExpenseService {
 
   static async updateExpense(expenseId: string, updates: Partial<Expense>): Promise<Expense> {
     try {
-      // ТА ЖЕ ПРОБЛЕМА: используем прямой доступ к localStorage
       const expensesJson = localStorage.getItem(STORAGE_KEY);
       const expenses: Expense[] = expensesJson ? JSON.parse(expensesJson) : [];
       
@@ -72,10 +76,19 @@ export class ExpenseService {
         throw new Error('Expense not found');
       }
       
-      expenses[index] = { ...expenses[index], ...updates };
+      // Очищаем fuelData если категория меняется на не-fuel
+      const cleanedUpdates = { ...updates };
+      if (updates.category && updates.category !== 'fuel') {
+        cleanedUpdates.fuelData = undefined;
+      } else if (updates.category === 'fuel' && !updates.fuelData) {
+        // Сохраняем существующие fuelData если они есть
+        cleanedUpdates.fuelData = expenses[index].fuelData;
+      }
+      
+      expenses[index] = { ...expenses[index], ...cleanedUpdates };
       localStorage.setItem(STORAGE_KEY, JSON.stringify(expenses));
       
-      console.log('Expense updated successfully:', expenses[index]); // Добавил лог
+      console.log('Expense updated successfully:', expenses[index]);
       return expenses[index];
     } catch (error) {
       console.error('Error updating expense:', error);
@@ -91,14 +104,115 @@ export class ExpenseService {
       const filteredExpenses = expenses.filter(exp => exp.id !== expenseId);
       localStorage.setItem(STORAGE_KEY, JSON.stringify(filteredExpenses));
       
-      console.log('Expense deleted successfully:', expenseId); // Добавил лог
+      console.log('Expense deleted successfully:', expenseId);
     } catch (error) {
       console.error('Error deleting expense:', error);
       throw new Error('Failed to delete expense');
     }
   }
 
-  // Остальные методы остаются без изменений
+  // Новый метод для получения статистики расхода топлива
+  static async getFuelConsumptionStats(carId: string): Promise<{
+    fullTankConsumption: number | null;
+    overallConsumption: number | null;
+    averageFromDashboard: number | null;
+    totalFuelExpenses: number;
+    fullTankExpenses: number;
+  }> {
+    try {
+      const fuelExpenses = await this.getExpenses({ 
+        carId, 
+        category: 'fuel' 
+      });
+
+      if (fuelExpenses.length === 0) {
+        return {
+          fullTankConsumption: null,
+          overallConsumption: null,
+          averageFromDashboard: null,
+          totalFuelExpenses: 0,
+          fullTankExpenses: 0
+        };
+      }
+/*
+      // Расчет по полным бакам
+      const fullTankExpenses = fuelExpenses.filter(expense => 
+        expense.fuelData?.isFullTank && expense.odometer && expense.fuelData?.liters
+      );
+
+      let fullTankConsumption = null;
+      if (fullTankExpenses.length >= 2) {
+        const sortedExpenses = [...fullTankExpenses].sort((a, b) => 
+          (a.odometer || 0) - (b.odometer || 0)
+        );
+
+        let totalLiters = 0;
+        let totalDistance = 0;
+
+        for (let i = 1; i < sortedExpenses.length; i++) {
+          const prev = sortedExpenses[i - 1];
+          const current = sortedExpenses[i];
+          
+          if (prev.odometer && current.odometer && prev.fuelData?.liters) {
+            const distance = current.odometer - prev.odometer;
+            totalDistance += distance;
+            totalLiters += prev.fuelData.liters;
+          }
+        }
+
+        if (totalDistance > 0 && totalLiters > 0) {
+          fullTankConsumption = (totalLiters / totalDistance) * 100;
+        }
+      }
+*/
+      // Общий средний расход
+      const totalLiters = fuelExpenses.reduce((sum, expense) => 
+        sum + (expense.fuelData?.liters || 0), 0
+      );
+
+      const odometerValues = fuelExpenses
+        .map(expense => expense.odometer)
+        .filter((odometer): odometer is number => odometer !== undefined)
+        .sort((a, b) => a - b);
+
+      const totalDistance = odometerValues.length >= 2 
+        ? odometerValues[odometerValues.length - 1] - odometerValues[0]
+        : 0;
+
+      const overallConsumption = totalDistance > 0 && totalLiters > 0
+        ? (totalLiters / totalDistance) * 100
+        : null;
+
+      // Средний расход по данным с приборки
+      const validConsumptions = fuelExpenses
+        .map(expense => expense.fuelData?.averageConsumption)
+        .filter((consumption): consumption is number => 
+          consumption !== undefined && consumption > 0
+        );
+
+      const averageFromDashboard = validConsumptions.length > 0
+        ? validConsumptions.reduce((sum, consumption) => sum + consumption, 0) / validConsumptions.length
+        : null;
+
+      return {
+        fullTankConsumption: null,
+        overallConsumption,
+        averageFromDashboard,
+        totalFuelExpenses: fuelExpenses.length,
+        fullTankExpenses: 0
+      };
+    } catch (error) {
+      console.error('Error getting fuel consumption stats:', error);
+      return {
+        fullTankConsumption: null,
+        overallConsumption: null,
+        averageFromDashboard: null,
+        totalFuelExpenses: 0,
+        fullTankExpenses: 0
+      };
+    }
+  }
+
   static async getExpenseStats(carId: string): Promise<ExpenseStats> {
     try {
       const expenses = await this.getExpenses({ carId });

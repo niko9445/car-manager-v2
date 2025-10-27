@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Expense, ExpenseListProps } from '../../../types';
 import ConfirmModal from '../../ui/ConfirmModal/ConfirmModal';
 
@@ -11,6 +11,43 @@ const ExpenseList: React.FC<ExpenseListProps> = ({
 }) => {
   const [expenseToDelete, setExpenseToDelete] = useState<Expense | null>(null);
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
+
+  // Расчет статистики расхода топлива
+  const fuelStats = useMemo(() => {
+    const fuelExpenses = expenses.filter(expense => 
+      expense.category === 'fuel' && expense.fuelData
+    );
+
+    if (fuelExpenses.length === 0) {
+      return {
+        overallConsumption: 0,
+        totalFuelExpenses: 0
+      };
+    }
+
+    // Общий средний расход с использованием данных о запасе хода
+    const totalLiters = fuelExpenses.reduce((sum, expense) => 
+      sum + (expense.fuelData?.liters || 0), 0
+    );
+
+    const odometerValues = fuelExpenses
+      .map(expense => expense.odometer)
+      .filter((odometer): odometer is number => odometer !== undefined)
+      .sort((a, b) => a - b);
+
+    const totalDistance = odometerValues.length >= 2 
+      ? odometerValues[odometerValues.length - 1] - odometerValues[0]
+      : 0;
+
+    const overallConsumption = totalDistance > 0 && totalLiters > 0
+      ? (totalLiters / totalDistance) * 100
+      : 0;
+
+    return {
+      overallConsumption,
+      totalFuelExpenses: fuelExpenses.length
+    };
+  }, [expenses]);
 
   const handleDeleteClick = (expense: Expense, e: React.MouseEvent) => {
     e.stopPropagation();
@@ -46,29 +83,55 @@ const ExpenseList: React.FC<ExpenseListProps> = ({
     return num.toLocaleString('ru-RU');
   };
 
+  const formatConsumption = (consumption: number): string => {
+    return consumption > 0 ? consumption.toFixed(1) + ' л/100км' : '0 л/100км';
+  };
+
+  // Расчет текущего месяца
+  const currentMonthTotal = useMemo(() => {
+    const now = new Date();
+    const currentMonthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+    
+    return expenses
+      .filter(expense => new Date(expense.date) >= currentMonthStart)
+      .reduce((sum, expense) => sum + expense.amount, 0);
+  }, [expenses]);
+
+  const hasFuelExpenses = fuelStats.totalFuelExpenses > 0;
+
   return (
     <div className="expense-list-container">
       {/* Статистика */}
       {stats && (
         <div className="expense-stats">
           <div className="expense-stats__grid">
+            {/* 👇 КАРТОЧКА СРЕДНЕГО РАСХОДА */}
+            <div className="expense-stat-card expense-stat-card--fuel">
+              <div className="expense-stat-card__title">Средний расход топлива</div>
+              <div className="expense-stat-card__consumption-single">
+                <span className="expense-stat-card__consumption-value">
+                  {formatConsumption(fuelStats.overallConsumption)}
+                </span>
+              </div>
+              {hasFuelExpenses && (
+                <div className="expense-stat-card__fuel-meta">
+                  На основе {fuelStats.totalFuelExpenses} заправок
+                </div>
+              )}
+            </div>
+
+            {/* 👇 ТРИ ОСНОВНЫЕ КАРТОЧКИ */}
             <div className="expense-stat-card">
               <div className="expense-stat-card__value">{formatAmount(stats.total)}</div>
               <div className="expense-stat-card__label">Всего расходов</div>
             </div>
             <div className="expense-stat-card">
-              <div className="expense-stat-card__value">{formatAmount(stats.monthlyAverage)}</div>
-              <div className="expense-stat-card__label">В среднем в месяц</div>
+              <div className="expense-stat-card__value">{formatAmount(currentMonthTotal)}</div>
+              <div className="expense-stat-card__label">В текущем месяце</div>
             </div>
             <div className="expense-stat-card">
               <div className="expense-stat-card__value">{formatAmount(stats.lastMonthTotal)}</div>
               <div className="expense-stat-card__label">За последний месяц</div>
-            </div>
-            <div className="expense-stat-card">
-              <div className="expense-stat-card__value">
-                {stats.trend === 'up' ? '📈' : stats.trend === 'down' ? '📉' : '➡️'}
-              </div>
-              <div className="expense-stat-card__label">Тренд</div>
             </div>
           </div>
         </div>
@@ -82,13 +145,11 @@ const ExpenseList: React.FC<ExpenseListProps> = ({
             className="expense-card"
             style={{ animationDelay: `${index * 0.05}s` }}
           >
-            {/* Заголовок карточки */}
             <div className="expense-card__header">
               <h3 className="expense-card__title">{expense.description}</h3>
               <span className="expense-card__amount">{formatAmount(expense.amount)}</span>
             </div>
             
-            {/* Мета-информация */}
             <div className="expense-card__meta">
               <span className={`expense-card__category expense-card__category--${expense.category}`}>
                 {getCategoryName(expense.category)}
@@ -99,7 +160,6 @@ const ExpenseList: React.FC<ExpenseListProps> = ({
               )}
             </div>
 
-            {/* Детали расхода */}
             <div className="expense-card__details">
               <div className="expense-card__detail">
                 <span className="expense-card__detail-label">Категория</span>
@@ -115,9 +175,33 @@ const ExpenseList: React.FC<ExpenseListProps> = ({
                   <span className="expense-card__detail-value">{formatNumber(expense.odometer)} км</span>
                 </div>
               )}
+              
+              {expense.category === 'fuel' && expense.fuelData && (
+                <>
+                  {expense.fuelData.liters && (
+                    <div className="expense-card__detail">
+                      <span className="expense-card__detail-label">Заправлено</span>
+                      <span className="expense-card__detail-value">
+                        {expense.fuelData.liters} л
+                      </span>
+                    </div>
+                  )}
+                  {expense.fuelData.remainingRange && (
+                    <div className="expense-card__detail">
+                      <span className="expense-card__detail-label">Запас хода</span>
+                      <span className="expense-card__detail-value">{expense.fuelData.remainingRange} км</span>
+                    </div>
+                  )}
+                  {expense.fuelData.averageConsumption && (
+                    <div className="expense-card__detail">
+                      <span className="expense-card__detail-label">Расход</span>
+                      <span className="expense-card__detail-value">{expense.fuelData.averageConsumption.toFixed(1)} л/100км</span>
+                    </div>
+                  )}
+                </>
+              )}
             </div>
             
-            {/* Кнопки действий */}
             <div className="expense-card__actions">
               <button 
                 className="btn btn--secondary btn--sm"
@@ -136,7 +220,6 @@ const ExpenseList: React.FC<ExpenseListProps> = ({
         ))}
       </div>
 
-      {/* Модальное окно подтверждения удаления */}
       <ConfirmModal
         isOpen={isConfirmModalOpen}
         onClose={handleCancelDelete}
@@ -151,7 +234,6 @@ const ExpenseList: React.FC<ExpenseListProps> = ({
   );
 };
 
-// Вспомогательная функция для отображения названий категорий
 const getCategoryName = (category: string): string => {
   const names: { [key: string]: string } = {
     fuel: 'Заправка',

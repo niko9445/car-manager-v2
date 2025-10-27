@@ -57,26 +57,7 @@ const ExpenseFilters: React.FC<ExpenseFiltersProps> = ({ onFilterChange }) => {
 
   return (
     <div className="expense-filters">
-      {/* Основные фильтры - категории в сетку */}
-      <div className="expense-filters__main">
-        <div className="expense-filters__categories">
-          {categoryOptions.map(option => (
-            <button
-              key={option.value}
-              className={`expense-filters__category-btn ${
-                filters.category === option.value || (option.value === 'all' && !filters.category) 
-                  ? 'expense-filters__category-btn--active' 
-                  : ''
-              }`}
-              onClick={() => handleCategoryChange(option.value)}
-            >
-              {option.label}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* Дополнительные фильтры */}
+      {/* 👇 ТОЛЬКО КНОПКА РАСШИРЕННЫХ ФИЛЬТРОВ В ВЕРХУ */}
       <div className="expense-filters__advanced">
         <button
           className="btn btn--secondary btn--sm btn--borderless expense-filters__expand-btn"
@@ -90,6 +71,7 @@ const ExpenseFilters: React.FC<ExpenseFiltersProps> = ({ onFilterChange }) => {
 
         {isExpanded && (
           <div className="expense-filters__expanded-content">
+            {/* 👇 ФИЛЬТРЫ ПО ДАТЕ */}
             <div className="expense-filters__date-grid">
               <div className="expense-filters__date-group">
                 <label className="expense-filters__date-label">Дата с</label>
@@ -115,21 +97,44 @@ const ExpenseFilters: React.FC<ExpenseFiltersProps> = ({ onFilterChange }) => {
                 />
               </div>
             </div>
+
+            {/* 👇 ФИЛЬТРЫ ПО КАТЕГОРИЯМ - ПЕРЕНЕСЕНЫ СЮДА */}
+            <div className="expense-filters__categories-section">
+              <label className="expense-filters__categories-label">Категории</label>
+              <div className="expense-filters__categories">
+                {categoryOptions.map(option => (
+                  <button
+                    key={option.value}
+                    className={`expense-filters__category-btn ${
+                      filters.category === option.value || (option.value === 'all' && !filters.category) 
+                        ? 'expense-filters__category-btn--active' 
+                        : ''
+                    }`}
+                    onClick={() => handleCategoryChange(option.value)}
+                  >
+                    {option.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Кнопка сброса */}
+                  {hasActiveFilters && (
+                    <div className="expense-filters__reset">
+                      <button
+                        className="btn btn--secondary btn--sm expense-filters__reset-btn"
+                        onClick={clearFilters}
+                      >
+                        Сбросить фильтры
+                      </button>
+                    </div>
+                  )}
+
           </div>
         )}
       </div>
 
-      {/* Кнопка сброса - ТЕПЕРЬ ВНИЗУ */}
-      {hasActiveFilters && (
-        <div className="expense-filters__reset">
-          <button
-            className="btn btn--secondary btn--sm expense-filters__reset-btn"
-            onClick={clearFilters}
-          >
-            Сбросить фильтры
-          </button>
-        </div>
-      )}
+      
     </div>
   );
 };

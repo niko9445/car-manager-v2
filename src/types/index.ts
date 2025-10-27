@@ -314,3 +314,34 @@ export interface ExpenseListProps {
 export interface ExpenseFiltersProps {
   onFilterChange: (filters: ExpenseFilters) => void;
 }
+
+// Добавь в конец файла types/index.ts
+export interface FuelData {
+  liters?: number;
+  remainingRange?: number;
+  averageConsumption?: number;
+}
+
+// Обнови интерфейс Expense
+export interface Expense {
+  id: string;
+  carId: string;
+  date: string;
+  category: ExpenseCategory;
+  amount: number;
+  description: string;
+  odometer?: number;
+  receiptPhoto?: string;
+  createdAt: string;
+  fuelData?: FuelData; // ← НОВОЕ ПОЛЕ
+}
+
+// Обнови ExpenseFormData
+export interface ExpenseFormData {
+  date: string;
+  category: ExpenseCategory;
+  amount: number;
+  description: string;
+  odometer?: number;
+  fuelData?: FuelData; // ← НОВОЕ ПОЛЕ
+}

@@ -1295,3 +1295,342 @@
     padding: var(--space-2) var(--space-3);
   }
 }
+
+/* ===== СТИЛИ КАЛЬКУЛЯТОРА БАКА ===== */
+
+.fuel-calculator-modal .modal__container {
+  max-width: 440px;
+}
+
+.fuel-calculator-modal .modal__form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.fuel-calculator-modal .modal__form-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-3);
+}
+
+.fuel-calculator-modal .modal__form-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.fuel-calculator-modal .modal__label {
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--color-text-secondary);
+}
+
+.fuel-calculator-modal .modal__input {
+  width: 100%;
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--color-border-secondary);
+  border-radius: var(--radius-md);
+  background: var(--color-bg-card);
+  color: var(--color-text-primary);
+  font-size: var(--font-size-sm);
+  transition: all var(--transition-fast);
+  box-sizing: border-box;
+}
+
+.fuel-calculator-modal .modal__input:focus {
+  outline: none;
+  border-color: var(--color-border-accent);
+}
+
+.fuel-calculator-modal .modal__input::placeholder {
+  color: var(--color-text-muted);
+  opacity: 0.7;
+}
+
+/* Результаты калькулятора */
+.fuel-calculator-results {
+  margin: 0;
+}
+
+.fuel-calculator-results .card {
+  background: transparent !important;
+  border: none !important;
+  border-radius: 0 !important;
+  overflow: hidden;
+}
+
+.fuel-calculator-results .card__header {
+  padding: var(--space-3) var(--space-4);
+  border-bottom: none !important;
+  background: transparent !important;
+}
+
+.fuel-calculator-results .card__title {
+  margin: 0;
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-text-primary);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.fuel-calculator-results .card__content {
+  padding: var(--space-4);
+  background: var(--color-bg-tertiary);
+}
+
+.fuel-calculator-result-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-2) 0;
+}
+
+.fuel-calculator-result-item:not(:last-child) {
+  border-bottom: 1px solid var(--color-border-secondary);
+}
+
+.fuel-calculator-label {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+.fuel-calculator-value {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+/* Кнопки калькулятора */
+.fuel-calculator-modal .modal__actions {
+  padding-top: var(--space-2);
+}
+
+.fuel-calculator-modal .modal__actions--center {
+  justify-content: center;
+}
+
+.fuel-calculator-actions {
+  display: flex;
+  gap: var(--space-3);
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.fuel-calculator-actions .btn {
+  min-width: 100px;
+}
+
+/* Исправления для иконок */
+.fuel-calculator-modal .card__title svg {
+  flex-shrink: 0;
+}
+
+.fuel-calculator-modal .modal__title svg {
+  flex-shrink: 0;
+}
+
+/* Мобильная адаптация калькулятора */
+@media (max-width: 768px) {
+  .fuel-calculator-modal .modal__container {
+    max-width: 100%;
+    margin: var(--space-4);
+  }
+  
+  .fuel-calculator-modal .modal__form {
+    gap: var(--space-3);
+  }
+  
+  .fuel-calculator-modal .modal__form-grid {
+    gap: var(--space-2);
+  }
+  
+  .fuel-calculator-modal .modal__input {
+    padding: var(--space-3);
+    font-size: 16px;
+  }
+  
+  .fuel-calculator-results .card__header {
+    padding: var(--space-2) var(--space-3);
+  }
+  
+  .fuel-calculator-results .card__content {
+    padding: var(--space-3);
+  }
+  
+  .fuel-calculator-result-item {
+    padding: var(--space-2) 0;
+  }
+  
+  .fuel-calculator-actions {
+    gap: var(--space-2);
+    width: 100%;
+  }
+  
+  .fuel-calculator-actions .btn {
+    flex: 1;
+    min-width: 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .fuel-calculator-modal .modal__container {
+    margin: var(--space-2);
+  }
+  
+  .fuel-calculator-modal .modal__input {
+    padding: var(--space-2) var(--space-3);
+  }
+  
+  .fuel-calculator-actions {
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+  
+  .fuel-calculator-actions .btn {
+    width: 100%;
+  }
+  
+  .fuel-calculator-results .card__header {
+    padding: var(--space-2);
+  }
+  
+  .fuel-calculator-results .card__content {
+    padding: var(--space-2);
+  }
+}
+
+/* Убеждаемся, что фоны правильные */
+.fuel-calculator-modal .card {
+  background: var(--color-bg-tertiary);
+}
+
+.fuel-calculator-modal .card__header {
+  background: var(--color-bg-secondary);
+}
+
+/* ===== СТИЛИ КНОПКИ КАЛЬКУЛЯТОРА В SIDEBAR ===== */
+
+.sidebar__actions-row {
+  display: flex;
+  gap: var(--space-2);
+  align-items: stretch;
+  width: 100%;
+}
+
+/* Кнопка добавления авто */
+.sidebar__actions-row .btn--full {
+  flex: 1;
+  min-width: 0;
+  height: auto;
+}
+
+/* Кнопка калькулятора - такая же высота как у кнопки добавления */
+.sidebar__calculator-btn {
+  width: 44px;
+  height: auto;
+  padding: var(--space-2) var(--space-1);
+  border: 1px solid var(--color-border-accent);
+  border-radius: var(--radius-md);
+  background: var(--color-bg-tertiary);
+  color: var(--color-border-accent);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--transition-fast);
+  flex-shrink: 0;
+}
+
+.sidebar__calculator-btn:hover {
+  background: var(--color-bg-card);
+  border-color: var(--color-border-accent);
+  color: var(--color-text-primary);
+  transform: translateY(-1px);
+}
+
+.sidebar__calculator-btn svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* Мобильная адаптация */
+@media (max-width: 768px) {
+  .sidebar__actions-row {
+    gap: var(--space-1);
+  }
+  
+  .sidebar__calculator-btn {
+    width: 40px;
+    padding: var(--space-2) var(--space-1);
+  }
+  
+  .sidebar__calculator-btn svg {
+    width: 16px;
+    height: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .sidebar__calculator-btn {
+    width: 36px;
+  }
+  
+  .sidebar__calculator-btn svg {
+    width: 14px;
+    height: 14px;
+  }
+}
+
+/* ===== ДОПОЛНИТЕЛЬНЫЕ СТИЛИ ДЛЯ ЗАГОЛОВКА КАЛЬКУЛЯТОРА ===== */
+
+.fuel-calculator-header {
+  margin-bottom: var(--space-4);
+  padding-bottom: var(--space-3);
+  border-bottom: 1px solid var(--color-border-primary);
+}
+
+.fuel-calculator-title {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.fuel-calculator-title svg {
+  flex-shrink: 0;
+}
+
+/* Скрываем стандартный заголовок модалки */
+.fuel-calculator-modal .modal__header {
+  display: none;
+}
+
+.fuel-calculator-modal .modal__content {
+  padding-top: var(--space-4);
+}
+
+/* Стили для чекбокса в модалке */
+.modal__checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  cursor: pointer;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-primary);
+}
+
+.modal__checkbox {
+  width: 16px;
+  height: 16px;
+  margin: 0;
+}
+
+.modal__checkbox-text {
+  font-weight: 500;
+}

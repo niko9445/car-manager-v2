@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useApp } from '../../../contexts/AppContext';
-import { Expense, ExpenseCategory } from '../../../types';
+import { Expense, ExpenseCategory, FuelData } from '../../../types';
 import { ExpenseService } from '../../../services/expenseService';
 
 interface ExpenseFormData {
@@ -9,6 +9,7 @@ interface ExpenseFormData {
   amount: number;
   description: string;
   odometer?: number;
+  fuelData?: FuelData;
 }
 
 interface ExpenseFormErrors {
@@ -17,6 +18,9 @@ interface ExpenseFormErrors {
   amount?: string;
   description?: string;
   odometer?: string;
+  liters?: string;
+  remainingRange?: string;
+  averageConsumption?: string;
 }
 
 interface ExpenseFormProps {
@@ -38,7 +42,8 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({
     category: 'fuel',
     amount: 0,
     description: '',
-    odometer: undefined
+    odometer: undefined,
+    fuelData: undefined
   });
   
   const [errors, setErrors] = useState<ExpenseFormErrors>({});
@@ -51,7 +56,8 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({
         category: expense.category,
         amount: expense.amount,
         description: expense.description,
-        odometer: expense.odometer
+        odometer: expense.odometer,
+        fuelData: expense.fuelData
       });
     } else {
       setFormData({
@@ -59,7 +65,8 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({
         category: 'fuel',
         amount: 0,
         description: '',
-        odometer: undefined
+        odometer: undefined,
+        fuelData: undefined
       });
     }
   }, [expense]);
@@ -67,14 +74,28 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
   ) => {
-    const { name, value } = e.target;
+    const { name, value, type } = e.target;
     
-    setFormData(prev => ({
-      ...prev,
-      [name]: name === 'amount' || name === 'odometer' 
-        ? value === '' ? undefined : Number(value)
-        : value
-    }));
+    if (name.startsWith('fuelData.')) {
+      const fuelField = name.replace('fuelData.', '') as keyof FuelData;
+      
+      setFormData(prev => ({
+        ...prev,
+        fuelData: {
+          ...prev.fuelData,
+          [fuelField]: type === 'checkbox' 
+            ? (e.target as HTMLInputElement).checked
+            : value === '' ? undefined : Number(value)
+        }
+      }));
+    } else {
+      setFormData(prev => ({
+        ...prev,
+        [name]: name === 'amount' || name === 'odometer' 
+          ? value === '' ? undefined : Number(value)
+          : value
+      }));
+    }
     
     if (errors[name as keyof ExpenseFormErrors]) {
       setErrors(prev => ({
@@ -101,6 +122,21 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({
 
     if (formData.odometer !== undefined && formData.odometer < 0) {
       newErrors.odometer = 'Пробег не может быть отрицательным';
+    }
+
+    // Валидация полей заправки
+    if (formData.category === 'fuel') {
+      if (formData.fuelData?.liters !== undefined && formData.fuelData.liters <= 0) {
+        newErrors.liters = 'Укажите корректное количество литров';
+      }
+
+      if (formData.fuelData?.remainingRange !== undefined && formData.fuelData.remainingRange < 0) {
+        newErrors.remainingRange = 'Запас хода не может быть отрицательным';
+      }
+
+      if (formData.fuelData?.averageConsumption !== undefined && formData.fuelData.averageConsumption <= 0) {
+        newErrors.averageConsumption = 'Укажите корректный расход';
+      }
     }
 
     setErrors(newErrors);
@@ -159,24 +195,11 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({
     { value: 'other', label: '💰 Прочее', icon: '💰' }
   ];
 
+  const isFuelCategory = formData.category === 'fuel';
+
   return (
     <form className="modal__form" onSubmit={handleSubmit}>
       <div className="modal__form-grid">
-        <div className="modal__form-group">
-          <label htmlFor="date" className="modal__label modal__label--required">
-            Дата расхода
-          </label>
-          <input
-            id="date"
-            name="date"
-            type="date"
-            value={formData.date}
-            onChange={handleInputChange}
-            className={`modal__input ${errors.date ? 'modal__input--error' : ''}`}
-            required
-          />
-          {errors.date && <span className="modal__error">{errors.date}</span>}
-        </div>
 
         <div className="modal__form-group">
           <label htmlFor="category" className="modal__label modal__label--required">
@@ -232,6 +255,64 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({
           />
           {errors.odometer && <span className="modal__error">{errors.odometer}</span>}
         </div>
+
+        {/* 👇 ПОЛЯ ДЛЯ ЗАПРАВКИ - ПОЯВЛЯЮТСЯ ТОЛЬКО ПРИ ВЫБОРЕ КАТЕГОРИИ "fuel" */}
+        {isFuelCategory && (
+          <>
+            <div className="modal__form-group">
+              <label htmlFor="fuelData.liters" className="modal__label">
+                Заправлено (л)
+              </label>
+              <input
+                id="fuelData.liters"
+                name="fuelData.liters"
+                type="number"
+                step="0.1"
+                min="0"
+                value={formData.fuelData?.liters || ''}
+                onChange={handleInputChange}
+                className={`modal__input ${errors.liters ? 'modal__input--error' : ''}`}
+                placeholder="0.0"
+              />
+              {errors.liters && <span className="modal__error">{errors.liters}</span>}
+            </div>
+
+            <div className="modal__form-group">
+              <label htmlFor="fuelData.remainingRange" className="modal__label">
+                Запас хода (км)
+              </label>
+              <input
+                id="fuelData.remainingRange"
+                name="fuelData.remainingRange"
+                type="number"
+                min="0"
+                value={formData.fuelData?.remainingRange || ''}
+                onChange={handleInputChange}
+                className={`modal__input ${errors.remainingRange ? 'modal__input--error' : ''}`}
+                placeholder="0"
+              />
+              {errors.remainingRange && <span className="modal__error">{errors.remainingRange}</span>}
+            </div>
+
+            <div className="modal__form-group">
+              <label htmlFor="fuelData.averageConsumption" className="modal__label">
+                Ср. расход (л/100км)
+              </label>
+              <input
+                id="fuelData.averageConsumption"
+                name="fuelData.averageConsumption"
+                type="number"
+                step="0.1"
+                min="0"
+                value={formData.fuelData?.averageConsumption || ''}
+                onChange={handleInputChange}
+                className={`modal__input ${errors.averageConsumption ? 'modal__input--error' : ''}`}
+                placeholder="0.0"
+              />
+              {errors.averageConsumption && <span className="modal__error">{errors.averageConsumption}</span>}
+            </div>
+          </>
+        )}
 
         <div className="modal__form-group modal__form-group--full">
           <label htmlFor="description" className="modal__label modal__label--required">
