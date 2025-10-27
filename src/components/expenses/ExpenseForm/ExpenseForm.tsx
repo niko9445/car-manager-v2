@@ -200,6 +200,22 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({
   return (
     <form className="modal__form" onSubmit={handleSubmit}>
       <div className="modal__form-grid">
+        {/* 👇 ДОБАВЛЕНО ПОЛЕ ДАТЫ - ПЕРВОЕ ПОЛЕ */}
+        <div className="modal__form-group">
+          <label htmlFor="date" className="modal__label modal__label--required">
+            Дата
+          </label>
+          <input
+            id="date"
+            name="date"
+            type="date"
+            value={formData.date}
+            onChange={handleInputChange}
+            className={`modal__input ${errors.date ? 'modal__input--error' : ''}`}
+            required
+          />
+          {errors.date && <span className="modal__error">{errors.date}</span>}
+        </div>
 
         <div className="modal__form-group">
           <label htmlFor="category" className="modal__label modal__label--required">

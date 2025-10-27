@@ -105,7 +105,7 @@ const ExpenseList: React.FC<ExpenseListProps> = ({
       {stats && (
         <div className="expense-stats">
           <div className="expense-stats__grid">
-            {/* 👇 КАРТОЧКА СРЕДНЕГО РАСХОДА */}
+            {/* 👇 КАРТОЧКА СРЕДНЕГО РАСХОДА - ВСЯ ШИРИНА */}
             <div className="expense-stat-card expense-stat-card--fuel">
               <div className="expense-stat-card__title">Средний расход топлива</div>
               <div className="expense-stat-card__consumption-single">
@@ -120,24 +120,28 @@ const ExpenseList: React.FC<ExpenseListProps> = ({
               )}
             </div>
 
-            {/* 👇 ТРИ ОСНОВНЫЕ КАРТОЧКИ */}
-            <div className="expense-stat-card">
+            {/* 👇 КАРТОЧКА ВСЕГО РАСХОДОВ - ВСЯ ШИРИНА */}
+            <div className="expense-stat-card expense-stat-card--full-width">
               <div className="expense-stat-card__value">{formatAmount(stats.total)}</div>
               <div className="expense-stat-card__label">Всего расходов</div>
             </div>
-            <div className="expense-stat-card">
-              <div className="expense-stat-card__value">{formatAmount(currentMonthTotal)}</div>
-              <div className="expense-stat-card__label">В текущем месяце</div>
-            </div>
-            <div className="expense-stat-card">
-              <div className="expense-stat-card__value">{formatAmount(stats.lastMonthTotal)}</div>
-              <div className="expense-stat-card__label">За последний месяц</div>
+
+            {/* 👇 ДВЕ КАРТОЧКИ В ОДНОЙ СТРОКЕ - ОБЕРТКА ДЛЯ МОБИЛЬНЫХ */}
+            <div className="expense-stats__row">
+              <div className="expense-stat-card">
+                <div className="expense-stat-card__value">{formatAmount(currentMonthTotal)}</div>
+                <div className="expense-stat-card__label">В текущем месяце</div>
+              </div>
+              <div className="expense-stat-card">
+                <div className="expense-stat-card__value">{formatAmount(stats.lastMonthTotal)}</div>
+                <div className="expense-stat-card__label">За последний месяц</div>
+              </div>
             </div>
           </div>
         </div>
       )}
 
-      {/* Список расходов */}
+      {/* Остальной код остается без изменений */}
       <div className="expense-list">
         {expenses.map((expense, index) => (
           <div 
