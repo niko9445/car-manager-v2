@@ -130,27 +130,34 @@ const FuelCalculatorModal: React.FC<FuelCalculatorModalProps> = ({
 
             <div className="modal__actions modal__actions--center">
               <div className="fuel-calculator-actions">
-                <button 
-                  type="button" 
-                  className="btn btn--secondary"
-                  onClick={clearForm}
-                >
-                  Очистить
-                </button>
-                <button 
-                  type="button" 
-                  className="btn btn--secondary"
-                  onClick={onClose}
-                >
-                  Закрыть
-                </button>
-                <button 
-                  type="button" 
-                  className="btn btn--primary"
-                  onClick={onClose}
-                >
-                  Готово
-                </button>
+                {/* Первая строка: кнопка Очистить на всю ширину */}
+                <div className="fuel-calculator-actions__row fuel-calculator-actions__row--single">
+                  <button 
+                    type="button" 
+                    className="btn btn--secondary"
+                    onClick={clearForm}
+                  >
+                    Очистить
+                  </button>
+                </div>
+                
+                {/* Вторая строка: кнопки Закрыть и Готово рядом */}
+                <div className="fuel-calculator-actions__row fuel-calculator-actions__row--double">
+                  <button 
+                    type="button" 
+                    className="btn btn--secondary"
+                    onClick={onClose}
+                  >
+                    Закрыть
+                  </button>
+                  <button 
+                    type="button" 
+                    className="btn btn--primary"
+                    onClick={onClose}
+                  >
+                    Готово
+                  </button>
+                </div>
               </div>
             </div>
           </div>

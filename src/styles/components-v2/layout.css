@@ -1,77 +1,159 @@
-
 /* ===== СИСТЕМА LAYOUT КОМПОНЕНТОВ ===== */
 
-/* Sidebar */
+/* ===== SIDEBAR ===== */
 .sidebar {
   width: 280px;
-  background: #1a1a1a;
-  border-right: 1px solid #333333;
+  background: var(--color-bg-secondary);
+  border-right: 1px solid var(--color-border-primary);
   display: flex;
   flex-direction: column;
   height: 100vh;
   overflow-y: auto;
+  position: relative;
   transition: transform 0.3s ease;
 }
 
 .sidebar__header {
-  padding: 20px;
-  border-bottom: 1px solid #333333;
-  background: #1f1f1f;
+  padding: var(--space-4);
+  border-bottom: 1px solid var(--color-border-primary);
+  background: var(--color-bg-tertiary);
+  flex-shrink: 0;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: var(--space-4);
+}
+
+.sidebar__header-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-3);
+  gap: var(--space-2);
 }
 
 .sidebar__title {
   margin: 0;
-  font-size: 20px;
-  font-weight: 700;
-  color: #ffffff;
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  color: var(--color-text-primary);
   text-align: center;
+}
+
+.sidebar__close-btn {
+  width: 28px;
+  height: 28px;
+  padding: var(--space-1);
+  border: 1px solid var(--color-border-secondary);
+  border-radius: var(--radius-sm);
+  background: var(--color-bg-card);
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--transition-fast);
+  flex-shrink: 0;
+}
+
+.sidebar__close-btn:hover {
+  border-color: var(--color-border-accent);
+  color: var(--color-text-primary);
 }
 
 .sidebar__actions {
   display: flex;
-  gap: 12px;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.sidebar__actions-row {
+  display: flex;
+  gap: var(--space-2);
+  align-items: stretch;
+  width: 100%;
+}
+
+.sidebar__actions-row .btn--full {
+  flex: 1;
+  min-width: 0;
+  height: auto;
+}
+
+.sidebar__calculator-btn {
+  width: 44px;
+  height: auto;
+  padding: var(--space-2) var(--space-1);
+  border: 1px solid var(--color-border-primary);
+  border-radius: var(--radius-md);
+  background: var(--color-bg-tertiary);
+  color: #ffffff !important;
+  cursor: pointer;
+  display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
+  transition: all var(--transition-fast);
+  flex-shrink: 0;
+}
+
+.sidebar__calculator-btn:hover {
+  background: var(--color-bg-card);
+  border-color: #ffffff;
+  color: var(--color-text-primary);
+  transform: translateY(-1px);
+}
+
+.sidebar__calculator-btn svg {
+  width: 18px;
+  height: 18px;
+  color: #ffffff !important;
 }
 
 .sidebar__content {
   flex: 1;
-  padding: 20px;
+  padding: var(--space-4);
+  overflow-y: auto;
+  min-height: 0;
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  overflow-y: auto;
+  gap: var(--space-4);
+}
+
+.sidebar__cars {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.sidebar__empty {
+  text-align: center;
+  padding: var(--space-8) var(--space-4);
+}
+
+.sidebar__empty-text {
+  margin: 0;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
 }
 
 .sidebar__footer {
-  padding: 20px;
-  border-top: 1px solid #333333;
-  background: #1f1f1f;
+  margin-top: auto;
+  padding: var(--space-4);
+  border-top: 1px solid var(--color-border-primary);
+  background: var(--color-bg-tertiary);
+  flex-shrink: 0;
 }
 
-/* Main Content */
+/* ===== MAIN CONTENT ===== */
 .main-content {
   flex: 1;
   display: flex;
   flex-direction: column;
-  background: #0a0a0a;
+  background: var(--color-bg-primary);
   height: 100vh;
   overflow-y: auto;
-  margin-left: 0; /* Отступ для sidebar */
+  margin-left: 0;
   transition: margin-left 0.3s ease;
 }
-
-/*.main-content__header {
-  padding: 20px;
-  background: #1a1a1a;
-  border-bottom: 1px solid #333333;
-  position: sticky;
-  top: 0;
-  z-index: 10;
-}*/
 
 .main-content__header {
   background: var(--color-bg-secondary);
@@ -86,8 +168,8 @@
 .main-content__header-top {
   display: flex;
   align-items: center;
-  gap: 12px;
-  margin-bottom: 16px;
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
 }
 
 .main-content__title {
@@ -101,14 +183,17 @@
   line-height: 1.3;
   flex-wrap: wrap;
 }
-/*.main-content__tabs {
-  display: flex;
-  gap: 8px;
-  overflow-x: auto;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-  padding-bottom: 2px;
-}*/
+
+.car-year-badge {
+  background: var(--color-bg-tertiary);
+  border: 1px solid var(--color-border-primary);
+  border-radius: var(--radius-md);
+  padding: var(--space-1) var(--space-3);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  line-height: 1;
+}
 
 .main-content__tabs {
   display: flex;
@@ -133,19 +218,11 @@
   flex-shrink: 0;
 }
 
-.car-year-badge {
-  background: var(--color-bg-tertiary);
-  border: 1px solid var(--color-border-primary);
-  border-radius: var(--radius-md);
-  padding: var(--space-1) var(--space-3);
-  font-size: var(--font-size-sm);
-  font-weight: 500;
-  color: var(--color-text-secondary);
-  line-height: 1;
-}
-
-.main-content__tabs::-webkit-scrollbar {
-  display: none;
+.main-content__tabs .btn--primary {
+  background: var(--color-accent);
+  border-color: var(--color-border-accent);
+  color: var(--color-text-primary);
+  box-shadow: var(--shadow-md);
 }
 
 .main-content__content {
@@ -155,62 +232,26 @@
   width: 100%;
   display: flex;
   flex-direction: column;
-  min-height: 0; /* ДОБАВИТЬ */
-  height: 100%; /* ДОБАВИТЬ */
+  min-height: 0;
+  height: 100%;
 }
 
-/* Empty states */
-.section__empty {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 40px 20px;
-  text-align: center;
-  background: #1f1f1f;
-  border-radius: 12px;
-  border: 1px solid #333333;
-  margin: 20px;
-}
-
-.section__empty-icon {
-  font-size: 48px;
-  margin-bottom: 16px;
-  opacity: 0.7;
-}
-
-.section__empty-text {
-  margin: 0 0 8px 0;
-  font-size: 18px;
-  font-weight: 600;
-  color: #ffffff;
-}
-
-.section__empty-subtext {
-  margin: 0;
-  font-size: 14px;
-  color: #888888;
-  line-height: 1.5;
-  max-width: 400px;
-}
-
-/* Контейнеры разделов - на тон темнее */
+/* ===== SECTION COMPONENTS ===== */
 .section-header {
   background: var(--color-bg-tertiary);
   border-bottom: 1px solid var(--color-border-primary);
   padding: var(--space-3) var(--space-5);
   position: sticky;
-  top: 80px; /* ИЗМЕНИТЬ: было 0 */
+  top: 80px;
   z-index: 90;
   margin: 0;
   width: 100%;
   box-sizing: border-box;
   left: 0;
   right: 0;
-  flex-shrink: 0; /* ДОБАВИТЬ */
+  flex-shrink: 0;
 }
 
-/* Заголовки разделов - стильные */
 .section-title {
   display: flex;
   align-items: center;
@@ -239,28 +280,557 @@
   flex-shrink: 0;
 }
 
-/* Кнопки в 2 раза меньше и справа */
 .section-title__actions {
   display: flex;
   gap: var(--space-1);
   flex-shrink: 0;
 }
 
-
-/* Контент разделов */
 .section-content {
   padding: var(--space-4) var(--space-5);
   margin: 0;
   width: 100%;
   box-sizing: border-box;
-  flex: 1; /* ДОБАВИТЬ */
-  min-height: 0; /* ДОБАВИТЬ */
-  overflow-y: auto; /* ДОБАВИТЬ */
-  height: 0; /* ДОБАВИТЬ */
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  height: 0;
 }
 
-/* Мобильная адаптация */
+/* ===== EMPTY STATES ===== */
+.section__empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-10) var(--space-5);
+  text-align: center;
+  background: var(--color-bg-tertiary);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border-primary);
+  margin: var(--space-5);
+}
+
+.section__empty-icon {
+  font-size: 48px;
+  margin-bottom: var(--space-4);
+  opacity: 0.7;
+}
+
+.section__empty-text {
+  margin: 0 0 var(--space-2) 0;
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.section__empty-subtext {
+  margin: 0;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  line-height: 1.5;
+  max-width: 400px;
+}
+
+/* ===== WELCOME SCREENS ===== */
+.main-content__welcome-screen {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: var(--space-8);
+  position: relative;
+  overflow: hidden;
+}
+
+.welcome-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  opacity: 0.03;
+  pointer-events: none;
+}
+
+.welcome-grid {
+  width: 100%;
+  height: 100%;
+  background-image: 
+    linear-gradient(var(--color-text-primary) 1px, transparent 1px),
+    linear-gradient(90deg, var(--color-text-primary) 1px, transparent 1px);
+  background-size: 50px 50px;
+  animation: gridMove 20s linear infinite;
+}
+
+@keyframes gridMove {
+  0% { transform: translate(0, 0); }
+  100% { transform: translate(50px, 50px); }
+}
+
+.welcome-container {
+  text-align: center;
+  position: relative;
+  z-index: 1;
+}
+
+.welcome-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-8);
+}
+
+.welcome-icon {
+  width: 120px;
+  height: 120px;
+  color: var(--color-text-primary);
+  opacity: 0.9;
+}
+
+.welcome-car { animation: carFloat 6s ease-in-out infinite; }
+.welcome-line { animation: linePulse 3s ease-in-out infinite; }
+.welcome-wheel { animation: wheelSpin 4s linear infinite; }
+
+@keyframes carFloat {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes linePulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+@keyframes wheelSpin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.welcome-title {
+  font-size: 3.5rem;
+  font-weight: 300;
+  color: var(--color-text-primary);
+  margin: 0;
+  letter-spacing: -0.02em;
+  animation: titleFadeIn 2s ease-out;
+}
+
+.welcome-subtitle {
+  font-size: var(--font-size-xl);
+  color: var(--color-text-secondary);
+  margin: 0;
+  font-weight: 400;
+  animation: subtitleFadeIn 2s ease-out 0.5s both;
+}
+
+@keyframes titleFadeIn {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes subtitleFadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.welcome-action {
+  animation: actionFadeIn 2s ease-out 1s both;
+}
+
+.welcome-btn {
+  padding: var(--space-5) var(--space-8);
+  font-size: var(--font-size-lg);
+  font-weight: 500;
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-lg);
+  transition: all var(--transition-normal);
+}
+
+.welcome-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-xl);
+}
+
+.welcome-hint {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  color: var(--color-text-muted);
+  font-size: var(--font-size-base);
+  padding: var(--space-4) var(--space-6);
+  border: 1px solid var(--color-border-secondary);
+  border-radius: var(--radius-xl);
+  background: var(--color-bg-tertiary);
+  animation: hintPulse 3s ease-in-out infinite;
+}
+
+@keyframes actionFadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes hintPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+/* ===== EXPENSE FILTERS ===== */
+.expense-filters {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  margin-bottom: var(--space-4);
+  width: 100%;
+  box-sizing: border-box;
+  max-width: 100%;
+}
+
+.expense-filters__main {
+  width: 100%;
+  box-sizing: border-box;
+  max-width: 100%;
+}
+
+.expense-filters__categories {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-2);
+  width: 100%;
+  box-sizing: border-box;
+  max-width: 100%;
+}
+
+.expense-filters__category-btn {
+  padding: var(--space-1) var(--space-2); /* ← МЕНЬШЕ PADDING */
+  border: 1px solid var(--color-border-secondary);
+  border-radius: var(--radius-md);
+  background: var(--color-bg-card);
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-xs); /* ← МЕНЬШЕ ШРИФТ */
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  text-align: center;
+  white-space: nowrap;
+  min-height: 28px; /* ← ФИКСИРОВАННАЯ ВЫСОТА */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.expense-filters__category-btn:hover {
+  border-color: var(--color-border-accent);
+  color: var(--color-text-primary);
+}
+
+.expense-filters__category-btn--active {
+  background: var(--color-accent);
+  border-color: var(--color-border-accent);
+  color: var(--color-text-primary);
+}
+
+.expense-filters__advanced {
+  background: var(--color-bg-tertiary);
+  border: 1px solid var(--color-border-secondary);
+  border-radius: var(--radius-lg);
+  padding: var(--space-3);
+  width: 100%;
+  box-sizing: border-box;
+  max-width: 100%;
+}
+
+.expense-filters__expanded-content {
+  margin-top: var(--space-3);
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--color-border-primary);
+  width: 100%;
+  box-sizing: border-box;
+  max-width: 100%;
+}
+
+.expense-filters__date-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-3);
+  width: 100%;
+  box-sizing: border-box;
+  max-width: 100%;
+}
+
+.expense-filters__date-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  max-width: 100%;
+}
+
+.expense-filters__date-label {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  font-weight: 500;
+}
+
+.expense-filters__date-input {
+  width: 100%;
+  padding: var(--space-3);
+  border: 1px solid var(--color-border-secondary);
+  border-radius: var(--radius-md);
+  background: var(--color-bg-card);
+  color: var(--color-text-primary);
+  font-size: var(--font-size-sm);
+  box-sizing: border-box;
+  min-width: 0 !important;
+  max-width: 100%;
+  transition: all var(--transition-fast);
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
+
+.expense-filters__date-input:focus {
+  outline: none;
+  border-color: var(--color-border-accent);
+}
+
+.expense-filters__date-input::-webkit-date-and-time-value {
+  text-align: left;
+}
+
+.expense-filters__date-input::-webkit-calendar-picker-indicator {
+  margin-left: 0;
+  padding: 4px;
+  background: transparent;
+  cursor: pointer;
+}
+
+.expense-filters__reset {
+  display: flex;
+  justify-content: center;
+  margin-top: var(--space-2);
+  width: 100%;
+  box-sizing: border-box;
+  max-width: 100%;
+}
+
+.expense-filters__reset-btn {
+  width: auto;
+  min-width: 140px;
+  box-sizing: border-box;
+  max-width: 100%;
+}
+
+/* ===== EXPENSE STATS CARDS ===== */
+.expense-stats__grid {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.expense-stat-card--fuel,
+.expense-stat-card--full-width {
+  grid-column: 1 / -1;
+  text-align: center;
+}
+
+.expense-stat-card__title {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-3);
+}
+
+.expense-stat-card__consumption-single {
+  margin-bottom: var(--space-2);
+}
+
+.expense-stat-card__consumption-value {
+  font-size: var(--font-size-xl);
+  font-weight: 700;
+  color: var(--color-text-primary);
+}
+
+.expense-stat-card__fuel-meta {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  text-align: center;
+  margin-top: var(--space-2);
+  padding-top: var(--space-2);
+  border-top: 1px solid var(--color-border-secondary);
+}
+
+/* ===== COMPACT CARDS ===== */
+.card--compact .card__header {
+  margin-bottom: 0;
+  padding: var(--space-3);
+}
+
+.card--compact .card__title {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  margin: 0 0 var(--space-1) 0;
+}
+
+.card--compact .card__description {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+  margin: 0;
+  opacity: 0.8;
+}
+
+.card--selected {
+  border-color: var(--color-border-accent);
+  background: var(--color-bg-tertiary);
+}
+
+.card__content {
+  width: 100%;
+  box-sizing: border-box;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+/* ===== OVERLAY ===== */
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.85);
+  z-index: 999;
+  backdrop-filter: blur(2px);
+  animation: fadeIn 0.2s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* ===== UTILITY COMPONENTS ===== */
+.menu-toggle-compact {
+  width: 28px;
+  height: 28px;
+  padding: 4px;
+  border: 1px solid var(--color-border-secondary);
+  border-radius: var(--radius-md);
+  background: var(--color-bg-card);
+  color: var(--color-text-primary);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  transition: all var(--transition-fast);
+  flex-shrink: 0;
+}
+
+.menu-toggle-compact:hover {
+  border-color: var(--color-border-accent);
+  background: var(--color-bg-tertiary);
+}
+
+.menu-toggle-compact__line {
+  width: 12px;
+  height: 1px;
+  background: currentColor;
+  border-radius: 1px;
+  transition: all var(--transition-fast);
+}
+
+.main-content__welcome-hint {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  margin: var(--space-2) 0 0 0;
+  opacity: 0.8;
+}
+
+/* ===== SECTION CONTAINER FIXES ===== */
+.maintenance-section,
+.car-data-section,
+.expense-tracker {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+}
+
+.main-content__content > * {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+}
+
+.maintenance-section .section-content,
+.car-data-section .section-content {
+  background: var(--color-bg-secondary);
+  border-radius: var(--radius-lg);
+  margin: 0;
+  padding: var(--space-4);
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  height: 0;
+}
+
+.maintenance-section .section__empty,
+.car-data-section .section__empty {
+  margin: 0;
+  background: transparent;
+  border: none;
+  padding: var(--space-8) var(--space-4);
+}
+
+.car-data-section .card__grid {
+  margin: 0;
+}
+
+.maintenance-section .section__list {
+  margin: 0;
+}
+
+/* ===== RESPONSIVE DESIGN ===== */
+
+/* Tablet */
 @media (max-width: 768px) {
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 300px;
+    max-width: 85vw;
+    z-index: 1001;
+    transform: translateX(-100%);
+  }
+  
+  .sidebar--open {
+    transform: translateX(0);
+  }
+
+  .overlay {
+    z-index: 1000;
+  }
+  
+  .main-content {
+    margin-left: 0;
+    width: 100%;
+  }
+  
+  .sidebar__header,
+  .sidebar__content,
+  .sidebar__footer {
+    padding: var(--space-3);
+  }
+  
   .main-content__header {
     padding: var(--space-3) var(--space-4);
   }
@@ -299,312 +869,38 @@
     height: 11px;
   }
   
-  .section-content {
-    padding: var(--space-3) var(--space-4);
+  .expense-filters__categories {
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-1);
   }
-}
-
-@media (max-width: 480px) {
-  .main-content__header {
+  
+  .expense-filters__category-btn {
+    padding: var(--space-2);
+    font-size: var(--font-size-xs);
+  }
+  
+  .expense-filters__date-grid {
+    grid-template-columns: 1fr;
+    gap: var(--space-2);
+  }
+  
+  .expense-filters__advanced {
+    padding: var(--space-2);
+  }
+  
+  .expense-filters__date-input {
     padding: var(--space-3);
-  }
-  
-  .section-header {
-    top: 0;
-    padding: var(--space-2) var(--space-3);
-  }
-  
-  .section-content {
-    padding: var(--space-3);
-  }
-  
-  .section-title__actions {
-    gap: 2px;
-  }
-}
-
-
-
-/* Overlay стили */
-.overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.85);
-  z-index: 999;
-  backdrop-filter: blur(2px);
-  animation: fadeIn 0.2s ease-out;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-/* Мобильная адаптация */
-@media (max-width: 768px) {
-  .sidebar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    height: 100vh;
-    width: 300px; /* Фиксированная ширина */
-    max-width: 85vw; /* Но не более 85% экрана */
-    z-index: 1001;
-    transform: translateX(-100%); /* По умолчанию скрыт */
-  }
-  
-  .sidebar--open {
-    transform: translateX(0); /* При открытии сдвигаем на экран */
-  }
-
-  .overlay {
-    z-index: 1000; /* Overlay ДОЛЖЕН БЫТЬ НИЖЕ sidebar */
-  }
-  
-  .main-content {
-    margin-left: 0; /* Убираем отступ на мобильных */
+    font-size: 16px;
     width: 100%;
+    min-width: 0 !important;
+    max-width: 100%;
   }
   
-  .sidebar__header {
-    padding: 16px;
+  .expense-filters__reset-btn {
+    width: 100%;
+    min-width: auto;
   }
   
-  .sidebar__content {
-    padding: 16px;
-  }
-  
-  .sidebar__footer {
-    padding: 16px;
-  }
-}
-
-@media (max-width: 480px) {
-  .sidebar {
-    width: 280px; /* Меньшая ширина на очень маленьких экранах */
-    max-width: 90vw;
-  }
-  
-  .sidebar__header {
-    padding: 12px;
-  }
-  
-  .sidebar__content {
-    padding: 12px;
-  }
-  
-  .sidebar__footer {
-    padding: 12px;
-  }
-}
-
-.main-content__welcome-hint {
-  font-size: var(--font-size-sm);
-  color: var(--color-text-muted);
-  margin: var(--space-2) 0 0 0;
-  opacity: 0.8;
-}
-
-/* ===== МИНИМАЛИСТИЧНЫЙ НАЧАЛЬНЫЙ ЭКРАН С АНИМАЦИЕЙ ===== */
-
-.main-content__welcome-screen {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 100vh;
-  padding: var(--space-8);
-  position: relative;
-  overflow: hidden;
-}
-
-/* Анимированный фон */
-.welcome-background {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  opacity: 0.03;
-  pointer-events: none;
-}
-
-.welcome-grid {
-  width: 100%;
-  height: 100%;
-  background-image: 
-    linear-gradient(var(--color-text-primary) 1px, transparent 1px),
-    linear-gradient(90deg, var(--color-text-primary) 1px, transparent 1px);
-  background-size: 50px 50px;
-  animation: gridMove 20s linear infinite;
-}
-
-@keyframes gridMove {
-  0% {
-    transform: translate(0, 0);
-  }
-  100% {
-    transform: translate(50px, 50px);
-  }
-}
-
-/* Основной контент */
-.welcome-container {
-  text-align: center;
-  position: relative;
-  z-index: 1;
-}
-
-.welcome-content {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: var(--space-8);
-}
-
-/* Иконка с анимацией */
-.welcome-icon {
-  width: 120px;
-  height: 120px;
-  color: var(--color-text-primary);
-  opacity: 0.9;
-}
-
-.welcome-car {
-  animation: carFloat 6s ease-in-out infinite;
-}
-
-.welcome-line {
-  animation: linePulse 3s ease-in-out infinite;
-}
-
-.welcome-wheel {
-  animation: wheelSpin 4s linear infinite;
-}
-
-@keyframes carFloat {
-  0%, 100% {
-    transform: translateY(0px);
-  }
-  50% {
-    transform: translateY(-10px);
-  }
-}
-
-@keyframes linePulse {
-  0%, 100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.5;
-  }
-}
-
-@keyframes wheelSpin {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
-}
-
-/* Текст */
-.welcome-title {
-  font-size: 3.5rem;
-  font-weight: 300;
-  color: var(--color-text-primary);
-  margin: 0;
-  letter-spacing: -0.02em;
-  animation: titleFadeIn 2s ease-out;
-}
-
-.welcome-subtitle {
-  font-size: var(--font-size-xl);
-  color: var(--color-text-secondary);
-  margin: 0;
-  font-weight: 400;
-  animation: subtitleFadeIn 2s ease-out 0.5s both;
-}
-
-@keyframes titleFadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes subtitleFadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* Кнопка действия */
-.welcome-action {
-  animation: actionFadeIn 2s ease-out 1s both;
-}
-
-.welcome-btn {
-  padding: var(--space-5) var(--space-8);
-  font-size: var(--font-size-lg);
-  font-weight: 500;
-  border-radius: var(--radius-xl);
-  box-shadow: var(--shadow-lg);
-  transition: all var(--transition-normal);
-}
-
-.welcome-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-xl);
-}
-
-.welcome-hint {
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
-  color: var(--color-text-muted);
-  font-size: var(--font-size-base);
-  padding: var(--space-4) var(--space-6);
-  border: 1px solid var(--color-border-secondary);
-  border-radius: var(--radius-xl);
-  background: var(--color-bg-tertiary);
-  animation: hintPulse 3s ease-in-out infinite;
-}
-
-@keyframes actionFadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes hintPulse {
-  0%, 100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.7;
-  }
-}
-
-/* Адаптивность */
-@media (max-width: 768px) {
   .main-content__welcome-screen {
     padding: var(--space-6);
   }
@@ -630,9 +926,108 @@
     padding: var(--space-4) var(--space-6);
     font-size: var(--font-size-base);
   }
+  
+  .sidebar__actions-row {
+    gap: var(--space-1);
+  }
+  
+  .sidebar__calculator-btn {
+    width: 40px;
+    padding: var(--space-2) var(--space-1);
+  }
+  
+  .sidebar__calculator-btn svg {
+    width: 16px;
+    height: 16px;
+  }
+  
+  .expense-stats__grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-3);
+  }
+  
+    /* Карточка расхода топлива - первая, вся ширина */
+  .expense-stat-card--fuel {
+    width: 100%;
+  }
+  
+    /* Карточка всего расходов - вторая, вся ширина */
+  .expense-stat-card--full-width {
+    width: 100%;
+  }
+
+  .expense-stat-card {
+    padding: var(--space-3);
+  }
+  
+  .expense-stat-card__consumption-value {
+    font-size: var(--font-size-lg);
+  }
+
+   /* Контейнер для двух карточек в строке */
+  .expense-stats__row {
+    display: contents;
+    grid-template-columns: 1fr 1fr; /* ← ДВЕ КОЛОНКИ */
+    gap: var(--space-3);
+    width: 100%;
+  }
+
+    .expense-stats__row .expense-stat-card {
+    margin: 0;
+    width: 100%; /* ← РАСТЯНУТЬ НА ВСЮ ШИРИНУ КОЛОНКИ */
+    min-width: 0; /* ← УБИРАЕМ МИНИМАЛЬНУЮ ШИРИНУ */
+  }
+  
+  .expense-stat-card__value {
+    font-size: var(--font-size-base);
+  }
 }
 
+/* Mobile */
 @media (max-width: 480px) {
+  .sidebar {
+    width: 280px;
+    max-width: 90vw;
+  }
+  
+  .sidebar__header,
+  .sidebar__content,
+  .sidebar__footer {
+    padding: var(--space-2);
+  }
+  
+  .main-content__header {
+    padding: var(--space-3);
+  }
+  
+  .section-header {
+    top: 0;
+    padding: var(--space-2) var(--space-3);
+  }
+  
+  .section-content {
+    padding: var(--space-3);
+  }
+  
+  .section-title__actions {
+    gap: 2px;
+  }
+  
+  .expense-filters__categories {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .expense-filters__category-btn {
+    font-size: 0.7rem;
+    padding: var(--space-1) var(--space-2);
+  }
+  
+  .expense-filters__date-input {
+    padding: var(--space-2) var(--space-3);
+    font-size: 14px;
+  }
+  
   .main-content__welcome-screen {
     padding: var(--space-4);
   }
@@ -649,745 +1044,6 @@
     font-size: var(--font-size-sm);
     padding: var(--space-3) var(--space-4);
   }
-}
-
-/* ===== ОБНОВЛЕННЫЕ СТИЛИ ДЛЯ SIDEBAR И CARDS ===== */
-
-/* Приветственный экран */
-.main-content__welcome {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  padding: var(--space-8);
-  height: 100%;
-  min-height: 60vh;
-}
-
-.main-content__welcome-icon {
-  width: 80px;
-  height: 80px;
-  color: var(--color-text-muted);
-  margin-bottom: var(--space-6);
-  opacity: 0.7;
-}
-
-.main-content__welcome-title {
-  font-size: var(--font-size-2xl);
-  font-weight: 600;
-  color: var(--color-text-primary);
-  margin: 0 0 var(--space-4) 0;
-}
-
-.main-content__welcome-text {
-  font-size: var(--font-size-base);
-  color: var(--color-text-secondary);
-  line-height: 1.5;
-  max-width: 400px;
-  margin: 0;
-}
-
-/* Обновленный хедер сайдбара */
-.sidebar__header-top {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: var(--space-4);
-  gap: var(--space-3);
-}
-
-.sidebar__header-actions {
-  display: flex;
-  gap: var(--space-2);
-  flex-shrink: 0;
-}
-
-/* Кнопка закрытия сайдбара - маленькая */
-.sidebar__close-btn {
-  background: none;
-  border: 1px solid var(--color-border-secondary);
-  border-radius: var(--radius-md);
-  color: var(--color-text-secondary);
-  cursor: pointer;
-  padding: var(--space-2);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 32px;
-  height: 32px;
-  flex-shrink: 0;
-  transition: all var(--transition-fast);
-}
-
-.sidebar__close-btn:hover {
-  border-color: var(--color-border-accent);
-  color: var(--color-text-primary);
-}
-
-/* Компактные карточки автомобилей */
-.sidebar__cars {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
-}
-
-.card--compact .card__header {
-  margin-bottom: 0;
-  padding: var(--space-3);
-}
-
-.card--compact .card__title {
-  font-size: var(--font-size-sm);
-  font-weight: 600;
-  margin: 0 0 var(--space-1) 0;
-}
-
-.card--compact .card__description {
-  font-size: var(--font-size-xs);
-  color: var(--color-text-secondary);
-  margin: 0;
-  opacity: 0.8;
-}
-
-/* Подсветка выбранной карточки */
-.card--selected {
-  border-color: var(--color-border-accent);
-  background: var(--color-bg-tertiary);
-}
-
-
-/* Адаптивность для мобильных */
-@media (max-width: 768px) {
-  .main-content__welcome {
-    padding: var(--space-6);
-    min-height: 50vh;
-  }
-  
-  .main-content__welcome-icon {
-    width: 64px;
-    height: 64px;
-    margin-bottom: var(--space-4);
-  }
-  
-  .main-content__welcome-title {
-    font-size: var(--font-size-xl);
-  }
-  
-  .main-content__welcome-text {
-    font-size: var(--font-size-sm);
-  }
-  
-  .sidebar__header {
-    padding: var(--space-3);
-  }
-  
-  .card--compact .card__header {
-    padding: var(--space-2);
-  }
-}
-
-@media (max-width: 480px) {
-  .main-content__welcome {
-    padding: var(--space-4);
-  }
-  
-  .main-content__welcome-icon {
-    width: 48px;
-    height: 48px;
-  }
-}
-
-/* Кнопки действий в sidebar */
-.sidebar__actions {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-3);
-}
-
-/* Адаптивность для мобильных */
-@media (max-width: 768px) {
-  .sidebar__actions {
-    gap: var(--space-2);
-  }
-}
-
-/* ===== УСИЛЕННОЕ ВЫДЕЛЕНИЕ АКТИВНЫХ КНОПОК ===== */
-.main-content__tabs .btn--primary {
-  background: var(--color-accent);
-  border-color: var(--color-border-accent);
-  color: var(--color-text-primary);
-  box-shadow: var(--shadow-md);
-}
-
-.main-content__tabs .btn--primary::after {
-  content: '';
-  position: absolute;
-  bottom: -1px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 80%;
-  height: 2px;
-  background: var(--color-text-primary);
-  border-radius: 1px;
-  display: none;
-}
-
-.menu-toggle-compact {
-  width: 28px;
-  height: 28px;
-  padding: 4px;
-  border: 1px solid var(--color-border-secondary);
-  border-radius: var(--radius-md);
-  background: var(--color-bg-card);
-  color: var(--color-text-primary);
-  cursor: pointer;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 2px;
-  transition: all var(--transition-fast);
-  flex-shrink: 0;
-}
-
-.menu-toggle-compact:hover {
-  border-color: var(--color-border-accent);
-  background: var(--color-bg-tertiary);
-}
-
-.menu-toggle-compact__line {
-  width: 12px;
-  height: 1px;
-  background: currentColor;
-  border-radius: 1px;
-  transition: all var(--transition-fast);
-}
-
-
-/* ===== ИСПРАВЛЕНИЕ РАСПОЛОЖЕНИЯ КОНТЕЙНЕРОВ РАЗДЕЛОВ ===== */
-
-/* Убеждаемся, что контейнеры разделов на всю ширину */
-.maintenance-section,
-.car-data-section,
-.expense-tracker {
-  width: 100%;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  height: 100%; /* ДОБАВИТЬ */
-  min-height: 0; /* ДОБАВИТЬ */
-}
-
-
-
-
-/* Убираем любые отступы у родительских контейнеров */
-.main-content__content > * {
-  margin: 0;
-  padding: 0;
-  width: 100%;
-}
-
-/* Мобильная адаптация */
-@media (max-width: 768px) {
-  .section-header {
-    padding: var(--space-2) var(--space-4);
-    top: 70px;
-  }
-  
-  .section-content {
-    padding: var(--space-3) var(--space-4);
-  }
-}
-
-@media (max-width: 480px) {
-  .section-header {
-    padding: var(--space-2) var(--space-3);
-    top: 65px;
-  }
-  
-  .section-content {
-    padding: var(--space-3);
-  }
-}
-
-/* ===== ИСПРАВЛЕНИЕ ФИЛЬТРОВ РАСХОДОВ ===== */
-
-/* ===== ИСПРАВЛЕННЫЕ ФИЛЬТРЫ РАСХОДОВ ===== */
-
-.expense-filters {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-4);
-  margin-bottom: var(--space-4);
-  width: 100%;
-  box-sizing: border-box;
-  max-width: 100%;
-}
-
-
-
-/* Основные фильтры - категории в сетку */
-.expense-filters__main {
-  width: 100%;
-  box-sizing: border-box;
-  max-width: 100%;
-}
-
-.expense-filters__categories {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: var(--space-2);
-  width: 100%;
-  box-sizing: border-box;
-  max-width: 100%;
-}
-
-.expense-filters__category-btn {
-  padding: var(--space-2) var(--space-3);
-  border: 1px solid var(--color-border-secondary);
-  border-radius: var(--radius-md);
-  background: var(--color-bg-card);
-  color: var(--color-text-secondary);
-  font-size: var(--font-size-sm);
-  font-weight: 500;
-  cursor: pointer;
-  transition: all var(--transition-fast);
-  text-align: center;
-  white-space: nowrap;
-  box-sizing: border-box;
-  max-width: 100%;
-}
-
-.expense-filters__category-btn:hover {
-  border-color: var(--color-border-accent);
-  color: var(--color-text-primary);
-}
-
-.expense-filters__category-btn--active {
-  background: var(--color-accent);
-  border-color: var(--color-border-accent);
-  color: var(--color-text-primary);
-}
-
-/* Дополнительные фильтры */
-.expense-filters__advanced {
-  background: var(--color-bg-tertiary);
-  border: 1px solid var(--color-border-secondary);
-  border-radius: var(--radius-lg);
-  padding: var(--space-3);
-  width: 100%;
-  box-sizing: border-box;
-  max-width: 100%;
-}
-
-.expense-filters__expand-btn {
-  width: 100%;
-  justify-content: center;
-  box-sizing: border-box;
-  max-width: 100%;
-}
-
-.expense-filters__expand-icon {
-  font-size: var(--font-size-xs);
-  margin-right: var(--space-2);
-}
-
-.expense-filters__expanded-content {
-  margin-top: var(--space-3);
-  padding-top: var(--space-3);
-  border-top: 1px solid var(--color-border-primary);
-  width: 100%;
-  box-sizing: border-box;
-  max-width: 100%;
-}
-
-/* Сетка дат - правильное расположение */
-.expense-filters__date-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: var(--space-3);
-  width: 100%;
-  box-sizing: border-box;
-  max-width: 100%;
-}
-
-.expense-filters__date-group {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
-  width: 100%;
-  min-width: 0;
-  box-sizing: border-box;
-  max-width: 100%;
-}
-
-.expense-filters__date-label {
-  font-size: var(--font-size-sm);
-  color: var(--color-text-secondary);
-  font-weight: 500;
-}
-
-/* КРИТИЧЕСКИ ВАЖНО: Переопределяем стандартное поведение полей даты */
-.expense-filters__date-input {
-  width: 100%;
-  padding: var(--space-3);
-  border: 1px solid var(--color-border-secondary);
-  border-radius: var(--radius-md);
-  background: var(--color-bg-card);
-  color: var(--color-text-primary);
-  font-size: var(--font-size-sm);
-  box-sizing: border-box;
-  min-width: 0 !important; /* Переопределяем минимальную ширину браузера */
-  max-width: 100%;
-  transition: all var(--transition-fast);
-  /* Убираем стандартное поведение date input */
-  appearance: none;
-  -webkit-appearance: none;
-  -moz-appearance: none;
-}
-
-.expense-filters__date-input:focus {
-  outline: none;
-  border-color: var(--color-border-accent);
-}
-
-/* Специфичные стили для WebKit браузеров */
-.expense-filters__date-input::-webkit-date-and-time-value {
-  text-align: left;
-}
-
-.expense-filters__date-input::-webkit-calendar-picker-indicator {
-  margin-left: 0;
-  padding: 4px;
-  background: transparent;
-  cursor: pointer;
-}
-
-/* Кнопка сброса - ВНИЗУ и по центру */
-.expense-filters__reset {
-  display: flex;
-  justify-content: center;
-  margin-top: var(--space-2);
-  width: 100%;
-  box-sizing: border-box;
-  max-width: 100%;
-}
-
-.expense-filters__reset-btn {
-  width: auto;
-  min-width: 140px;
-  box-sizing: border-box;
-  max-width: 100%;
-}
-
-/* Мобильная адаптация */
-@media (max-width: 768px) {
-  .expense-filters__categories {
-    grid-template-columns: repeat(3, 1fr);
-    gap: var(--space-1);
-  }
-  
-  .expense-filters__category-btn {
-    padding: var(--space-2);
-    font-size: var(--font-size-xs);
-  }
-  
-  .expense-filters__date-grid {
-    grid-template-columns: 1fr;
-    gap: var(--space-2);
-  }
-  
-  .expense-filters__advanced {
-    padding: var(--space-2);
-  }
-  
-  .expense-filters__date-input {
-    padding: var(--space-3);
-    font-size: 16px;
-    width: 100%;
-    /* На мобильных делаем еще более компактным */
-    min-width: 0 !important;
-    max-width: 100%;
-  }
-  
-  .expense-filters__reset-btn {
-    width: 100%;
-    min-width: auto;
-  }
-}
-
-@media (max-width: 480px) {
-  .expense-filters__categories {
-    grid-template-columns: repeat(2, 1fr);
-  }
-  
-  .expense-filters__category-btn {
-    font-size: 0.7rem;
-    padding: var(--space-1) var(--space-2);
-  }
-  
-  .expense-filters__date-input {
-    padding: var(--space-2) var(--space-3);
-    /* На очень маленьких экранах уменьшаем шрифт */
-    font-size: 14px;
-  }
-}
-
-
-.card__content {
-  width: 100%;
-  box-sizing: border-box;
-  max-width: 100%;
-  overflow-x: hidden;
-}
-
-.sidebar__footer {
-  margin-top: auto;
-  padding: 16px;
-  border-top: 1px solid var(--border-color);
-  background: var(--card-bg);
-}
-
-/* === УНИФИКАЦИЯ СТИЛЕЙ КОНТЕЙНЕРОВ РАЗДЕЛОВ === */
-
-/* ОСНОВНОЙ СТИЛЬ КОНТЕЙНЕРА КАК В УЧЕТЕ РАСХОДОВ */
-.maintenance-section .section-content,
-.car-data-section .section-content {
-  background: var(--color-bg-secondary);
-  border-radius: var(--radius-lg);
-  margin: 0;
-  padding: var(--space-4);
-  flex: 1;
-  min-height: 0;
-  overflow-y: auto;
-  height: 0;
-}
-
-/* Исправляем отступы для пустых состояний в унифицированных контейнерах */
-.maintenance-section .section__empty,
-.car-data-section .section__empty {
-  margin: 0;
-  background: transparent;
-  border: none;
-  padding: var(--space-8) var(--space-4);
-}
-
-/* Исправляем сетку в CarDataSection для нового контейнера */
-.car-data-section .card__grid {
-  margin: 0;
-}
-
-/* Исправляем списки в MaintenanceSection для нового контейнера */
-.maintenance-section .section__list {
-  margin: 0;
-}
-
-/* ===== ОБНОВЛЕННЫЕ СТИЛИ SIDEBAR ===== */
-
-.sidebar {
-  width: 280px;
-  background: var(--color-bg-secondary);
-  border-right: 1px solid var(--color-border-primary);
-  display: flex;
-  flex-direction: column;
-  height: 100vh;
-  overflow-y: auto;
-  position: relative;
-}
-
-.sidebar__header {
-  padding: var(--space-4);
-  border-bottom: 1px solid var(--color-border-primary);
-  background: var(--color-bg-tertiary);
-  flex-shrink: 0;
-}
-
-.sidebar__header-top {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: var(--space-3);
-  gap: var(--space-2);
-}
-
-.sidebar__title {
-  margin: 0;
-  font-size: var(--font-size-lg);
-  font-weight: 600;
-  color: var(--color-text-primary);
-}
-
-.sidebar__close-btn {
-  width: 28px;
-  height: 28px;
-  padding: var(--space-1);
-  border: 1px solid var(--color-border-secondary);
-  border-radius: var(--radius-sm);
-  background: var(--color-bg-card);
-  color: var(--color-text-secondary);
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all var(--transition-fast);
-  flex-shrink: 0;
-}
-
-.sidebar__close-btn:hover {
-  border-color: var(--color-border-accent);
-  color: var(--color-text-primary);
-}
-
-/* Основные действия */
-.sidebar__actions {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
-}
-
-.sidebar__actions-row {
-  display: flex;
-  gap: var(--space-2);
-  align-items: stretch;
-  width: 100%;
-}
-
-/* Кнопка добавления авто */
-.sidebar__actions-row .btn--full {
-  flex: 1;
-  min-width: 0;
-  height: auto;
-}
-
-/* Кнопка калькулятора - такая же высота как у кнопки добавления */
-.sidebar__calculator-btn {
-  width: 44px;
-  height: auto;
-  padding: var(--space-2) var(--space-1);
-  border: 1px solid var(--color-border-primary);
-  border-radius: var(--radius-md);
-  background: var(--color-bg-tertiary);
-  color: #ffffff !important;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all var(--transition-fast);
-  flex-shrink: 0;
-}
-
-.sidebar__calculator-btn:hover {
-  background: var(--color-bg-card);
-  border-color: #ffffff;
-  color: var(--color-text-primary);
-  transform: translateY(-1px);
-}
-
-.sidebar__calculator-btn svg {
-  width: 18px;
-  height: 18px;
-  color: #ffffff !important;
-}
-
-/* Контент сайдбара */
-.sidebar__content {
-  flex: 1;
-  padding: var(--space-4);
-  overflow-y: auto;
-  min-height: 0;
-}
-
-.sidebar__empty {
-  text-align: center;
-  padding: var(--space-8) var(--space-4);
-}
-
-.sidebar__empty-text {
-  margin: 0;
-  font-size: var(--font-size-sm);
-  color: var(--color-text-secondary);
-}
-
-.sidebar__cars {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
-}
-
-/* Футер с DataManager */
-.sidebar__footer {
-  margin-top: auto;
-  padding: var(--space-4);
-  border-top: 1px solid var(--color-border-primary);
-  background: var(--color-bg-tertiary);
-  flex-shrink: 0;
-}
-
-/* Мобильная адаптация */
-@media (max-width: 768px) {
-  .sidebar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    height: 100vh;
-    width: 300px;
-    max-width: 85vw;
-    z-index: 1001;
-    transform: translateX(-100%);
-    transition: transform 0.3s ease;
-  }
-  
-  .sidebar--open {
-    transform: translateX(0);
-  }
-  
-  .sidebar__header {
-    padding: var(--space-3);
-  }
-  
-  .sidebar__content {
-    padding: var(--space-3);
-  }
-  
-  .sidebar__footer {
-    padding: var(--space-3);
-  }
-  
-  .sidebar__actions-row {
-    gap: var(--space-1);
-  }
-  
-  .sidebar__calculator-btn {
-    width: 40px;
-    padding: var(--space-2) var(--space-1);
-  }
-  
-  .sidebar__calculator-btn svg {
-    width: 16px;
-    height: 16px;
-  }
-}
-
-@media (max-width: 480px) {
-  .sidebar {
-    width: 280px;
-    max-width: 90vw;
-  }
-  
-  .sidebar__header {
-    padding: var(--space-2);
-  }
-  
-  .sidebar__content {
-    padding: var(--space-2);
-  }
-  
-  .sidebar__footer {
-    padding: var(--space-2);
-  }
   
   .sidebar__calculator-btn {
     width: 36px;
@@ -1397,711 +1053,19 @@
     width: 14px;
     height: 14px;
   }
-}
-
-/* ===== СТИЛИ ДЛЯ КАРТОЧКИ РАСХОДА ТОПЛИВА ===== */
-
-.expense-stat-card--fuel {
-  text-align: left;
-  grid-column: 1 / -1; /* Занимает всю ширину на мобильных */
-}
-
-.expense-stat-card__title {
-  font-size: var(--font-size-sm);
-  font-weight: 600;
-  color: var(--color-text-primary);
-  margin-bottom: var(--space-3);
-  text-align: center;
-}
-
-.expense-stat-card__consumption {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
-  margin-bottom: var(--space-2);
-}
-
-.expense-stat-card__consumption-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: var(--space-2);
-}
-
-.expense-stat-card__consumption-label {
-  font-size: var(--font-size-xs);
-  color: var(--color-text-secondary);
-  flex: 1;
-}
-
-.expense-stat-card__consumption-value {
-  font-size: var(--font-size-sm);
-  font-weight: 600;
-  color: var(--color-text-primary);
-  flex-shrink: 0;
-}
-
-.expense-stat-card__fuel-meta {
-  font-size: var(--font-size-xs);
-  color: var(--color-text-muted);
-  text-align: center;
-  margin-top: var(--space-2);
-  padding-top: var(--space-2);
-  border-top: 1px solid var(--color-border-secondary);
-}
-
-/* Адаптивность для карточки расхода топлива */
-@media (max-width: 768px) {
-  .expense-stat-card--fuel {
-    grid-column: 1 / -1;
-  }
   
-  .expense-stat-card__consumption-item {
-    flex-direction: column;
-    align-items: stretch;
-    gap: var(--space-1);
-  }
-  
-  .expense-stat-card__consumption-value {
-    text-align: left;
-  }
-}
-
-@media (max-width: 480px) {
-  .expense-stat-card__title {
-    font-size: var(--font-size-xs);
-  }
-  
-  .expense-stat-card__consumption-label,
-  .expense-stat-card__consumption-value {
-    font-size: var(--font-size-xs);
-  }
-}
-
-/* ===== ОБНОВЛЕННЫЕ СТИЛИ ДЛЯ КАРТОЧЕК ===== */
-
-.expense-stats__grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr; /* Три колонки для обычных карточек */
-  gap: var(--space-4);
-}
-
-.expense-stat-card--fuel {
-  grid-column: 1 / -1; /* Занимает всю ширину */
-  text-align: center;
-}
-
-.expense-stat-card__title {
-  font-size: var(--font-size-sm);
-  font-weight: 600;
-  color: var(--color-text-primary);
-  margin-bottom: var(--space-3);
-}
-
-/* 👇 ТЕПЕРЬ В ОДНУ СТРОКУ */
-.expense-stat-card__consumption-row {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: var(--space-6);
-  margin-bottom: var(--space-2);
-}
-
-.expense-stat-card__consumption-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: var(--space-1);
-}
-
-.expense-stat-card__consumption-label {
-  font-size: var(--font-size-xs);
-  color: var(--color-text-secondary);
-  text-align: center;
-}
-
-.expense-stat-card__consumption-value {
-  font-size: var(--font-size-base);
-  font-weight: 600;
-  color: var(--color-text-primary);
-}
-
-.expense-stat-card__fuel-meta {
-  font-size: var(--font-size-xs);
-  color: var(--color-text-muted);
-  text-align: center;
-  margin-top: var(--space-2);
-  padding-top: var(--space-2);
-  border-top: 1px solid var(--color-border-secondary);
-}
-
-/* Мобильная адаптация */
-@media (max-width: 768px) {
-  .expense-stats__grid {
-    grid-template-columns: 1fr; /* Одна колонка на мобильных */
-    gap: var(--space-3);
-  }
-  
-  .expense-stat-card--fuel {
-    grid-column: 1;
-    order: -1; /* Первая карточка */
-  }
-  
-  .expense-stat-card__consumption-row {
-    flex-direction: column;
-    gap: var(--space-3);
-  }
-  
-  .expense-stat-card {
-    padding: var(--space-3);
-  }
-  
-  .expense-stat-card__value {
-    font-size: var(--font-size-lg);
-  }
-}
-
-@media (max-width: 480px) {
   .expense-stats__grid {
     gap: var(--space-2);
   }
   
   .expense-stat-card {
     padding: var(--space-2);
-  }
-  
-  .expense-stat-card__title {
-    font-size: var(--font-size-xs);
-  }
-  
-  .expense-stat-card__consumption-label {
-    font-size: var(--font-size-xs);
-  }
-  
-  .expense-stat-card__consumption-value {
-    font-size: var(--font-size-sm);
-  }
-  
-  .expense-stat-card__value {
-    font-size: var(--font-size-base);
-  }
-}
-
-/* Для очень маленьких экранов */
-@media (max-width: 360px) {
-  .expense-stat-card__consumption-row {
-    gap: var(--space-2);
-  }
-}
-
-/* ===== ОБНОВЛЕННЫЕ СТИЛИ ДЛЯ КАРТОЧЕК ===== */
-
-.expense-stats__grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr; /* Три колонки для обычных карточек */
-  gap: var(--space-4);
-}
-
-.expense-stat-card--fuel {
-  grid-column: 1 / -1; /* Занимает всю ширину */
-  text-align: center;
-}
-
-.expense-stat-card__title {
-  font-size: var(--font-size-sm);
-  font-weight: 600;
-  color: var(--color-text-primary);
-  margin-bottom: var(--space-3);
-}
-
-/* 👇 ТЕПЕРЬ В ОДНУ СТРОКУ */
-.expense-stat-card__consumption-row {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: var(--space-6);
-  margin-bottom: var(--space-2);
-}
-
-.expense-stat-card__consumption-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: var(--space-1);
-}
-
-.expense-stat-card__consumption-label {
-  font-size: var(--font-size-xs);
-  color: var(--color-text-secondary);
-  text-align: center;
-}
-
-.expense-stat-card__consumption-value {
-  font-size: var(--font-size-base);
-  font-weight: 600;
-  color: var(--color-text-primary);
-}
-
-.expense-stat-card__fuel-meta {
-  font-size: var(--font-size-xs);
-  color: var(--color-text-muted);
-  text-align: center;
-  margin-top: var(--space-2);
-  padding-top: var(--space-2);
-  border-top: 1px solid var(--color-border-secondary);
-}
-
-/* Мобильная адаптация - ИСПРАВЛЕНО */
-@media (max-width: 768px) {
-  .expense-stats__grid {
-    grid-template-columns: 1fr 1fr 1fr; /* ТРИ КАРТОЧКИ В ОДНУ СТРОКУ */
-    gap: var(--space-3);
-  }
-  
-  .expense-stat-card--fuel {
-    grid-column: 1 / -1; /* Карточка расхода топлива на всю ширину */
-    order: -1; /* Первая карточка */
-    margin-bottom: var(--space-3);
-  }
-  
-  .expense-stat-card__consumption-row {
-    flex-direction: row; /* В ОДНУ СТРОКУ НА МОБИЛЬНЫХ */
-    justify-content: space-around;
-    gap: var(--space-4);
-  }
-  
-  .expense-stat-card {
-    padding: var(--space-3);
-  }
-  
-  .expense-stat-card__value {
-    font-size: var(--font-size-base);
-  }
-  
-  .expense-stat-card__label {
-    font-size: var(--font-size-xs);
-  }
-}
-
-@media (max-width: 480px) {
-  .expense-stats__grid {
-    grid-template-columns: 1fr 1fr 1fr; /* ВСЕГДА ТРИ В СТРОКУ */
-    gap: var(--space-2);
-  }
-  
-  .expense-stat-card {
-    padding: var(--space-2);
-  }
-  
-  .expense-stat-card__title {
-    font-size: var(--font-size-xs);
-  }
-  
-  .expense-stat-card__consumption-row {
-    gap: var(--space-3);
-  }
-  
-  .expense-stat-card__consumption-label {
-    font-size: var(--font-size-xs);
-  }
-  
-  .expense-stat-card__consumption-value {
-    font-size: var(--font-size-sm);
-  }
-  
-  .expense-stat-card__value {
-    font-size: var(--font-size-sm);
-  }
-  
-  .expense-stat-card__label {
-    font-size: var(--font-size-xs);
-  }
-}
-
-/* Для очень маленьких экранов */
-@media (max-width: 360px) {
-  .expense-stats__grid {
-    grid-template-columns: 1fr 1fr 1fr; /* ТРИ КАРТОЧКИ ДАЖЕ НА 360px */
-    gap: var(--space-1);
-  }
-  
-  .expense-stat-card {
-    padding: var(--space-1);
-  }
-  
-  .expense-stat-card__consumption-row {
-    gap: var(--space-2);
-  }
-  
-  .expense-stat-card__consumption-label,
-  .expense-stat-card__consumption-value,
-  .expense-stat-card__value,
-  .expense-stat-card__label {
-    font-size: 0.6rem;
-  }
-}
-
-/* ===== ОБНОВЛЕННЫЕ СТИЛИ ДЛЯ КАРТОЧЕК ===== */
-
-.expense-stats__grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr; /* ДВЕ КАРТОЧКИ В СТРОКУ */
-  gap: var(--space-4);
-}
-
-.expense-stat-card--fuel {
-  grid-column: 1 / -1; /* Карточка расхода на всю ширину */
-  text-align: center;
-}
-
-.expense-stat-card__title {
-  font-size: var(--font-size-sm);
-  font-weight: 600;
-  color: var(--color-text-primary);
-  margin-bottom: var(--space-3);
-}
-
-.expense-stat-card__consumption-single {
-  margin-bottom: var(--space-2);
-}
-
-.expense-stat-card__consumption-value {
-  font-size: var(--font-size-xl);
-  font-weight: 700;
-  color: var(--color-text-primary);
-}
-
-.expense-stat-card__fuel-meta {
-  font-size: var(--font-size-xs);
-  color: var(--color-text-muted);
-  text-align: center;
-  margin-top: var(--space-2);
-  padding-top: var(--space-2);
-  border-top: 1px solid var(--color-border-secondary);
-}
-
-/* Мобильная адаптация */
-@media (max-width: 768px) {
-  .expense-stats__grid {
-    grid-template-columns: 1fr 1fr; /* ДВЕ КАРТОЧКИ В СТРОКУ НА МОБИЛЬНЫХ */
-    gap: var(--space-3);
-  }
-  
-  .expense-stat-card--fuel {
-    grid-column: 1 / -1;
-  }
-  
-  .expense-stat-card {
-    padding: var(--space-3);
-  }
-  
-  .expense-stat-card__consumption-value {
-    font-size: var(--font-size-lg);
-  }
-  
-  .expense-stat-card__value {
-    font-size: var(--font-size-base);
-  }
-}
-
-@media (max-width: 480px) {
-  .expense-stats__grid {
-    gap: var(--space-2);
-  }
-  
-  .expense-stat-card {
-    padding: var(--space-2);
-  }
-  
-  .expense-stat-card__title {
-    font-size: var(--font-size-xs);
-  }
-  
-  .expense-stat-card__consumption-value {
-    font-size: var(--font-size-base);
-  }
-  
-  .expense-stat-card__value {
-    font-size: var(--font-size-sm);
-  }
-}
-
-/* ===== ОБНОВЛЕННЫЕ СТИЛИ ДЛЯ КАРТОЧЕК ===== */
-
-.expense-stats__grid {
-  display: grid;
-  grid-template-columns: 1fr; /* Одна колонка по умолчанию */
-  gap: var(--space-4);
-}
-
-.expense-stat-card--fuel {
-  grid-column: 1 / -1; /* Занимает всю ширину */
-  text-align: center;
-}
-
-.expense-stat-card--full-width {
-  grid-column: 1 / -1; /* Занимает всю ширину */
-}
-
-.expense-stat-card__title {
-  font-size: var(--font-size-sm);
-  font-weight: 600;
-  color: var(--color-text-primary);
-  margin-bottom: var(--space-3);
-}
-
-.expense-stat-card__consumption-single {
-  margin-bottom: var(--space-2);
-}
-
-.expense-stat-card__consumption-value {
-  font-size: var(--font-size-xl);
-  font-weight: 700;
-  color: var(--color-text-primary);
-}
-
-.expense-stat-card__fuel-meta {
-  font-size: var(--font-size-xs);
-  color: var(--color-text-muted);
-  text-align: center;
-  margin-top: var(--space-2);
-  padding-top: var(--space-2);
-  border-top: 1px solid var(--color-border-secondary);
-}
-
-/* Десктопная версия */
-@media (min-width: 769px) {
-  .expense-stats__grid {
-    grid-template-columns: 1fr 1fr; /* Две колонки для карточек текущего и прошлого месяца */
-    gap: var(--space-4);
-  }
-  
-  .expense-stat-card--fuel,
-  .expense-stat-card--full-width {
-    grid-column: 1 / -1; /* На всю ширину */
-  }
-}
-
-/* Мобильная адаптация */
-@media (max-width: 768px) {
-  .expense-stats__grid {
-    grid-template-columns: 1fr; /* Одна колонка на мобильных */
-    gap: var(--space-3);
-  }
-  
-  .expense-stat-card--fuel,
-  .expense-stat-card--full-width {
-    grid-column: 1;
-  }
-  
-  .expense-stat-card {
-    padding: var(--space-3);
-  }
-  
-  .expense-stat-card__consumption-value {
-    font-size: var(--font-size-lg);
-  }
-  
-  .expense-stat-card__value {
-    font-size: var(--font-size-base);
-  }
-}
-
-@media (max-width: 480px) {
-  .expense-stats__grid {
-    gap: var(--space-2);
-  }
-  
-  .expense-stat-card {
-    padding: var(--space-2);
-  }
-  
-  .expense-stat-card__title {
-    font-size: var(--font-size-xs);
-  }
-  
-  .expense-stat-card__consumption-value {
-    font-size: var(--font-size-base);
-  }
-  
-  .expense-stat-card__value {
-    font-size: var(--font-size-sm);
-  }
-}
-
-/* ===== ОБНОВЛЕННЫЕ СТИЛИ ДЛЯ КАРТОЧЕК ===== */
-
-.expense-stats__grid {
-  display: grid;
-  grid-template-columns: 1fr; /* Одна колонка по умолчанию для мобильных */
-  gap: var(--space-4);
-}
-
-.expense-stat-card--fuel {
-  grid-column: 1 / -1; /* Занимает всю ширину */
-  text-align: center;
-}
-
-.expense-stat-card--full-width {
-  grid-column: 1 / -1; /* Занимает всю ширину */
-}
-
-
-
-.expense-stat-card__title {
-  font-size: var(--font-size-sm);
-  font-weight: 600;
-  color: var(--color-text-primary);
-  margin-bottom: var(--space-3);
-}
-
-.expense-stat-card__consumption-single {
-  margin-bottom: var(--space-2);
-}
-
-.expense-stat-card__consumption-value {
-  font-size: var(--font-size-xl);
-  font-weight: 700;
-  color: var(--color-text-primary);
-}
-
-.expense-stat-card__fuel-meta {
-  font-size: var(--font-size-xs);
-  color: var(--color-text-muted);
-  text-align: center;
-  margin-top: var(--space-2);
-  padding-top: var(--space-2);
-  border-top: 1px solid var(--color-border-secondary);
-}
-
-/* Десктопная версия */
-@media (min-width: 769px) {
-  .expense-stats__grid {
-    grid-template-columns: 1fr 1fr; /* Две колонки для карточек текущего и прошлого месяца */
-    gap: var(--space-4);
-  }
-  
-  .expense-stat-card--fuel,
-  .expense-stat-card--full-width {
-    grid-column: 1 / -1; /* На всю ширину */
-  }
-  
- 
-}
-
-/* Мобильная адаптация */
-@media (max-width: 768px) {
-  .expense-stats__grid {
-    grid-template-columns: 1fr; /* Одна колонка на мобильных */
-    gap: var(--space-3);
-  }
-  
-  .expense-stat-card--fuel {
-    grid-column: 1;
-    order: 1; /* Первая карточка */
-  }
-  
-  .expense-stat-card--full-width {
-    grid-column: 1;
-    order: 2; /* Вторая карточка */
-  }
-  
-  /* Контейнер для двух карточек в строке на мобильных */
-  .expense-stat-card--half {
-    order: 3; /* Третья и четвертая карточки */
-  }
-  
-  .expense-stat-card--half:first-of-type {
-    margin-bottom: var(--space-3);
-  }
-  
-  .expense-stat-card {
-    padding: var(--space-3);
-  }
-  
-  .expense-stat-card__consumption-value {
-    font-size: var(--font-size-lg);
-  }
-  
-  .expense-stat-card__value {
-    font-size: var(--font-size-base);
-  }
-}
-
-/* Альтернативный вариант для мобильных - две карточки в строке */
-@media (max-width: 768px) {
-  .expense-stats__grid {
-    grid-template-columns: 1fr; /* Основная структура - одна колонка */
-    gap: var(--space-3);
-  }
-  
-  .expense-stat-card--fuel {
-    order: 1;
-  }
-  
-  .expense-stat-card--full-width {
-    order: 2;
-  }
-  
-  /* Контейнер для двух половинных карточек */
-  .expense-stats__half-container {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: var(--space-3);
-    order: 3;
-  }
-}
-
-/* Улучшенная мобильная версия */
-@media (max-width: 768px) {
-  .expense-stats__grid {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-3);
-  }
-  
-  .expense-stat-card--fuel {
-    order: 1;
     width: 100%;
-  }
-  
-  .expense-stat-card--full-width {
-    order: 2;
-    width: 100%;
-  }
-  
-  /* Контейнер для двух карточек в строке */
-  .expense-stats__row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: var(--space-3);
-    order: 3;
-    width: 100%;
-  }
-  
-  .expense-stat-card--half {
-    margin: 0;
-    width: 100%;
-  }
-}
-
-/* Для очень маленьких экранов */
-@media (max-width: 480px) {
-  .expense-stats__grid {
-    gap: var(--space-2);
-  }
-  
-  .expense-stats__row {
-    gap: var(--space-2);
-  }
-  
-  .expense-stat-card {
-    padding: var(--space-2);
+    box-sizing: border-box;
   }
   
   .expense-stat-card__title {
     font-size: var(--font-size-xs);
-    margin-bottom: var(--space-2);
   }
   
   .expense-stat-card__consumption-value {
@@ -2121,22 +1085,71 @@
   }
 }
 
-/* Для экранов меньше 360px */
+/* Desktop enhancements */
+@media (min-width: 769px) {
+  .expense-stats__grid {
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-4);
+  }
+  
+  .expense-stat-card--fuel,
+  .expense-stat-card--full-width {
+    grid-column: 1 / -1;
+  }
+}
+
+/* === ИСПРАВЛЕНИЯ ДЛЯ ФИЛЬТРОВ РАСХОДОВ === */
+
+/* Заголовок категорий */
+.expense-filters__categories-label {
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  margin-bottom: var(--space-3);
+  display: block;
+}
+
+/* Кнопка дополнительных фильтров - выравнивание по центру */
+.expense-filters__expand-btn {
+  justify-content: center !important;
+  width: 100%;
+}
+
+/* Мобильная версия фильтров */
+@media (max-width: 768px) {
+  .expense-filters__categories-section {
+    margin-top: var(--space-4);
+  }
+  
+  .expense-filters__categories-label {
+    text-align: center;
+    font-size: var(--font-size-sm);
+    margin-bottom: var(--space-2);
+  }
+  
+  /* Уменьшаем кнопки категорий */
+  .expense-filters__categories {
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-1);
+  }
+  
+  .expense-filters__category-btn {
+    padding: var(--space-1);
+    font-size: 0.7rem; /* ← ЕЩЕ МЕНЬШЕ НА МОБИЛЬНЫХ */
+    min-height: 24px;
+  }
+}
+
+/* Для очень маленьких экранов */
 @media (max-width: 360px) {
   .expense-stats__row {
-    grid-template-columns: 1fr; /* На очень маленьких экранах - одна колонка */
+    grid-template-columns: 1fr 1fr;
     gap: var(--space-2);
+    width: 100%;
   }
   
-  .expense-stat-card {
-    padding: var(--space-1);
-  }
-  
-  .expense-stat-card__value {
-    font-size: var(--font-size-xs);
-  }
-  
-  .expense-stat-card__label {
-    font-size: 0.6rem;
+  .expense-stats__row .expense-stat-card {
+    padding: var(--space-2);
+    min-width: 0; /* ← УБИРАЕМ МИНИМАЛЬНУЮ ШИРИНУ */
   }
 }

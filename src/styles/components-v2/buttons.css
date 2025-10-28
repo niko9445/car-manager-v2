@@ -284,3 +284,47 @@
     padding-right: 50px;
   }
 }
+
+/* === КНОПКИ КАЛЬКУЛЯТОРА - МОБИЛЬНАЯ ВЕРСИЯ === */
+.fuel-calculator-actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  width: 100%;
+}
+
+.fuel-calculator-actions__row {
+  display: flex;
+  gap: var(--space-3);
+  width: 100%;
+}
+
+.fuel-calculator-actions__row--single {
+  justify-content: stretch;
+}
+
+.fuel-calculator-actions__row--double {
+  justify-content: space-between;
+}
+
+/* На мобильных - вертикальное расположение */
+@media (max-width: 768px) {
+  .fuel-calculator-actions {
+    gap: var(--space-2);
+  }
+  
+  .fuel-calculator-actions__row {
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+  
+  .fuel-calculator-actions__row--double {
+    flex-direction: row;
+    gap: var(--space-3);
+  }
+  
+  .fuel-calculator-actions .btn {
+    flex: 1;
+    min-width: 0;
+  }
+}
