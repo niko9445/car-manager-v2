@@ -327,4 +327,9 @@
     flex: 1;
     min-width: 0;
   }
+
+  .fuel-calculator-actions .btn1 {
+    flex: 1;
+    min-width: 0;
+  }
 }
