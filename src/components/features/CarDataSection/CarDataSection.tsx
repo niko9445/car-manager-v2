@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { CarDataSectionProps } from '../../../types';
+import DataCard from './DataCard';
 
 const CarDataSection: React.FC<CarDataSectionProps> = ({ 
   car, 
@@ -79,27 +80,34 @@ const CarDataSection: React.FC<CarDataSectionProps> = ({
 
       {/* ПРОКРУЧИВАЕМЫЙ КОНТЕНТ */}
       <div className="section-content">
-        <div className="card__grid">
-          {/* Основные данные автомобиля */}
-          {allDataItems.map((item) => (
-            <div key={item.id} className="card__grid-item">
-              <span className="card__grid-label">{item.name}</span>
-              <span className="card__grid-value">{item.value}</span>
-            </div>
-          ))}
-          
-          {/* Дополнительные данные из carData */}
-          {currentCar.carData && currentCar.carData.map((dataEntry) => 
-            dataEntry.fields.map((field, index) => (
-              <div key={`${dataEntry.id}-${index}`} className="card__grid-item">
-                <span className="card__grid-label">{field.name}</span>
-                <span className="card__grid-value">
-                  {field.value} {field.unit && ` ${field.unit}`}
-                </span>
+        {/* Основные данные автомобиля - всегда видимые */}
+        <div className="car-data-section__basic">
+          <h3 className="car-data-section__subtitle">Основная информация</h3>
+          <div className="card__grid card__grid--basic">
+            {allDataItems.map((item) => (
+              <div key={item.id} className="card__grid-item card__grid-item--basic">
+                <span className="card__grid-label">{item.name}</span>
+                <span className="card__grid-value">{item.value}</span>
               </div>
-            ))
-          )}
+            ))}
+          </div>
         </div>
+
+        {/* Дополнительные данные с аккордеон-карточками */}
+        {currentCar.carData && currentCar.carData.length > 0 && (
+          <div className="car-data-section__additional">
+            <h3 className="car-data-section__subtitle">Дополнительные данные</h3>
+            <div className="card__grid">
+              {currentCar.carData.map((dataEntry, index) => (
+                <DataCard
+                  key={dataEntry.id}
+                  data={dataEntry}
+                  position={index}
+                />
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Сообщение если нет данных вообще */}
         {allDataItems.length === 0 && (!currentCar.carData || currentCar.carData.length === 0) && (

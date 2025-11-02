@@ -11,6 +11,11 @@ const ExpenseList: React.FC<ExpenseListProps> = ({
 }) => {
   const [expenseToDelete, setExpenseToDelete] = useState<Expense | null>(null);
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
+  const [expandedExpenseId, setExpandedExpenseId] = useState<string | null>(null);
+
+  const handleToggleExpense = (expenseId: string) => {
+    setExpandedExpenseId(expandedExpenseId === expenseId ? null : expenseId);
+  };
 
   // Расчет статистики расхода топлива
   const fuelStats = useMemo(() => {
@@ -101,127 +106,156 @@ const ExpenseList: React.FC<ExpenseListProps> = ({
 
   return (
     <div className="expense-list-container">
-      {/* Статистика */}
+      {/* Статистика - компактные карточки */}
       {stats && (
         <div className="expense-stats">
           <div className="expense-stats__grid">
-            {/* 👇 КАРТОЧКА СРЕДНЕГО РАСХОДА - ВСЯ ШИРИНА */}
-            <div className="expense-stat-card expense-stat-card--fuel">
-              <div className="expense-stat-card__title">Средний расход топлива</div>
-              <div className="expense-stat-card__consumption-single">
-                <span className="expense-stat-card__consumption-value">
+            {/* Средний расход топлива */}
+            <div className="expense-stat-card">
+              <div className="expense-stat-card__content">
+                <div className="expense-stat-card__title">Средний расход</div>
+                <div className="expense-stat-card__value expense-stat-card__value--consumption">
                   {formatConsumption(fuelStats.overallConsumption)}
-                </span>
-              </div>
-              {hasFuelExpenses && (
-                <div className="expense-stat-card__fuel-meta">
-                  На основе {fuelStats.totalFuelExpenses} заправок
                 </div>
-              )}
-            </div>
-
-            {/* 👇 КАРТОЧКА ВСЕГО РАСХОДОВ - ВСЯ ШИРИНА */}
-            <div className="expense-stat-card expense-stat-card--full-width">
-              <div className="expense-stat-card__value">{formatAmount(stats.total)}</div>
-              <div className="expense-stat-card__label">Всего расходов</div>
-            </div>
-
-            {/* 👇 ДВЕ КАРТОЧКИ В ОДНОЙ СТРОКЕ - ОБЕРТКА ДЛЯ МОБИЛЬНЫХ */}
-            <div className="expense-stats__row">
-              <div className="expense-stat-card">
-                <div className="expense-stat-card__value">{formatAmount(currentMonthTotal)}</div>
-                <div className="expense-stat-card__label">В текущем месяце</div>
               </div>
-              <div className="expense-stat-card">
+            </div>
+
+            {/* Всего расходов */}
+            <div className="expense-stat-card">
+              <div className="expense-stat-card__content">
+                <div className="expense-stat-card__title">Всего</div>
+                <div className="expense-stat-card__value">{formatAmount(stats.total)}</div>
+              </div>
+            </div>
+
+            {/* В текущем месяце */}
+            <div className="expense-stat-card">
+              <div className="expense-stat-card__content">
+                <div className="expense-stat-card__title">Этот месяц</div>
+                <div className="expense-stat-card__value">{formatAmount(currentMonthTotal)}</div>
+              </div>
+            </div>
+
+            {/* За прошлый месяц */}
+            <div className="expense-stat-card">
+              <div className="expense-stat-card__content">
+                <div className="expense-stat-card__title">Прошлый месяц</div>
                 <div className="expense-stat-card__value">{formatAmount(stats.lastMonthTotal)}</div>
-                <div className="expense-stat-card__label">За последний месяц</div>
               </div>
             </div>
           </div>
         </div>
       )}
 
-      {/* Остальной код остается без изменений */}
+      {/* Список расходов с аккордеон-логикой */}
       <div className="expense-list">
-        {expenses.map((expense, index) => (
-          <div 
-            key={expense.id}
-            className="expense-card"
-            style={{ animationDelay: `${index * 0.05}s` }}
-          >
-            <div className="expense-card__header">
-              <h3 className="expense-card__title">{expense.description}</h3>
-              <span className="expense-card__amount">{formatAmount(expense.amount)}</span>
-            </div>
-            
-            <div className="expense-card__meta">
-              <span className={`expense-card__category expense-card__category--${expense.category}`}>
-                {getCategoryName(expense.category)}
-              </span>
-              <span className="expense-card__date">{formatDate(expense.date)}</span>
-              {expense.odometer && (
-                <span className="expense-card__odometer">{formatNumber(expense.odometer)} км</span>
-              )}
-            </div>
+        {expenses.map((expense, index) => {
+          const isExpanded = expandedExpenseId === expense.id;
+          const hasFuelData = expense.category === 'fuel' && expense.fuelData;
 
-            <div className="expense-card__details">
-              <div className="expense-card__detail">
-                <span className="expense-card__detail-label">Категория</span>
-                <span className="expense-card__detail-value">{getCategoryName(expense.category)}</span>
-              </div>
-              <div className="expense-card__detail">
-                <span className="expense-card__detail-label">Дата</span>
-                <span className="expense-card__detail-value">{formatDate(expense.date)}</span>
-              </div>
-              {expense.odometer && (
-                <div className="expense-card__detail">
-                  <span className="expense-card__detail-label">Пробег</span>
-                  <span className="expense-card__detail-value">{formatNumber(expense.odometer)} км</span>
-                </div>
-              )}
-              
-              {expense.category === 'fuel' && expense.fuelData && (
-                <>
-                  {expense.fuelData.liters && (
-                    <div className="expense-card__detail">
-                      <span className="expense-card__detail-label">Заправлено</span>
-                      <span className="expense-card__detail-value">
-                        {expense.fuelData.liters} л
+          return (
+            <div 
+              key={expense.id}
+              className={`expense-card ${isExpanded ? 'expense-card--expanded' : ''}`}
+              onClick={() => handleToggleExpense(expense.id)}
+              style={{ animationDelay: `${index * 0.05}s` }}
+            >
+              <div className="expense-card__header">
+                <div className="expense-card__main-info">
+                  <h3 className="expense-card__title">{expense.description}</h3>
+                  <div className="expense-card__preview">
+                    <div className="expense-card__preview-row">
+                      <span className={`expense-card__category expense-card__category--${expense.category}`}>
+                        {getCategoryName(expense.category)}
+                      </span>
+                      <span className="expense-card__amount">
+                        {formatAmount(expense.amount)}
                       </span>
                     </div>
-                  )}
-                  {expense.fuelData.remainingRange && (
-                    <div className="expense-card__detail">
-                      <span className="expense-card__detail-label">Запас хода</span>
-                      <span className="expense-card__detail-value">{expense.fuelData.remainingRange} км</span>
+                    <div className="expense-card__preview-date">
+                      {formatDate(expense.date)}
                     </div>
-                  )}
-                  {expense.fuelData.averageConsumption && (
+                  </div>
+                </div>
+                
+                {/* Кнопки действий в правом верхнем углу */}
+                <div className="expense-card__corner-actions">
+                  <button 
+                    className="expense-card__corner-action"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onEditExpense(expense);
+                    }}
+                    title="Редактировать"
+                    type="button"
+                  >
+                    <svg viewBox="0 0 24 24" fill="none" width="14" height="14">
+                      <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" stroke="currentColor" strokeWidth="2"/>
+                      <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" stroke="currentColor" strokeWidth="2"/>
+                    </svg>
+                  </button>
+                  <button 
+                    className="expense-card__corner-action expense-card__corner-action--danger"
+                    onClick={(e) => handleDeleteClick(expense, e)}
+                    title="Удалить"
+                    type="button"
+                  >
+                    <svg viewBox="0 0 24 24" fill="none" width="14" height="14">
+                      <path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" stroke="currentColor" strokeWidth="2"/>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+
+              {/* Полный вид - появляется ТОЛЬКО при раскрытии */}
+              {isExpanded && (
+                <div className="expense-card__expanded-content">
+                  <div className="expense-card__details">
                     <div className="expense-card__detail">
-                      <span className="expense-card__detail-label">Расход</span>
-                      <span className="expense-card__detail-value">{expense.fuelData.averageConsumption.toFixed(1)} л/100км</span>
+                      <span className="expense-card__detail-label">Категория</span>
+                      <span className="expense-card__detail-value">{getCategoryName(expense.category)}</span>
                     </div>
-                  )}
-                </>
+                    <div className="expense-card__detail">
+                      <span className="expense-card__detail-label">Дата</span>
+                      <span className="expense-card__detail-value">{formatDate(expense.date)}</span>
+                    </div>
+                    {expense.odometer && (
+                      <div className="expense-card__detail">
+                        <span className="expense-card__detail-label">Пробег</span>
+                        <span className="expense-card__detail-value">{formatNumber(expense.odometer)} км</span>
+                      </div>
+                    )}
+                    
+                    {expense.category === 'fuel' && expense.fuelData && (
+                      <>
+                        {expense.fuelData.liters && (
+                          <div className="expense-card__detail">
+                            <span className="expense-card__detail-label">Заправлено</span>
+                            <span className="expense-card__detail-value">
+                              {expense.fuelData.liters} л
+                            </span>
+                          </div>
+                        )}
+                        {expense.fuelData.remainingRange && (
+                          <div className="expense-card__detail">
+                            <span className="expense-card__detail-label">Запас хода</span>
+                            <span className="expense-card__detail-value">{expense.fuelData.remainingRange} км</span>
+                          </div>
+                        )}
+                        {expense.fuelData.averageConsumption && (
+                          <div className="expense-card__detail">
+                            <span className="expense-card__detail-label">Расход</span>
+                            <span className="expense-card__detail-value">{expense.fuelData.averageConsumption.toFixed(1)} л/100км</span>
+                          </div>
+                        )}
+                      </>
+                    )}
+                  </div>
+                </div>
               )}
             </div>
-            
-            <div className="expense-card__actions">
-              <button 
-                className="btn btn--secondary btn--sm"
-                onClick={() => onEditExpense(expense)}
-              >
-                Редактировать
-              </button>
-              <button 
-                className="btn btn--danger btn--sm"
-                onClick={(e) => handleDeleteClick(expense, e)}
-              >
-                Удалить
-              </button>
-            </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
       <ConfirmModal

@@ -102,12 +102,34 @@ const DataManager: React.FC<DataManagerProps> = () => {
   return (
     <>
       <div className="card">
-        <h3 className="card__title">Управление данными</h3>
-        <p className="card__description">
-          Экспортируйте данные для резервного копирования или импортируйте для переноса на другой компьютер
-        </p>
+        <div style={{ 
+            textAlign: 'center', 
+            width: '100%',
+            marginBottom: 'var(--space-4)'
+          }}>
+            <h3 style={{
+              fontSize: 'var(--font-size-base)',
+              fontWeight: '600',
+              color: 'var(--color-text-primary)',
+              margin: '0 0 var(--space-2) 0',
+              lineHeight: '1.3'
+            }}>
+              Управление данными
+            </h3>
+            <p style={{
+              fontSize: 'var(--font-size-xs)',
+              color: 'var(--color-text-secondary)',
+              margin: '0',
+              lineHeight: '1.5',
+              maxWidth: '600px',
+              marginLeft: 'auto',
+              marginRight: 'auto'
+            }}>
+              Экспортируйте данные для резервного копирования или импортируйте для переноса на другой компьютер
+            </p>
+          </div>
         
-        <div className="card__actions">
+        <div className="card__actions card__actions--center">
           <button 
             className="btn btn--success"
             onClick={handleExport}
@@ -118,7 +140,7 @@ const DataManager: React.FC<DataManagerProps> = () => {
               <path d="M9 13L12 16L15 13" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
               <path d="M8 12H6a2 2 0 00-2 2v4a2 2 0 002 2h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2" stroke="currentColor" strokeWidth="2"/>
             </svg>
-            Скачать backup
+            Скачать
           </button>
           
           <button 
@@ -131,7 +153,7 @@ const DataManager: React.FC<DataManagerProps> = () => {
               <path d="M9 11L12 8L15 11" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
               <path d="M8 12H6a2 2 0 00-2 2v4a2 2 0 002 2h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2" stroke="currentColor" strokeWidth="2"/>
             </svg>
-            Загрузить backup
+            Загрузить
           </button>
           
           <input

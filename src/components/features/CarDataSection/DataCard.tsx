@@ -10,21 +10,20 @@ const DataCard: React.FC<DataCardProps> = ({
   data, 
   position = 0
 }) => {
+  // Берем первое поле для отображения (название и значение)
+  const mainField = data.fields[0];
+
   return (
     <div 
-      className="card" 
+      className="card__grid-item"
       style={{ animationDelay: `${position * 0.1}s` }}
     >
-      <div className="card__grid">
-        {data.fields.map((field, index) => (
-          <div key={index} className="card__grid-item">
-            <span className="card__grid-label">{field.name}</span>
-            <span className="card__grid-value">
-              {field.value} {field.unit && ` ${field.unit}`}
-            </span>
-          </div>
-        ))}
-      </div>
+      <span className="card__grid-label">
+        {mainField?.name || 'Данные автомобиля'}
+      </span>
+      <span className="card__grid-value">
+        {mainField?.value} {mainField?.unit && ` ${mainField?.unit}`}
+      </span>
     </div>
   );
 };

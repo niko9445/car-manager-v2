@@ -10,10 +10,10 @@ const MaintenanceSection: React.FC<MaintenanceSectionProps> = ({
   onEditMaintenance 
 }) => {
   const currentCar = cars.find(c => c.id === car.id) || car;
-  const [activeCardId, setActiveCardId] = useState<string | null>(null);
+  const [expandedCardId, setExpandedCardId] = useState<string | null>(null);
 
-  const handleToggleActive = (cardId: string) => {
-    setActiveCardId(activeCardId === cardId ? null : cardId);
+  const handleToggleCard = (cardId: string) => {
+    setExpandedCardId(expandedCardId === cardId ? null : cardId);
   };
 
   return (
@@ -50,8 +50,8 @@ const MaintenanceSection: React.FC<MaintenanceSectionProps> = ({
                 onDelete={() => onDeleteMaintenance(maintenance)}
                 onEdit={() => onEditMaintenance(maintenance)}
                 position={index}
-                isActive={activeCardId === maintenance.id}
-                onToggleActive={() => handleToggleActive(maintenance.id)}
+                isExpanded={expandedCardId === maintenance.id}
+                onToggle={() => handleToggleCard(maintenance.id)}
               />
             ))}
           </div>

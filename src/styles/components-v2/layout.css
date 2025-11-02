@@ -1,6 +1,60 @@
 /* ===== СИСТЕМА LAYOUT КОМПОНЕНТОВ ===== */
 
 /* ===== SIDEBAR ===== */
+/* Стили для аккордеона в сайдбаре */
+.sidebar__accordion {
+  background: transparent;
+}
+
+.sidebar__accordion-header {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-4);
+  cursor: pointer;
+  transition: color var(--transition-fast);
+  background: transparent;
+  border: none;
+  width: 100%;
+}
+
+.sidebar__accordion-header:hover {
+  background: transparent;
+}
+
+.sidebar__accordion-header:hover .sidebar__accordion-title,
+.sidebar__accordion-header:hover .sidebar__accordion-icon {
+  color: var(--color-text-primary);
+}
+
+.sidebar__accordion-header--expanded {
+  background: transparent;
+  border: none;
+}
+
+.sidebar__accordion-header--expanded .sidebar__accordion-title,
+.sidebar__accordion-header--expanded .sidebar__accordion-icon {
+  color: var(--color-text-primary);
+}
+
+.sidebar__accordion-title {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  transition: color var(--transition-fast);
+}
+
+.sidebar__accordion-icon {
+  color: var(--color-text-secondary);
+  transition: color var(--transition-fast);
+}
+
+.sidebar__accordion-content {
+  padding: var(--space-1) 0;
+  animation: slideDown 0.2s ease-out;
+}
+
 .sidebar {
   width: 280px;
   background: var(--color-bg-secondary);
@@ -14,21 +68,21 @@
 }
 
 .sidebar__header {
-  padding: var(--space-4);
+  padding: var(--space-2);
   border-bottom: 1px solid var(--color-border-primary);
   background: var(--color-bg-tertiary);
   flex-shrink: 0;
   display: flex;
   flex-direction: column;
-  gap: var(--space-4);
+  gap: var(--space-2);
 }
 
 .sidebar__header-top {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: var(--space-3);
-  gap: var(--space-2);
+  margin-bottom: var(--space-1);
+  gap: var(--space-1);
 }
 
 .sidebar__title {
@@ -37,6 +91,19 @@
   font-weight: 600;
   color: var(--color-text-primary);
   text-align: center;
+}
+
+.app-credits {
+  text-align: center;
+  padding: var(--space-4) 0 0 0;
+  margin-top: var(--space-4);
+  border-top: 1px solid var(--color-border-secondary);
+}
+
+.app-credits__text {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  font-weight: 500;
 }
 
 .sidebar__close-btn {
@@ -1152,4 +1219,11 @@
     padding: var(--space-2);
     min-width: 0; /* ← УБИРАЕМ МИНИМАЛЬНУЮ ШИРИНУ */
   }
+}
+
+.card__actions--center {
+  display: flex;
+  justify-content: center;
+  gap: var(--space-3);
+  margin-top: var(--space-4);
 }
