@@ -54,33 +54,42 @@ const MainContent: React.FC<MainContentProps> = ({
     return (
       <div className="main-content__welcome-screen">
         <div className="welcome-container">
+          {/* Анимированный фон */}
+          <div className="welcome-background">
+            <div className="welcome-grid"></div>
+          </div>
+          
           {/* Основной контент */}
           <div className="welcome-content">
             <div className="welcome-icon">
-              <svg viewBox="0 0 64 64" fill="none" width="48" height="48">
+              <svg viewBox="0 0 64 64" fill="none">
                 <path 
                   d="M48 16H16C12.6863 16 10 18.6863 10 22V42C10 45.3137 12.6863 48 16 48H48C51.3137 48 54 45.3137 54 42V22C54 18.6863 51.3137 16 48 16Z" 
                   stroke="currentColor" 
                   strokeWidth="2" 
                   strokeLinecap="round"
+                  className="welcome-car"
                 />
                 <path 
                   d="M10 32H54" 
                   stroke="currentColor" 
                   strokeWidth="2" 
                   strokeLinecap="round"
+                  className="welcome-line"
                 />
                 <circle 
                   cx="18" 
                   cy="42" 
                   r="2" 
                   fill="currentColor"
+                  className="welcome-wheel"
                 />
                 <circle 
                   cx="46" 
                   cy="42" 
                   r="2" 
                   fill="currentColor"
+                  className="welcome-wheel"
                 />
               </svg>
             </div>
@@ -97,18 +106,18 @@ const MainContent: React.FC<MainContentProps> = ({
             <div className="welcome-action">
               {isMobile ? (
                 <button 
-                  className="btn btn--primary welcome-btn"
+                  className="btn btn--primary btn--lg welcome-btn"
                   onClick={onOpenSidebar}
                   type="button"
                 >
-                  <svg className="btn__icon" viewBox="0 0 24 24" fill="none" width="16" height="16">
+                  <svg className="btn__icon" viewBox="0 0 24 24" fill="none" width="18" height="18">
                     <path d="M3 12h18M3 6h18M3 18h18" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
                   </svg>
                   Выбрать автомобиль
                 </button>
               ) : (
                 <div className="welcome-hint">
-                  <svg viewBox="0 0 24 24" fill="none" width="16" height="16">
+                  <svg viewBox="0 0 24 24" fill="none" width="20" height="20">
                     <path d="M14 5l7 7m0 0l-7 7m7-7H3" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
                   </svg>
                   <span>Выберите автомобиль из списка слева</span>
