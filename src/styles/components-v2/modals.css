@@ -18,7 +18,7 @@
 }
 
 .modal__container {
-  background: var(--color-bg-secondary);
+  background: var(--color-bg-tertiary);
   border-radius: var(--radius-xl);
   border: 1px solid var(--color-border-primary);
   max-width: 500px;
@@ -99,7 +99,13 @@
 }
 
 .modal__actions--center { justify-content: center; }
-.modal__actions--between { justify-content: space-between; }
+
+/* Улучшенные стили для модального окна */
+.modal__form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: var(--space-3); /* Меньше расстояние между полями */
+}
 
 /* === ФОРМЫ В МОДАЛКАХ === */
 .modal__form {
@@ -108,17 +114,14 @@
   gap: var(--space-5);
 }
 
-.modal__form-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: var(--space-4);
-  width: 100%;
-}
-
 .modal__form-group {
   display: flex;
   flex-direction: column;
   gap: var(--space-2);
+}
+
+.modal__form-group {
+  margin-bottom: var(--space-2); /* Меньше отступ снизу */
 }
 
 .modal__label {
@@ -167,6 +170,52 @@
   margin: 0;
 }
 
+.modal__input[type="date"] {
+  width: 100%;
+  padding: 8px 12px;
+  background: var(--color-bg-primary);
+  border: 1px solid var(--color-border-primary);
+  border-radius: var(--radius-md);
+  color: var(--color-text-primary);
+  font-size: 14px;
+  box-sizing: border-box;
+  min-height: 40px;
+}
+
+.modal__input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(0.8); /* Для темной темы */
+  cursor: pointer;
+}
+
+/* Для Webkit браузеров (Chrome, Safari) */
+.modal__input[type="date"]::-webkit-datetime-edit {
+  text-align: left !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.modal__input[type="date"]::-webkit-datetime-edit-fields-wrapper {
+  text-align: left !important;
+  display: flex;
+  justify-content: flex-start;
+  width: 100%;
+}
+
+.modal__input[type="date"]::-webkit-datetime-edit-year-field,
+.modal__input[type="date"]::-webkit-datetime-edit-month-field,
+.modal__input[type="date"]::-webkit-datetime-edit-day-field,
+.modal__input[type="date"]::-webkit-datetime-edit-text {
+  text-align: left !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+/* Для Firefox */
+.modal__input[type="date"]::-moz-placeholder {
+  text-align: left !important;
+}
+  
+
 .modal__input--textarea {
   resize: vertical;
   min-height: 80px;
@@ -191,7 +240,7 @@
   width: 100%;
 }
 
-.modal__suggestions {
+/*.modal__suggestions {
   position: absolute;
   top: 100%;
   left: 0;
@@ -208,7 +257,7 @@
   transform: translateY(-5px);
   pointer-events: none;
   transition: all var(--transition-fast);
-}
+}*/
 
 .modal__field-with-suggestions input:focus ~ .modal__suggestions,
 .modal__suggestions.show {
@@ -217,7 +266,7 @@
   pointer-events: auto;
 }
 
-.modal__suggestion-item {
+/*.modal__suggestion-item {
   padding: var(--space-3) var(--space-4);
   cursor: pointer;
   border-bottom: 1px solid var(--color-border-secondary);
@@ -227,7 +276,7 @@
   overflow: hidden;
   text-overflow: ellipsis;
   transition: background var(--transition-fast);
-}
+}*/
 
 .modal__suggestion-item:hover {
   background: var(--color-bg-tertiary);
@@ -353,16 +402,82 @@
   flex: 1;
 }
 
-.modal__item-remove {
-  width: 24px;
-  height: 24px;
-  padding: 0;
+.modal__item-content {
   display: flex;
-  align-items: center;
+  flex-direction: column; /* Изменить на колонку */
+  gap: var(--space-3);
+  width: 100%;
+}
+
+.modal__item-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  min-width: 0;
+}
+
+.modal__item-name {
+  font-weight: 500;
+  color: var(--color-text-primary);
+}
+
+.modal__item-edit {
+  width: 100%;
+}
+
+.modal__edit-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr auto;
+  gap: var(--space-2);
+  align-items: start;
+  width: 100%;
+}
+
+.modal__edit-actions {
+  display: flex;
+  gap: var(--space-2);
+  width: 100%;
+  justify-content: stretch; /* ← РАСТЯНУТЬ НА ВСЮ ШИРИНУ */
+}
+
+.modal__edit-actions .btn {
+  flex: 1; /* ← РАВНАЯ ШИРИНА */
   justify-content: center;
-  font-size: var(--font-size-base);
-  font-weight: 600;
+}
+
+/* Секция добавления поля с отступом */
+.modal__add-field-section {
+  margin-top: var(--space-3); /* ← ДОБАВИТЬ ОТСТУП */
+  display: flex;
+  justify-content: center;
+}
+
+.modal__input--sm {
+  padding: var(--space-2);
+  font-size: var(--font-size-sm);
+}
+
+.modal__item-actions {
+  display: flex;
+  gap: var(--space-2);
+  width: 100%;
+  justify-content: flex-end; /* или stretch для растягивания */
+}
+
+.modal__item-actions .btn {
+  flex: 1;
+  justify-content: center;
+}
+
+.modal__item-value {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+.modal__item-remove {
   flex-shrink: 0;
+  align-self: center;
 }
 
 .modal__remove-button {
@@ -412,6 +527,7 @@
 }
 
 /* === АДАПТИВНОСТЬ === */
+/* Мобильная адаптация модальных окон */
 @media (max-width: 768px) {
   .modal {
     padding: var(--space-3);
@@ -437,23 +553,112 @@
     padding: var(--space-4);
   }
   
+  .modal-content {
+    max-width: 95vw;
+    margin: 10px;
+  }
+
   .modal__actions {
     flex-direction: column;
   }
   
-  .modal__form-grid,
+  /* СТИЛИ ТОЛЬКО ДЛЯ ПОЛЯ ДАТЫ */
+  .modal__input[type="date"] {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    font-size: 14px;
+    min-height: 40px;
+    padding: 8px 12px;
+    -webkit-appearance: none;
+    appearance: none;
+    background: var(--color-bg-primary);
+    border: 1px solid var(--color-border-primary);
+    border-radius: var(--radius-md);
+    color: var(--color-text-primary);
+    text-align: left !important; /* !important для приоритета */
+    direction: ltr;
+    text-align-last: left; /* Для некоторых браузеров */
+  }
+  
+  /* Улучшение для iOS */
+  @supports (-webkit-touch-callout: none) {
+    .modal__input[type="date"] {
+      font-size: 14px !important;
+      line-height: 1.2;
+      text-align: left !important;
+    }
+
+    .modal__input[type="date"]::-webkit-datetime-edit {
+      text-align: left !important;
+      line-height: 1.2;
+    }
+  }
+  
+  /* Контейнер поля даты */
+  .modal__form-group {
+    width: 100%;
+  }
+
   .modal__add-grid {
+    grid-template-columns: 1fr;
+    gap: var(--space-3);
+  }
+
+  .modal__form-group {
+    width: 100%;
+  }
+
+  .modal__form-grid {
     grid-template-columns: 1fr;
     gap: var(--space-3);
   }
   
   .modal__item {
+    background: var(--color-bg-tertiary);
+    border: 1px solid var(--color-border-secondary);
+    border-radius: var(--radius-md);
+    padding: var(--space-4);
+  }
+
+  .modal__item-content {
     flex-direction: column;
-    align-items: stretch;
+    gap: var(--space-4);
+  }
+  
+  .modal__item-remove {
+    align-self: stretch;
+    margin-top: var(--space-2);
+  }
+  
+  .modal__edit-grid {
+    grid-template-columns: 1fr;
+    gap: var(--space-3);
+  }
+
+  .modal__edit-actions {
+    grid-column: 1 / -1;
+    display: flex;
+    gap: var(--space-2);
+  }
+
+  .modal__edit-actions .btn {
+    flex: 1;
+  }
+  
+  .modal__item-actions {
+    width: 100%;
+    display: flex;
     gap: var(--space-2);
   }
   
-  .modal__suggestions {
+  .modal__item-actions .btn {
+    flex: 1;
+    padding: var(--space-2) var(--space-3);
+    font-size: var(--font-size-xs);
+  }
+
+  /*.modal__suggestions {
     position: fixed;
     top: auto;
     bottom: 0;
@@ -461,7 +666,7 @@
     right: var(--space-3);
     max-height: 50vh;
     border-radius: var(--radius-lg) var(--radius-lg) 0 0;
-  }
+  }*/
   
   .modal__content--centered {
     padding: var(--space-6);
@@ -470,6 +675,10 @@
   .modal__icon {
     width: 48px;
     height: 48px;
+  }
+
+  .modal__form {
+    padding: var(--space-2);
   }
 }
 
@@ -494,6 +703,15 @@
   
   .modal__message {
     font-size: var(--font-size-sm);
+  }
+  
+  /* Дополнительные стили для поля даты на маленьких экранах */
+  .modal__input[type="date"] {
+    min-height: 40px; /* Уменьшили с 48px */
+    padding: 8px 12px; /* Уменьшили padding */
+    font-size: 14px; /* Уменьшили размер шрифта */
+    text-align: left;
+    direction: ltr;
   }
 }
 
@@ -583,4 +801,328 @@
   border-color: var(--color-border-accent);
   color: var(--color-text-primary);
   transform: translateY(-1px);
+}
+
+
+
+/* Стили для автозаполнения */
+.modal__input[readonly] {
+  cursor: not-allowed;
+  opacity: 0.9;
+}
+
+/* Убедимся что grid работает правильно */
+.modal__form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: var(--space-4);
+}
+
+/* settings-modal.css */
+.settings-modal {
+  background: var(--color-bg-tertiary) !important;
+  border: 1px solid var(--color-border-primary) !important;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4) !important;
+  border-radius: 12px !important;
+}
+
+.settings-modal .modal__content {
+  padding: 0 !important;
+  background: var(--color-bg-secondary) !important;
+  border: none !important;
+  box-shadow: none !important;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.settings-content {
+  background: var(--color-bg-secondary);
+  max-height: 70vh;
+  overflow-y: auto;
+}
+
+.settings-section {
+  padding: var(--space-5);
+  border-bottom: 1px solid var(--color-border-primary);
+  background: var(--color-bg-secondary);
+}
+
+.settings-section .data-manager .card__actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-3);
+  margin-top: var(--space-3);
+  background: transparent !important;
+}
+
+.settings-section:last-child {
+  border-bottom: none;
+}
+
+.settings-section__title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin: 0 0 var(--space-2) 0;
+}
+
+.settings-section__description {
+  font-size: 14px;
+  color: var(--color-text-secondary);
+  margin: 0 0 var(--space-4) 0;
+  line-height: 1.4;
+}
+
+/* CurrencySwitcher в настройках */
+.settings-section {
+  background: var(--color-bg-primary);
+  border-radius: var(--radius-md);
+  padding: var(--space-3);
+  border: 1px solid var(--color-border-secondary);
+}
+
+.settings-section .currency-switcher__trigger {
+  background: var(--color-bg-primary);
+  border: 1px solid var(--color-border-primary);
+}
+
+.settings-section .currency-switcher__dropdown {
+  background: var(--color-bg-primary);
+  border: 1px solid var(--color-border-primary);
+}
+
+.settings-section .currency-switcher__option {
+  background: var(--color-bg-primary);
+}
+
+.settings-section .currency-switcher__option:hover {
+  background: var(--color-bg-tertiary);
+}
+
+/* DataManager в настройках */
+.settings-section .data-manager h3 {
+  display: none !important;
+}
+
+.settings-section .data-manager .card {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+.settings-section .data-manager .card__header {
+  display: none !important;
+}
+
+.settings-section .data-manager .card__content {
+  padding: 0 !important;
+  background: transparent !important;
+}
+
+.settings-section .data-manager .card__actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin-top: var(--space-3);
+  background: transparent !important;
+}
+
+.settings-section .data-manager .btn {
+  justify-content: center;
+  background: var(--color-bg-card); /* Менее темный фон */
+  border: 1px solid var(--color-border-primary);
+  min-height: 44px;
+}
+
+.settings-section .data-manager .btn:hover {
+  background: var(--color-bg-tertiary);
+}
+
+/* Заглушки для будущих функций */
+.settings-coming-soon {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--space-2) var(--space-3);
+  background: var(--color-bg-tertiary);
+  border: 1px solid var(--color-border-secondary);
+  border-radius: var(--radius-md);
+  color: var(--color-text-muted);
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.settings-footer {
+  padding: var(--space-5);
+  border-top: 1px solid var(--color-border-primary);
+  text-align: center;
+  background: var(--color-bg-tertiary);
+}
+
+.app-credits {
+  opacity: 0.7;
+}
+
+.app-credits__text {
+  font-size: 14px;
+  color: var(--color-text-muted);
+}
+
+/* Адаптивность для мобильных */
+@media (max-width: 768px) {
+  .settings-modal {
+    margin: var(--space-4) !important;
+    max-height: calc(100vh - 80px) !important;
+    width: calc(100% - var(--space-8)) !important;
+  }
+
+  .settings-section {
+    padding: var(--space-4);
+  }
+
+  .settings-content {
+    max-height: calc(100vh - 140px);
+  }
+
+  .settings-section .data-manager .card__actions {
+    grid-template-columns: 1fr 1fr; /* Остается в одну строку */
+    gap: var(--space-2);
+  }
+
+  .settings-section .data-manager .btn {
+    padding: var(--space-3) var(--space-4);
+    font-size: 14px;
+  }
+}
+
+/* Для очень маленьких экранов */
+@media (max-width: 480px) {
+  .settings-modal {
+    margin: var(--space-2) !important;
+    width: calc(100% - var(--space-4)) !important;
+  }
+
+  .settings-section {
+    padding: var(--space-3);
+  }
+
+  .settings-section__title {
+    font-size: 15px;
+  }
+
+  .settings-section__description {
+    font-size: 13px;
+  }
+}
+
+/* ===== КОМПАКТНЫЙ ПЕРЕКЛЮЧАТЕЛЬ ВАЛЮТ С ИКОНКАМИ ===== */
+
+
+.currency-switcher__grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  width: 100%;
+}
+
+.currency-switcher__icon-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 8px;
+  border: 1px solid var(--color-border-secondary);
+  border-radius: var(--radius-md);
+  background: var(--color-bg-card); /* Менее темный фон */
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  font-size: 16px;
+  font-weight: 600;
+  min-height: 44px;
+}
+
+.currency-switcher__icon-btn:hover {
+  border-color: var(--color-border-accent);
+  color: var(--color-text-primary);
+  background: var(--color-bg-tertiary);
+}
+
+.currency-switcher__icon-btn--active {
+  background: var(--color-accent-primary);
+  border-color: var(--color-border-accent);
+  color: white;
+}
+
+.currency-switcher__icon-btn--active:hover {
+  background: var(--color-accent-primary-dark);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-lg);
+}
+
+.currency-switcher__symbol {
+  font-weight: 600;
+  line-height: 1;
+}
+
+/* Анимация переключения */
+.currency-switcher__icon-btn {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.currency-switcher__icon-btn--active::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--color-border-accent);
+  animation: currencyActive 0.3s ease-out;
+}
+
+@keyframes currencyActive {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+
+/* Мобильная адаптация */
+@media (max-width: 768px) {
+  .currency-switcher__grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 6px;
+  }
+  
+  .currency-switcher__icon-btn {
+    padding: 10px 6px;
+    min-height: 40px;
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  .currency-switcher__grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-2);
+  }
+  
+  .currency-switcher__icon-btn {
+    padding: var(--space-3) var(--space-2);
+    min-height: 40px;
+    font-size: 14px;
+  }
+}
+
+/* Для очень маленьких экранов */
+@media (max-width: 360px) {
+  .currency-switcher__grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-1);
+  }
+  
+  .currency-switcher__icon-btn {
+    padding: var(--space-2);
+    min-height: 38px;
+    font-size: 13px;
+  }
 }

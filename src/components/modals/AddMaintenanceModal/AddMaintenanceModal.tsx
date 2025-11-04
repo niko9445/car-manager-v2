@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import Modal from '../../ui/Modal/Modal';
 import { AdditionalItem, MaintenanceFormData } from '../../../types';
+import { useCurrency } from '../../../contexts/CurrencyContext';
 
 interface AddMaintenanceModalProps {
   onClose: () => void;
@@ -8,11 +9,13 @@ interface AddMaintenanceModalProps {
 }
 
 const AddMaintenanceModal: React.FC<AddMaintenanceModalProps> = ({ onClose, onSave }) => {
+  const { getCurrencySymbol } = useCurrency();
   const [formData, setFormData] = useState({
     mileage: '',
     oilChangeStep: '10000',
-    filterChangeStep: '15000',
+    filterChangeStep: '10000',
     cost: '',
+    date: '',
     additionalItems: [] as AdditionalItem[]
   });
 
@@ -31,6 +34,7 @@ const AddMaintenanceModal: React.FC<AddMaintenanceModalProps> = ({ onClose, onSa
         oilChangeStep: parseInt(formData.oilChangeStep),
         filterChangeStep: parseInt(formData.filterChangeStep),
         cost: formData.cost ? parseInt(formData.cost) : null,
+        date: formData.date,
         additionalItems: formData.additionalItems
       });
     }
@@ -63,6 +67,18 @@ const AddMaintenanceModal: React.FC<AddMaintenanceModalProps> = ({ onClose, onSa
           <div className="card__content">
             <div className="modal__form-grid">
               <div className="modal__form-group">
+                <label className="modal__label">Затраты ({getCurrencySymbol()})</label>
+                <input
+                  type="number"
+                  className="modal__input"
+                  value={formData.cost}
+                  onChange={(e) => setFormData({...formData, cost: e.target.value})}
+                  min="0"
+                  placeholder="Необязательно"
+                />
+              </div>
+
+              <div className="modal__form-group">
                 <label className="modal__label modal__label--required">Пробег (км)</label>
                 <input
                   type="number"
@@ -72,18 +88,6 @@ const AddMaintenanceModal: React.FC<AddMaintenanceModalProps> = ({ onClose, onSa
                   required
                   min="0"
                   placeholder="Текущий пробег автомобиля"
-                />
-              </div>
-
-              <div className="modal__form-group">
-                <label className="modal__label">Затраты (BYN)</label>
-                <input
-                  type="number"
-                  className="modal__input"
-                  value={formData.cost}
-                  onChange={(e) => setFormData({...formData, cost: e.target.value})}
-                  min="0"
-                  placeholder="Необязательно"
                 />
               </div>
 
@@ -172,7 +176,7 @@ const AddMaintenanceModal: React.FC<AddMaintenanceModalProps> = ({ onClose, onSa
                       className="btn btn--danger btn--sm modal__item-remove"
                       onClick={() => removeAdditionalItem(index)}
                     >
-                      ×
+                      Удалить
                     </button>
                   </div>
                 ))}

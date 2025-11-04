@@ -38,7 +38,6 @@ const MaintenanceSection: React.FC<MaintenanceSectionProps> = ({
         </div>
       </div>
 
-      {/* ПРОКРУЧИВАЕМЫЙ КОНТЕНТ */}
       <div className="section-content">
         {currentCar.maintenance && currentCar.maintenance.length > 0 ? (
           <div className="section__list">
@@ -56,18 +55,32 @@ const MaintenanceSection: React.FC<MaintenanceSectionProps> = ({
             ))}
           </div>
         ) : (
-          <div className="section__empty">
-            <div className="section__empty-icon">🔧</div>
-            <h3 className="section__empty-text">Нет записей о техническом обслуживании</h3>
-            <p className="section__empty-subtext">
-              Добавьте первую запись ТО для отслеживания обслуживания автомобиля
-            </p>
-            <div className="section__empty-actions">
-              <button 
-                className="btn btn--primary"
+          <div className="maintenance-welcome">
+            <div className="maintenance-welcome__background">
+              <div className="maintenance-welcome__grid"></div>
+            </div>
+            <div className="maintenance-welcome__content">
+              <div className="maintenance-welcome__icon">
+                <div className="maintenance-welcome__tools">
+                  <div className="maintenance-welcome__wrench"></div>
+                  <div className="maintenance-welcome__screwdriver"></div>
+                </div>
+                <div className="maintenance-welcome__gear">⚙️</div>
+              </div>
+              <div className="maintenance-welcome__text">
+                <h3 className="maintenance-welcome__title">Начните вести историю ТО</h3>
+                <p className="maintenance-welcome__subtitle">
+                  Добавьте первую запись для отслеживания технического обслуживания
+                </p>
+              </div>
+              <button
+                className="btn btn--primary maintenance-welcome__button"
                 onClick={onAddMaintenance}
               >
-                Добавить ТО
+                <span>Добавить ТО</span>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                  <path d="M12 5v14m-7-7h14" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                </svg>
               </button>
             </div>
           </div>

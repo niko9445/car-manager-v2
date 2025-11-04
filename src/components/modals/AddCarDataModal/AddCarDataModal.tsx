@@ -1,6 +1,7 @@
-import React, { useState, useEffect, useMemo, useRef } from 'react';
+import React, { useState, useMemo } from 'react';
 import Modal from '../../ui/Modal/Modal';
 import { CarDataField } from '../../../types';
+import { useCurrency } from '../../../contexts/CurrencyContext';
 
 interface AddCarDataModalProps {
   onClose: () => void;
@@ -9,15 +10,14 @@ interface AddCarDataModalProps {
 
 const AddCarDataModal: React.FC<AddCarDataModalProps> = ({ onClose, onSave }) => {
   const [fields, setFields] = useState<CarDataField[]>([{ name: '', value: '', unit: '' }]);
-  const [activeSuggestionIndex, setActiveSuggestionIndex] = useState<number | null>(null);
-  const timeoutRef = useRef<number | null>(null);
+  const { getCurrencySymbol } = useCurrency();
 
   const predefinedFields = useMemo(() => [
     { name: 'Пробег', unit: 'км' },
     { name: 'Расход топлива', unit: 'л/100км' },
     { name: 'Мощность', unit: 'л.с.' },
     { name: 'Объем двигателя', unit: 'л' },
-    { name: 'Стоимость', unit: 'руб.' },
+    { name: 'Стоимость', unit: getCurrencySymbol() },
     { name: 'Дата покупки', unit: '' },
     { name: 'Цвет', unit: '' },
     { name: 'Тип кузова', unit: '' },
@@ -31,17 +31,9 @@ const AddCarDataModal: React.FC<AddCarDataModalProps> = ({ onClose, onSave }) =>
     { name: 'Расход по трассе', unit: 'л/100км' },
     { name: 'Страна производства', unit: '' },
     { name: 'Гарантия', unit: 'мес' },
-    { name: 'Страхование', unit: 'руб/год' },
-    { name: 'Налог', unit: 'руб/год' }
-  ], []);
-
-  useEffect(() => {
-    return () => {
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
-      }
-    };
-  }, []);
+    { name: 'Страхование', unit: `${getCurrencySymbol()}/год` },
+    { name: 'Налог', unit: `${getCurrencySymbol()}/год` }
+  ], [getCurrencySymbol]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -51,6 +43,7 @@ const AddCarDataModal: React.FC<AddCarDataModalProps> = ({ onClose, onSave }) =>
   };
 
   const addField = () => setFields([...fields, { name: '', value: '', unit: '' }]);
+
   const removeField = (index: number) => {
     if (fields.length > 1) setFields(fields.filter((_, i) => i !== index));
   };
@@ -60,140 +53,113 @@ const AddCarDataModal: React.FC<AddCarDataModalProps> = ({ onClose, onSave }) =>
     setFields(updated);
   };
 
-  const filteredSuggestions = useMemo(() => {
-    if (activeSuggestionIndex === null) return [];
-    const current = fields[activeSuggestionIndex]?.name.toLowerCase() || '';
-    return predefinedFields.filter(
-      f => f.name.toLowerCase().includes(current) &&
-           !fields.some((field, idx) => idx !== activeSuggestionIndex && field.name === f.name)
-    );
-  }, [activeSuggestionIndex, fields, predefinedFields]);
-
-  const handleSuggestionSelect = (index: number, suggestion: typeof predefinedFields[0]) => {
-    const updated = [...fields];
-    updated[index] = { ...updated[index], name: suggestion.name, unit: suggestion.unit };
-    setFields(updated);
-    setActiveSuggestionIndex(null);
+  // Функция для обработки выбора параметра
+  const handleParameterChange = (index: number, selectedName: string) => {
+    const selectedField = predefinedFields.find(f => f.name === selectedName);
+    
+    if (selectedField) {
+      // Автозаполняем название и единицу измерения
+      const updated = [...fields];
+      updated[index] = { 
+        ...updated[index], 
+        name: selectedField.name,
+        unit: selectedField.unit
+      };
+      setFields(updated);
+    } else {
+      // Если выбрано "Выберите параметр" - сбрасываем
+      updateField(index, 'name', selectedName);
+      updateField(index, 'unit', '');
+    }
   };
-
-  const handleInputFocus = (index: number) => setActiveSuggestionIndex(index);
-
-  const handleInputBlur = () => {
-    timeoutRef.current = window.setTimeout(() => setActiveSuggestionIndex(null), 200);
-  };
-
-  const handleSuggestionMouseDown = (e: React.MouseEvent) => e.preventDefault();
 
   return (
     <Modal isOpen={true} onClose={onClose} title="Добавить данные об авто" size="md">
       <form className="modal__form" onSubmit={handleSubmit}>
         
         {/* Поля данных */}
-        <div className="card card--compact">
-          <div className="card__header">
-            <h3 className="card__title card__title--sm">Данные автомобиля</h3>
-          </div>
-          <div className="card__content">
-            
-            {/* Список полей */}
-            <div className="modal__edit-fields">
-              {fields.map((field, index) => (
-                <div key={index} className="modal__field-row">
-                  
-                  {/* Поле с автодополнением */}
-                  <div className="modal__field-with-suggestions">
-                    <input
-                      className="modal__input"
-                      type="text"
-                      placeholder="Название параметра"
-                      value={field.name}
-                      onChange={(e) => updateField(index, 'name', e.target.value)}
-                      onFocus={() => handleInputFocus(index)}
-                      onBlur={handleInputBlur}
-                      required
-                    />
+        <div className="modal__form-grid">
+          
+          {fields.map((field, index) => (
+            <React.Fragment key={index}>
+              {/* Название параметра как select */}
+              <div className="modal__form-group">
+                <label className="modal__label">
+                  {index === 0 ? 'Название параметра' : `Параметр ${index + 1}`}
+                </label>
+                <select
+                  className="modal__input"
+                  value={field.name}
+                  onChange={(e) => handleParameterChange(index, e.target.value)}
+                  required
+                >
+                  <option value="">Выберите параметр</option>
+                  {predefinedFields.map(item => (
+                    <option key={item.name} value={item.name}>
+                      {item.name} {item.unit && `(${item.unit})`}
+                    </option>
+                  ))}
+                </select>
+              </div>
 
-                    <div className={`modal__suggestions ${activeSuggestionIndex === index ? 'show' : ''}`}>
-                      <div className="modal__suggestions-header">
-                        Выберите параметр или введите свой
-                      </div>
+              {/* Значение */}
+              <div className="modal__form-group">
+                <label className="modal__label">
+                  Значение {field.unit && `(${field.unit})`}
+                </label>
+                <input
+                  className="modal__input"
+                  type="text"
+                  placeholder={`Введите значение ${field.unit ? `в ${field.unit}` : ''}`}
+                  value={field.value}
+                  onChange={(e) => updateField(index, 'value', e.target.value)}
+                  required
+                />
+              </div>
 
-                      {filteredSuggestions.map((suggestion, idx) => (
-                        <div
-                          key={idx}
-                          className="modal__suggestion-item"
-                          onMouseDown={handleSuggestionMouseDown}
-                          onClick={() => handleSuggestionSelect(index, suggestion)}
-                        >
-                          <strong>{suggestion.name}</strong>
-                          {suggestion.unit && <span className="modal__suggestion-unit"> ({suggestion.unit})</span>}
-                        </div>
-                      ))}
-
-                      {filteredSuggestions.length === 0 && (
-                        <div className="modal__suggestion-item modal__suggestion-item--empty">
-                          Нет подходящих параметров
-                        </div>
-                      )}
-                    </div>
-                  </div>
-
-                  <input
-                    className="modal__input"
-                    type="text"
-                    placeholder="Значение"
-                    value={field.value}
-                    onChange={(e) => updateField(index, 'value', e.target.value)}
-                    required
-                  />
-
-                  <input
-                    className="modal__input"
-                    type="text"
-                    placeholder="Ед. измерения"
-                    value={field.unit}
-                    onChange={(e) => updateField(index, 'unit', e.target.value)}
-                  />
-
-                  {fields.length > 1 && (
-                    <button
-                      type="button"
-                      className="btn btn--danger btn--sm modal__remove-button"
-                      onClick={() => removeField(index)}
-                    >
-                      ×
-                    </button>
-                  )}
+              {/* Кнопка удаления */}
+              {fields.length > 1 && (
+                <div className="modal__form-group">
+                  <label className="modal__label" style={{ opacity: 0 }}>Действия</label>
+                  <button
+                    type="button"
+                    className="btn btn--danger"
+                    onClick={() => removeField(index)}
+                    style={{ height: '42px' }}
+                  >
+                    Удалить
+                  </button>
                 </div>
-              ))}
-            </div>
+              )}
+            </React.Fragment>
+          ))}
+          
+        </div>
 
-            {/* Кнопка добавления поля */}
-            <div className="modal__actions">
-              <button 
-                type="button" 
-                className="btn btn--secondary btn--sm"
-                onClick={addField}
-              >
-                + Добавить поле
-              </button>
-            </div>
-          </div>
+        {/* Кнопка добавления поля */}
+        <div className="modal__actions" style={{ justifyContent: 'center', marginTop: 'var(--space-4)' }}>
+          <button 
+            type="button" 
+            className="btn btn--secondary"
+            onClick={addField}
+          >
+            + Добавить поле
+          </button>
         </div>
 
         {/* Кнопки действий */}
-        <div className="modal__actions modal__actions--between">
-          <button type="button" className="btn btn--cancel" onClick={onClose}>
-            Отмена
-          </button>
-          <button 
-            type="submit" 
-            className="btn btn--primary"
-            disabled={!fields.every(f => f.name.trim() && f.value.trim())}
-          >
-            Сохранить данные
-          </button>
-        </div>
+          <div className="modal__actions modal__actions--between">
+            <button type="button" className="btn btn--cancel" onClick={onClose}>
+              Отмена
+            </button>
+            <button 
+              type="submit" 
+              className="btn btn--primary"
+              disabled={!fields.every(f => f.name.trim() && f.value.trim())}
+            >
+              Сохранить {/* ← ИЗМЕНИТЬ НАПИСАНИЕ */}
+            </button>
+          </div>
       </form>
     </Modal>
   );

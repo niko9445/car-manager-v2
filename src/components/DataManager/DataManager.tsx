@@ -3,7 +3,7 @@ import { exportData, importData } from '../../utils/database';
 import Notification from '../ui/Notification/Notification';
 import { DataManagerProps, NotificationState, NotificationType } from '../../types';
 
-const DataManager: React.FC<DataManagerProps> = () => {
+const DataManager: React.FC<DataManagerProps> = ({ hideTitle = false }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [notification, setNotification] = useState<NotificationState>({
     isOpen: false,
@@ -101,37 +101,10 @@ const DataManager: React.FC<DataManagerProps> = () => {
 
   return (
     <>
-      <div className="card">
-        <div style={{ 
-            textAlign: 'center', 
-            width: '100%',
-            marginBottom: 'var(--space-4)'
-          }}>
-            <h3 style={{
-              fontSize: 'var(--font-size-base)',
-              fontWeight: '600',
-              color: 'var(--color-text-primary)',
-              margin: '0 0 var(--space-2) 0',
-              lineHeight: '1.3'
-            }}>
-              Управление данными
-            </h3>
-            <p style={{
-              fontSize: 'var(--font-size-xs)',
-              color: 'var(--color-text-secondary)',
-              margin: '0',
-              lineHeight: '1.5',
-              maxWidth: '600px',
-              marginLeft: 'auto',
-              marginRight: 'auto'
-            }}>
-              Экспортируйте данные для резервного копирования или импортируйте для переноса на другой компьютер
-            </p>
-          </div>
-        
-        <div className="card__actions card__actions--center">
+      <div className="data-manager-simple">
+        <div className="data-manager__actions">
           <button 
-            className="btn btn--success"
+            className="btn btn--success btn--full"
             onClick={handleExport}
             type="button"
           >
@@ -144,7 +117,7 @@ const DataManager: React.FC<DataManagerProps> = () => {
           </button>
           
           <button 
-            className="btn btn--primary"
+            className="btn btn--primary btn--full"
             onClick={handleImportClick}
             type="button"
           >

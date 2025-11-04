@@ -90,6 +90,7 @@
   padding: var(--space-2) var(--space-3);
   font-size: var(--font-size-xs);
   min-width: 80px;
+  width: 100%;
 }
 
 .btn--lg {
@@ -333,3 +334,100 @@
     min-width: 0;
   }
 }
+/* ЗАМЕНИТЬ .currency-switcher-compact на: */
+.currency-switcher-compact {
+  width: 100%;
+}
+
+.currency-switcher__grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  width: 100%;
+}
+
+.currency-switcher__icon-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 8px;
+  border: 1px solid var(--color-border-secondary);
+  border-radius: var(--radius-md);
+  background: var(--color-bg-card);
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  font-size: 16px;
+  font-weight: 600;
+  min-height: 44px;
+}
+
+.currency-switcher__icon-btn:hover {
+  border-color: var(--color-border-accent);
+  color: var(--color-text-primary);
+  background: var(--color-bg-tertiary);
+}
+
+.currency-switcher__icon-btn--active {
+  background: var(--color-accent-primary);
+  border-color: var(--color-border-accent);
+  color: white;
+}
+
+
+
+
+/* ===== ИСПРАВЛЕННАЯ КНОПКА НАСТРОЕК ===== */
+.sidebar__settings-btn {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  width: 100%;
+  padding: var(--space-3) var(--space-4);
+  border: none;
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  text-align: left;
+}
+
+.sidebar__settings-btn:hover {
+  background: var(--color-bg-tertiary);
+  border-color: none;
+  color: var(--color-text-primary);
+  transform: translateY(-1px);
+}
+
+.sidebar__settings-icon {
+  color: var(--color-text-secondary);
+  transition: color var(--transition-fast);
+  flex-shrink: 0;
+}
+
+.sidebar__settings-btn:hover .sidebar__settings-icon {
+  color: var(--color-text-primary);
+}
+
+/* Мобильная адаптация */
+@media (max-width: 768px) {
+  .sidebar__settings-btn {
+    padding: var(--space-3);
+    min-height: 44px;
+  }
+  
+  .sidebar__settings-icon {
+    width: 16px;
+    height: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .sidebar__settings-btn {
+    padding: var(--space-2) var(--space-3);
+    font-size: var(--font-size-xs);
+  }
+} 

@@ -35,6 +35,7 @@ export interface SidebarProps {
 
 export interface Maintenance {
   id: string;
+  date: string;
   mileage: number;
   cost: number | null;
   oilChangeStep: number;
@@ -72,7 +73,7 @@ export interface CarFormData {
 }
 
 export interface MaintenanceFormData {
-  date?: string;
+  date: string;
   mileage: number;
   cost?: number | null;
   oilChangeStep: number;
@@ -154,6 +155,20 @@ export interface CarDataFormData {
   }>;
 }
 
+export interface ModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  title: string;
+  children: React.ReactNode;
+  size?: 'sm' | 'md' | 'lg' | 'xl';
+  className?: string;
+}
+
+export interface SettingsModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+}
+
 // Дополняем существующие типы если нужно
 export interface AddCarModalProps {
   onClose: () => void;
@@ -196,7 +211,7 @@ export interface BackupData {
 }
 
 export interface DataManagerProps {
-  // Пока пусто, но можно добавить props при необходимости
+  hideTitle?: boolean;
 }
 
 // Добавляем к существующим типам
@@ -228,7 +243,7 @@ export interface MaintenanceSectionProps {
 export interface CarDataSectionProps {
   car: Car;
   cars: Car[];
-  setCars: (cars: Car[]) => void;
+  setCars?: (cars: Car[]) => void;
   onAddCarData: () => void;
   onDeleteCarData: (data: CarDataEntry) => void;
   onEditCarData: (data: CarDataEntry) => void;
@@ -236,7 +251,6 @@ export interface CarDataSectionProps {
 }
 
 // ===== ТИПЫ ДЛЯ РАСХОДОВ И ОТЧЕТОВ =====
-
 export interface Expense {
   id: string;
   carId: string;
@@ -247,6 +261,10 @@ export interface Expense {
   odometer?: number;
   receiptPhoto?: string;
   createdAt: string;
+  fuelData?: FuelData;
+  partsData?: PartsData; // ← ДОБАВИТЬ
+  insuranceData?: InsuranceData; // ← ДОБАВИТЬ
+  inspectionData?: InspectionData; // ← ДОБАВИТЬ
 }
 
 export type ExpenseCategory = 
@@ -259,6 +277,7 @@ export type ExpenseCategory =
   | 'parking'     // Парковка
   | 'washing'     // Мойка
   | 'fines'       // Штрафы
+  | 'inspection'  // Техосмотр ← ДОБАВИТЬ
   | 'other';      // Прочее
 
 export interface ExpenseStats {
@@ -284,6 +303,10 @@ export interface ExpenseFormData {
   amount: number;
   description: string;
   odometer?: number;
+  fuelData?: FuelData;
+  partsData?: PartsData;
+  insuranceData?: InsuranceData; // ← ОПЦИОНАЛЬНО
+  inspectionData?: InspectionData; // ← ОПЦИОНАЛЬНО
 }
 
 export interface ExpenseReport {
@@ -344,4 +367,22 @@ export interface ExpenseFormData {
   description: string;
   odometer?: number;
   fuelData?: FuelData; // ← НОВОЕ ПОЛЕ
+}
+
+export interface PartsData {
+  article?: string;
+  link?: string;
+}
+
+export interface InsuranceData {
+  series: string;
+  number: string;
+  startDate: string;
+  endDate: string;
+}
+
+export interface InspectionData {
+  series: string;
+  number: string;
+  validUntil: string;
 }

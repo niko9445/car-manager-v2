@@ -6,6 +6,7 @@ interface ModalProps {
   title: string;
   children: React.ReactNode;
   size?: 'sm' | 'md' | 'lg' | 'xl';
+  className?: string;
 }
 
 const Modal: React.FC<ModalProps> = ({ 
@@ -13,7 +14,8 @@ const Modal: React.FC<ModalProps> = ({
   onClose, 
   title, 
   children, 
-  size = 'md' 
+  size = 'md',
+  className = '' 
 }) => {
   const modalRef = useRef<HTMLDivElement>(null);
 
@@ -65,7 +67,7 @@ const Modal: React.FC<ModalProps> = ({
     >
       <div 
         ref={modalRef}
-        className={`modal__container modal--${size}`}
+        className={`modal__container modal--${size} ${className}`} 
         onClick={(e) => e.stopPropagation()}
         onKeyDown={handleKeyDown}
         tabIndex={-1}

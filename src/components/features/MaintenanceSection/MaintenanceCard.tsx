@@ -1,5 +1,6 @@
 import React from 'react';
 import { Maintenance, Car } from '../../../types';
+import { useCurrency } from '../../../contexts/CurrencyContext';
 
 interface MaintenanceCardProps {
   maintenance: Maintenance;
@@ -39,6 +40,8 @@ const MaintenanceCard: React.FC<MaintenanceCardProps> = ({
 
   const hasAdditionalItems = maintenance.additionalItems && maintenance.additionalItems.length > 0;
 
+  const { formatCurrency } = useCurrency();
+
   return (
     <div 
       className={`card card--interactive ${isExpanded ? 'card--expanded' : ''}`}
@@ -49,7 +52,7 @@ const MaintenanceCard: React.FC<MaintenanceCardProps> = ({
         <div className="card__main-info">
           {/* Красивый лейбл с датой */}
           <div className="maintenance-date-label">
-            {formatDate(maintenance.createdAt)}
+            {formatDate(maintenance.date)}
           </div>
           
           <div className="card__preview">
@@ -60,7 +63,7 @@ const MaintenanceCard: React.FC<MaintenanceCardProps> = ({
             <div className="card__preview-item">
               <span className="card__preview-label">Затраты:</span>
               <span className="card__preview-value">
-                {maintenance.cost ? `${formatNumber(maintenance.cost)} ₽` : 'Не указано'}
+                {maintenance.cost ? formatCurrency(maintenance.cost) : 'Не указано'}
               </span>
             </div>
             {hasAdditionalItems && !isExpanded && (

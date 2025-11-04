@@ -9,6 +9,7 @@ import AddCarDataModal from './components/modals/AddCarDataModal/AddCarDataModal
 import AddExpenseModal from './components/modals/AddExpenseModal/AddExpenseModal';
 import ConfirmModal from './components/ui/ConfirmModal/ConfirmModal';
 import EditCarDataModal from './components/modals/EditCarDataModal/EditCarDataModal';
+import { CurrencyProvider } from './contexts/CurrencyContext';
 import { useLocalStorage } from './hooks/useLocalStorage';
 import { 
   Car, 
@@ -143,6 +144,7 @@ const AppContent = () => {
           oilChangeStep: maintenanceData.oilChangeStep,
           filterChangeStep: maintenanceData.filterChangeStep,
           additionalItems: maintenanceData.additionalItems,
+          date: maintenanceData.date,
           createdAt: new Date().toISOString()
         };
         return {
@@ -157,7 +159,7 @@ const AppContent = () => {
   };
 
   // Функции для данных авто
-  const handleAddCarData = (carData: CarDataFormData) => {
+  const handleAddCarData = (carData: { fields: CarDataField[] }) => {
     if (!selectedCar) return;
     
     const updatedCars = cars.map(car => {
@@ -400,7 +402,9 @@ const AppContent = () => {
 const App = () => {
   return (
     <AppProvider>
-      <AppContent />
+      <CurrencyProvider>
+        <AppContent />
+      </CurrencyProvider>
     </AppProvider>
   );
 };

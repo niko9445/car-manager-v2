@@ -192,106 +192,94 @@ const EditCarModal: React.FC<EditCarModalProps> = ({
               </div>
             </div>
             <div className="card__content">
-              <div className="modal__data-list">
+
+              {/* Список дополнительных данных */}
+              <div className="modal__items-list">
                 {carDataEntries.map((dataEntry) => (
-                  <div key={dataEntry.id} className="card card--compact modal__data-item">
+                  <div key={dataEntry.id} className="modal__item">
                     {editingDataId === dataEntry.id ? (
-                      // Режим редактирования
-                      <div className="modal__edit-mode">
-                        <div className="modal__edit-fields">
+                      /* Режим редактирования */
+                      <div className="modal__item-edit">
+                        <div className="modal__edit-grid">
                           {editingDataFields.map((field, index) => (
-                            <div key={index} className="modal__field-row">
+                            <React.Fragment key={index}>
                               <input
                                 type="text"
-                                placeholder="Название параметра"
+                                className="modal__input modal__input--sm"
                                 value={field.name}
                                 onChange={(e) => updateEditingField(index, { name: e.target.value })}
-                                className="modal__input modal__input--sm"
+                                placeholder="Название параметра"
                               />
                               <input
                                 type="text"
-                                placeholder="Значение"
+                                className="modal__input modal__input--sm"
                                 value={field.value}
                                 onChange={(e) => updateEditingField(index, { value: e.target.value })}
-                                className="modal__input modal__input--sm"
+                                placeholder="Значение"
                               />
                               <input
                                 type="text"
-                                placeholder="Ед. измерения"
+                                className="modal__input modal__input--sm"
                                 value={field.unit}
                                 onChange={(e) => updateEditingField(index, { unit: e.target.value })}
-                                className="modal__input modal__input--sm"
+                                placeholder="Ед. измерения"
                               />
-                              <button
-                                type="button"
-                                onClick={() => removeEditingField(index)}
-                                className="btn btn--danger btn--sm modal__remove-button"
-                                disabled={editingDataFields.length === 1}
-                              >
-                                ×
-                              </button>
-                            </div>
+                              <div className="modal__edit-actions">
+                                <button 
+                                  type="button"
+                                  className="btn btn--primary btn--sm"
+                                  onClick={() => handleSaveEditedData(dataEntry.id)}
+                                  disabled={!editingDataFields.some(f => f.name.trim() && f.value.trim())}
+                                >
+                                  Сохранить
+                                </button>
+                                <button 
+                                  type="button"
+                                  className="btn btn--cancel btn--sm"
+                                  onClick={cancelEditingData}
+                                >
+                                  Отмена
+                                </button>
+                              </div>
+                            </React.Fragment>
                           ))}
                         </div>
-                        <div className="modal__actions modal__actions--between">
-                          <button
-                            type="button"
-                            onClick={addEditingField}
+                        {/* Кнопка добавления поля с отступом */}
+                        <div className="modal__add-field-section">
+                          <button 
+                            type="button" 
                             className="btn btn--secondary btn--sm"
+                            onClick={addEditingField}
                           >
                             + Добавить поле
                           </button>
-                          <div className="modal__field-actions">
-                            <button
-                              type="button"
-                              onClick={cancelEditingData}
-                              className="btn btn--cancel btn--sm"
-                            >
-                              Отмена
-                            </button>
-                            <button
-                              type="button"
-                              onClick={() => handleSaveEditedData(dataEntry.id)}
-                              className="btn btn--primary btn--sm"
-                              disabled={!editingDataFields.some(field => field.name.trim() && field.value.trim())}
-                            >
-                              Сохранить
-                            </button>
-                          </div>
                         </div>
                       </div>
                     ) : (
-                      // Режим просмотра
-                      <div className="modal__view-mode">
-                        <div className="card__content">
-                          <div className="modal__data-fields">
-                            {dataEntry.fields.map((field, index) => (
-                              <div key={index} className="modal__data-field">
-                                <span className="modal__field-name">{field.name}</span>
-                                <span className="modal__field-value">
-                                  {field.value} {field.unit && <span className="modal__field-unit">{field.unit}</span>}
-                                </span>
-                              </div>
-                            ))}
-                          </div>
-                          <div className="modal__data-meta">
-                            <span className="modal__data-date">
-                              {formatDate(dataEntry.createdAt)}
-                            </span>
-                          </div>
+                      /* Режим просмотра */
+                      <div className="modal__item-content">
+                        <div className="modal__item-info">
+                          {dataEntry.fields.map((field, index) => (
+                            <div key={index} style={{ display: 'flex', flexDirection: 'column', gap: '4px', marginBottom: '8px' }}>
+                              <span className="modal__item-name">{field.name}</span>
+                              <span className="modal__item-value">
+                                {field.value} {field.unit || ''}
+                              </span>
+                            </div>
+                          ))}
                         </div>
-                        <div className="card__actions">
-                          <button
+                        <div className="modal__item-actions">
+                          <button 
                             type="button"
+                            className="btn btn--secondary btn--sm"
                             onClick={() => startEditingData(dataEntry)}
-                            className="btn btn--primary btn--sm"
                           >
                             Редактировать
                           </button>
-                          <button
+                          <button 
                             type="button"
-                            onClick={() => onDeleteCarData(car.id, dataEntry.id)}
                             className="btn btn--danger btn--sm"
+                            onClick={() => onDeleteCarData(car.id, dataEntry.id)}
                           >
                             Удалить
                           </button>

@@ -6,6 +6,8 @@ const CarDataSection: React.FC<CarDataSectionProps> = ({
   car, 
   cars, 
   onAddCarData, 
+  onDeleteCarData,
+  onEditCarData,
   onEditCar
 }) => {
   const currentCar = cars.find(c => c.id === car.id) || car;
@@ -80,24 +82,28 @@ const CarDataSection: React.FC<CarDataSectionProps> = ({
 
       {/* ПРОКРУЧИВАЕМЫЙ КОНТЕНТ */}
       <div className="section-content">
-        {/* Основные данные автомобиля - всегда видимые */}
-        <div className="car-data-section__basic">
-          <h3 className="car-data-section__subtitle">Основная информация</h3>
-          <div className="card__grid card__grid--basic">
-            {allDataItems.map((item) => (
-              <div key={item.id} className="card__grid-item card__grid-item--basic">
-                <span className="card__grid-label">{item.name}</span>
-                <span className="card__grid-value">{item.value}</span>
-              </div>
-            ))}
-          </div>
-        </div>
+        {/* Все данные единым списком без заголовков */}
+        <div className="car-data-section__all-data">
+          {/* Основные данные - карточки */}
+          {allDataItems.length > 0 && (
+            <div className="card__grid card__grid--unified">
+              {allDataItems.map((item) => (
+                <DataCard
+                  key={item.id}
+                  data={{
+                    id: item.id,
+                    fields: [{ name: item.name, value: item.value, unit: '' }],
+                    createdAt: ''
+                  }}
+                  position={0}
+                />
+              ))}
+            </div>
+          )}
 
-        {/* Дополнительные данные с аккордеон-карточками */}
-        {currentCar.carData && currentCar.carData.length > 0 && (
-          <div className="car-data-section__additional">
-            <h3 className="car-data-section__subtitle">Дополнительные данные</h3>
-            <div className="card__grid">
+          {/* Дополнительные данные - аккордеон-карточки */}
+          {currentCar.carData && currentCar.carData.length > 0 && (
+            <div className="card__grid card__grid--unified">
               {currentCar.carData.map((dataEntry, index) => (
                 <DataCard
                   key={dataEntry.id}
@@ -106,8 +112,8 @@ const CarDataSection: React.FC<CarDataSectionProps> = ({
                 />
               ))}
             </div>
-          </div>
-        )}
+          )}
+        </div>
 
         {/* Сообщение если нет данных вообще */}
         {allDataItems.length === 0 && (!currentCar.carData || currentCar.carData.length === 0) && (

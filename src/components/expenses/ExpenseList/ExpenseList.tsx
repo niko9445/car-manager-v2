@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { Expense, ExpenseListProps } from '../../../types';
 import ConfirmModal from '../../ui/ConfirmModal/ConfirmModal';
+import { useCurrency } from '../../../contexts/CurrencyContext';
 
 const ExpenseList: React.FC<ExpenseListProps> = ({
   expenses,
@@ -12,6 +13,7 @@ const ExpenseList: React.FC<ExpenseListProps> = ({
   const [expenseToDelete, setExpenseToDelete] = useState<Expense | null>(null);
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
   const [expandedExpenseId, setExpandedExpenseId] = useState<string | null>(null);
+  const { formatCurrency } = useCurrency();
 
   const handleToggleExpense = (expenseId: string) => {
     setExpandedExpenseId(expandedExpenseId === expenseId ? null : expenseId);
@@ -30,7 +32,6 @@ const ExpenseList: React.FC<ExpenseListProps> = ({
       };
     }
 
-    // Общий средний расход с использованием данных о запасе хода
     const totalLiters = fuelExpenses.reduce((sum, expense) => 
       sum + (expense.fuelData?.liters || 0), 0
     );
@@ -77,13 +78,6 @@ const ExpenseList: React.FC<ExpenseListProps> = ({
     return new Date(dateString).toLocaleDateString('ru-RU');
   };
 
-  const formatAmount = (amount: number): string => {
-    return new Intl.NumberFormat('ru-RU', {
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0
-    }).format(amount) + ' ₽';
-  };
-
   const formatNumber = (num: number): string => {
     return num.toLocaleString('ru-RU');
   };
@@ -124,7 +118,7 @@ const ExpenseList: React.FC<ExpenseListProps> = ({
             <div className="expense-stat-card">
               <div className="expense-stat-card__content">
                 <div className="expense-stat-card__title">Всего</div>
-                <div className="expense-stat-card__value">{formatAmount(stats.total)}</div>
+                <div className="expense-stat-card__value">{formatCurrency(stats.total)}</div>
               </div>
             </div>
 
@@ -132,7 +126,7 @@ const ExpenseList: React.FC<ExpenseListProps> = ({
             <div className="expense-stat-card">
               <div className="expense-stat-card__content">
                 <div className="expense-stat-card__title">Этот месяц</div>
-                <div className="expense-stat-card__value">{formatAmount(currentMonthTotal)}</div>
+                <div className="expense-stat-card__value">{formatCurrency(currentMonthTotal)}</div>
               </div>
             </div>
 
@@ -140,7 +134,7 @@ const ExpenseList: React.FC<ExpenseListProps> = ({
             <div className="expense-stat-card">
               <div className="expense-stat-card__content">
                 <div className="expense-stat-card__title">Прошлый месяц</div>
-                <div className="expense-stat-card__value">{formatAmount(stats.lastMonthTotal)}</div>
+                <div className="expense-stat-card__value">{formatCurrency(stats.lastMonthTotal)}</div>
               </div>
             </div>
           </div>
@@ -152,6 +146,9 @@ const ExpenseList: React.FC<ExpenseListProps> = ({
         {expenses.map((expense, index) => {
           const isExpanded = expandedExpenseId === expense.id;
           const hasFuelData = expense.category === 'fuel' && expense.fuelData;
+          const hasPartsData = expense.category === 'parts' && expense.partsData;
+          const hasInsuranceData = expense.category === 'insurance' && expense.insuranceData;
+          const hasInspectionData = expense.category === 'inspection' && expense.inspectionData;
 
           return (
             <div 
@@ -169,7 +166,7 @@ const ExpenseList: React.FC<ExpenseListProps> = ({
                         {getCategoryName(expense.category)}
                       </span>
                       <span className="expense-card__amount">
-                        {formatAmount(expense.amount)}
+                        {formatCurrency(expense.amount)}
                       </span>
                     </div>
                     <div className="expense-card__preview-date">
@@ -226,28 +223,91 @@ const ExpenseList: React.FC<ExpenseListProps> = ({
                       </div>
                     )}
                     
-                    {expense.category === 'fuel' && expense.fuelData && (
+                    {/* Данные заправки */}
+                    {hasFuelData && (
                       <>
-                        {expense.fuelData.liters && (
+                        {expense.fuelData!.liters && (
                           <div className="expense-card__detail">
                             <span className="expense-card__detail-label">Заправлено</span>
                             <span className="expense-card__detail-value">
-                              {expense.fuelData.liters} л
+                              {expense.fuelData!.liters} л
                             </span>
                           </div>
                         )}
-                        {expense.fuelData.remainingRange && (
+                        {expense.fuelData!.remainingRange && (
                           <div className="expense-card__detail">
                             <span className="expense-card__detail-label">Запас хода</span>
-                            <span className="expense-card__detail-value">{expense.fuelData.remainingRange} км</span>
+                            <span className="expense-card__detail-value">{expense.fuelData!.remainingRange} км</span>
                           </div>
                         )}
-                        {expense.fuelData.averageConsumption && (
+                        {expense.fuelData!.averageConsumption && (
                           <div className="expense-card__detail">
                             <span className="expense-card__detail-label">Расход</span>
-                            <span className="expense-card__detail-value">{expense.fuelData.averageConsumption.toFixed(1)} л/100км</span>
+                            <span className="expense-card__detail-value">{expense.fuelData!.averageConsumption.toFixed(1)} л/100км</span>
                           </div>
                         )}
+                      </>
+                    )}
+
+                    {/* Данные запчастей */}
+                    {hasPartsData && (
+                      <>
+                        {expense.partsData!.article && (
+                          <div className="expense-card__detail">
+                            <span className="expense-card__detail-label">Артикул</span>
+                            <span className="expense-card__detail-value">{expense.partsData!.article}</span>
+                          </div>
+                        )}
+                        {expense.partsData!.link && (
+                          <div className="expense-card__detail">
+                            <span className="expense-card__detail-label">Ссылка</span>
+                            <a 
+                              href={expense.partsData!.link} 
+                              target="_blank" 
+                              rel="noopener noreferrer"
+                              className="expense-card__link"
+                              onClick={(e) => e.stopPropagation()}
+                            >
+                              Перейти по ссылке
+                            </a>
+                          </div>
+                        )}
+                      </>
+                    )}
+
+                    {/* Данные страховки */}
+                    {hasInsuranceData && (
+                      <>
+                        <div className="expense-card__detail">
+                          <span className="expense-card__detail-label">Серия и номер</span>
+                          <span className="expense-card__detail-value">
+                            {expense.insuranceData!.series} {expense.insuranceData!.number}
+                          </span>
+                        </div>
+                        <div className="expense-card__detail">
+                          <span className="expense-card__detail-label">Срок действия</span>
+                          <span className="expense-card__detail-value">
+                            {formatDate(expense.insuranceData!.startDate)} - {formatDate(expense.insuranceData!.endDate)}
+                          </span>
+                        </div>
+                      </>
+                    )}
+
+                    {/* Данные техосмотра */}
+                    {hasInspectionData && (
+                      <>
+                        <div className="expense-card__detail">
+                          <span className="expense-card__detail-label">Серия и номер</span>
+                          <span className="expense-card__detail-value">
+                            {expense.inspectionData!.series} {expense.inspectionData!.number}
+                          </span>
+                        </div>
+                        <div className="expense-card__detail">
+                          <span className="expense-card__detail-label">Действителен до</span>
+                          <span className="expense-card__detail-value">
+                            {formatDate(expense.inspectionData!.validUntil)}
+                          </span>
+                        </div>
                       </>
                     )}
                   </div>
@@ -263,7 +323,7 @@ const ExpenseList: React.FC<ExpenseListProps> = ({
         onClose={handleCancelDelete}
         onConfirm={handleConfirmDelete}
         title="Удалить расход"
-        message={expenseToDelete ? `Вы уверены, что хотите удалить расход "${expenseToDelete.description}" на сумму ${formatAmount(expenseToDelete.amount)}?` : "Вы уверены, что хотите удалить этот расход?"}
+        message={expenseToDelete ? `Вы уверены, что хотите удалить расход "${expenseToDelete.description}" на сумму ${formatCurrency(expenseToDelete.amount)}?` : "Вы уверены, что хотите удалить этот расход?"}
         confirmText="Удалить"
         cancelText="Отмена"
         type="delete"
@@ -283,6 +343,7 @@ const getCategoryName = (category: string): string => {
     parking: 'Парковка',
     washing: 'Мойка',
     fines: 'Штрафы',
+    inspection: 'Техосмотр',
     other: 'Прочее'
   };
   return names[category] || category;

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Modal from '../../ui/Modal/Modal';
 import { EditMaintenanceModalProps, AdditionalItem } from '../../../types';
+import { useCurrency } from '../../../contexts/CurrencyContext'; // ← ДОБАВИТЬ
 
 const EditMaintenanceModal: React.FC<EditMaintenanceModalProps> = ({ 
   maintenance, 
@@ -12,6 +13,7 @@ const EditMaintenanceModal: React.FC<EditMaintenanceModalProps> = ({
     cost: '',
     oilChangeStep: '',
     filterChangeStep: '',
+    date: '',
     additionalItems: [] as AdditionalItem[]
   });
 
@@ -21,6 +23,8 @@ const EditMaintenanceModal: React.FC<EditMaintenanceModalProps> = ({
     unit: '' 
   });
 
+  const { getCurrencySymbol } = useCurrency(); // ← ДОБАВИТЬ
+
   useEffect(() => {
     if (maintenance) {
       setFormData({
@@ -28,6 +32,7 @@ const EditMaintenanceModal: React.FC<EditMaintenanceModalProps> = ({
         cost: maintenance.cost?.toString() || '',
         oilChangeStep: maintenance.oilChangeStep.toString(),
         filterChangeStep: maintenance.filterChangeStep.toString(),
+        date: maintenance.date,
         additionalItems: maintenance.additionalItems || []
       });
     }
@@ -41,6 +46,7 @@ const EditMaintenanceModal: React.FC<EditMaintenanceModalProps> = ({
         cost: formData.cost ? parseInt(formData.cost) : null,
         oilChangeStep: parseInt(formData.oilChangeStep),
         filterChangeStep: parseInt(formData.filterChangeStep),
+        date: formData.date,
         additionalItems: formData.additionalItems
       };
       onSave(maintenance.id, updatedData);
@@ -69,12 +75,50 @@ const EditMaintenanceModal: React.FC<EditMaintenanceModalProps> = ({
     setFormData({ ...formData, additionalItems: updatedItems });
   };
 
+  const startEditingItem = (index: number): void => {
+    setEditingIndex(index);
+    setEditingItem({ ...formData.additionalItems[index] });
+  };
+
+  const saveEditingItem = (): void => {
+    if (editingIndex !== null) {
+      const updatedItems = [...formData.additionalItems];
+      updatedItems[editingIndex] = { ...editingItem };
+      
+      setFormData({
+        ...formData,
+        additionalItems: updatedItems
+      });
+      
+      cancelEditing();
+    }
+  };
+
+  const cancelEditing = (): void => {
+    setEditingIndex(null);
+    setEditingItem({ name: '', value: '', unit: '' });
+  };
+
+  const updateEditingItem = (field: keyof AdditionalItem, value: string): void => {
+    setEditingItem(prev => ({
+      ...prev,
+      [field]: value
+    }));
+  };
+
   const updateNewItem = (field: keyof AdditionalItem, value: string): void => {
     setNewItem(prev => ({
       ...prev,
       [field]: value
     }));
   };
+
+  const [editingIndex, setEditingIndex] = useState<number | null>(null);
+  const [editingItem, setEditingItem] = useState<AdditionalItem>({ 
+    name: '', 
+    value: '', 
+    unit: '' 
+  });
 
   return (
     <Modal isOpen={true} onClose={onClose} title="Редактировать ТО" size="lg">
@@ -88,6 +132,17 @@ const EditMaintenanceModal: React.FC<EditMaintenanceModalProps> = ({
           <div className="card__content">
             <div className="modal__form-grid">
               <div className="modal__form-group">
+                <label className="modal__label modal__label--required">Дата ТО</label>
+                <input
+                  type="date"
+                  className="modal__input"
+                  value={formData.date}
+                  onChange={(e) => handleInputChange('date', e.target.value)}
+                  required
+                />
+              </div>
+              
+              <div className="modal__form-group">
                 <label className="modal__label modal__label--required">Пробег (км)</label>
                 <input
                   type="number"
@@ -99,8 +154,9 @@ const EditMaintenanceModal: React.FC<EditMaintenanceModalProps> = ({
                 />
               </div>
               
+              {/* ИСПРАВЛЕНО: Затраты с текущей валютой */}
               <div className="modal__form-group">
-                <label className="modal__label">Затраты (BYN)</label>
+                <label className="modal__label">Затраты ({getCurrencySymbol()})</label>
                 <input
                   type="number"
                   className="modal__input"
@@ -188,18 +244,77 @@ const EditMaintenanceModal: React.FC<EditMaintenanceModalProps> = ({
               <div className="modal__items-list">
                 {formData.additionalItems.map((item, index) => (
                   <div key={index} className="modal__item">
-                    <div className="modal__item-content">
-                      <span className="modal__item-text">
-                        {item.name}: {item.value} {item.unit || ''}
-                      </span>
-                      <button 
-                        type="button"
-                        className="btn btn--danger btn--sm modal__item-remove"
-                        onClick={() => removeAdditionalItem(index)}
-                      >
-                        Удалить
-                      </button>
-                    </div>
+                    {editingIndex === index ? (
+                      /* Режим редактирования */
+                      <div className="modal__item-edit">
+                        <div className="modal__edit-grid">
+                          <input
+                            type="text"
+                            className="modal__input modal__input--sm"
+                            value={editingItem.name}
+                            onChange={(e) => updateEditingItem('name', e.target.value)}
+                            placeholder="Название работы"
+                          />
+                          <input
+                            type="text"
+                            className="modal__input modal__input--sm"
+                            value={editingItem.value}
+                            onChange={(e) => updateEditingItem('value', e.target.value)}
+                            placeholder="Значение"
+                          />
+                          <input
+                            type="text"
+                            className="modal__input modal__input--sm"
+                            value={editingItem.unit}
+                            onChange={(e) => updateEditingItem('unit', e.target.value)}
+                            placeholder="Единица измерения"
+                          />
+                          <div className="modal__edit-actions">
+                            <button 
+                              type="button"
+                              className="btn btn--primary btn--sm"
+                              onClick={saveEditingItem}
+                              disabled={!editingItem.name.trim() || !editingItem.value.trim()}
+                            >
+                              ✓
+                            </button>
+                            <button 
+                              type="button"
+                              className="btn btn--cancel btn--sm"
+                              onClick={cancelEditing}
+                            >
+                              ×
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    ) : (
+                      /* Режим просмотра */
+                      <div className="modal__item-content">
+                        <div className="modal__item-info">
+                          <span className="modal__item-name">{item.name}</span>
+                          <span className="modal__item-value">
+                            {item.value} {item.unit || ''}
+                          </span>
+                        </div>
+                        <div className="modal__item-actions">
+                          <button 
+                            type="button"
+                            className="btn btn--secondary btn--sm"
+                            onClick={() => startEditingItem(index)}
+                          >
+                            Редактировать
+                          </button>
+                          <button 
+                            type="button"
+                            className="btn btn--danger btn--sm"
+                            onClick={() => removeAdditionalItem(index)}
+                          >
+                            Удалить
+                          </button>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>
