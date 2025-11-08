@@ -81,15 +81,6 @@ const EditCarModal: React.FC<EditCarModalProps> = ({
     setEditingDataFields([...editingDataFields, { name: '', value: '', unit: '' }]);
   };
 
-  const removeEditingField = (index: number) => {
-    const updatedFields = editingDataFields.filter((_, i) => i !== index);
-    setEditingDataFields(updatedFields);
-  };
-
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('ru-RU');
-  };
-
   return (
     <Modal isOpen={true} onClose={onClose} title="Редактировать автомобиль" size="lg">
       <form className="modal__form" onSubmit={handleSubmit}>

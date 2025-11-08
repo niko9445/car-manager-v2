@@ -96,7 +96,7 @@ const ExpenseList: React.FC<ExpenseListProps> = ({
       .reduce((sum, expense) => sum + expense.amount, 0);
   }, [expenses]);
 
-  const hasFuelExpenses = fuelStats.totalFuelExpenses > 0;
+  
 
   return (
     <div className="expense-list-container">

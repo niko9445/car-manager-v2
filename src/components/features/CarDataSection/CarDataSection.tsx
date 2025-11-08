@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { CarDataSectionProps } from '../../../types';
 import DataCard from './DataCard';
 

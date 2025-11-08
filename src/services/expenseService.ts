@@ -1,4 +1,4 @@
-import { Expense, ExpenseFilters, ExpenseStats, FuelData } from '../types';
+import { Expense, ExpenseFilters, ExpenseStats} from '../types';
 
 const STORAGE_KEY = 'car_expenses';
 

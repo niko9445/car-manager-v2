@@ -20,7 +20,6 @@ import {
   MaintenanceFormData,
   ConfirmType,
   ModalData,
-  CarDataFormData,
   CarDataField,
   SectionType 
 } from './types';
