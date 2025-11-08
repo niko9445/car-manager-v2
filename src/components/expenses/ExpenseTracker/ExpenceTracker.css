@@ -1,0 +1,233 @@
+.expense-welcome {
+  position: relative;
+  background: var(--color-bg-tertiary);
+  border: 1px solid var(--color-border-primary);
+  border-radius: var(--radius-xl);
+  padding: var(--space-8);
+  text-align: center;
+  overflow: hidden;
+  min-height: 400px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: var(--space-4) 0;
+}
+
+.expense-welcome__background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  opacity: 0.03;
+  pointer-events: none;
+}
+
+.expense-welcome__grid {
+  width: 100%;
+  height: 100%;
+  background-image: 
+    linear-gradient(var(--color-text-primary) 1px, transparent 1px),
+    linear-gradient(90deg, var(--color-text-primary) 1px, transparent 1px);
+  background-size: 40px 40px;
+  animation: gridFlow 20s linear infinite;
+}
+
+@keyframes gridFlow {
+  0% { transform: translate(0, 0); }
+  100% { transform: translate(40px, 40px); }
+}
+
+.expense-welcome__content {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-6);
+  max-width: 320px;
+}
+
+.expense-welcome__icon {
+  position: relative;
+  width: 80px;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.expense-welcome__chart {
+  position: absolute;
+  width: 60px;
+  height: 40px;
+  bottom: 0;
+  display: flex;
+  align-items: end;
+  gap: 4px;
+}
+
+.expense-welcome__bar {
+  flex: 1;
+  background: var(--color-border-accent);
+  border-radius: 2px 2px 0 0;
+  animation: barGrow 2s ease-in-out infinite;
+  transform-origin: bottom;
+}
+
+.expense-welcome__bar--1 {
+  height: 20px;
+  animation-delay: 0s;
+}
+.expense-welcome__bar--2 {
+  height: 30px;
+  animation-delay: 0.2s;
+}
+.expense-welcome__bar--3 {
+  height: 25px;
+  animation-delay: 0.4s;
+}
+.expense-welcome__bar--4 {
+  height: 35px;
+  animation-delay: 0.6s;
+}
+
+@keyframes barGrow {
+  0%, 100% { transform: scaleY(1); opacity: 0.8; }
+  50% { transform: scaleY(1.1); opacity: 1; }
+}
+
+.expense-welcome__currency {
+  font-size: 24px;
+  font-weight: 300;
+  color: var(--color-text-primary);
+  animation: currencyFloat 3s ease-in-out infinite;
+}
+
+@keyframes currencyFloat {
+  0%, 100% { 
+    transform: translateY(0px) scale(1); 
+    opacity: 0.9;
+  }
+  50% { 
+    transform: translateY(-5px) scale(1.05); 
+    opacity: 1;
+  }
+}
+
+.expense-welcome__text {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.expense-welcome__title {
+  font-size: var(--font-size-xl);
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin: 0;
+  line-height: 1.3;
+}
+
+.expense-welcome__subtitle {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  margin: 0;
+  line-height: 1.5;
+  opacity: 0.8;
+}
+
+.expense-welcome__button {
+  padding: var(--space-3) var(--space-6);
+  border-radius: var(--radius-lg);
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  transition: all var(--transition-normal);
+  box-shadow: var(--shadow-md);
+}
+
+.expense-welcome__button:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+/* Мобильная адаптация */
+@media (max-width: 768px) {
+  .expense-welcome {
+    padding: var(--space-6);
+    min-height: 350px;
+    margin: var(--space-3) 0;
+  }
+  
+  .expense-welcome__content {
+    gap: var(--space-5);
+    max-width: 280px;
+  }
+  
+  .expense-welcome__icon {
+    width: 70px;
+    height: 70px;
+  }
+  
+  .expense-welcome__chart {
+    width: 50px;
+    height: 35px;
+  }
+  
+  .expense-welcome__bar {
+    border-radius: 1px 1px 0 0;
+  }
+  
+  .expense-welcome__title {
+    font-size: var(--font-size-lg);
+  }
+  
+  .expense-welcome__subtitle {
+    font-size: var(--font-size-xs);
+  }
+  
+  .expense-welcome__button {
+    padding: var(--space-3) var(--space-5);
+  }
+}
+
+@media (max-width: 480px) {
+  .expense-welcome {
+    padding: var(--space-5);
+    min-height: 300px;
+  }
+  
+  .expense-welcome__content {
+    gap: var(--space-4);
+    max-width: 100%;
+  }
+  
+  .expense-welcome__icon {
+    width: 60px;
+    height: 60px;
+  }
+  
+  .expense-welcome__chart {
+    width: 45px;
+    height: 30px;
+  }
+  
+  .expense-welcome__currency {
+    font-size: 20px;
+  }
+}
+
+
+
+
+.expense-tracker {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+}

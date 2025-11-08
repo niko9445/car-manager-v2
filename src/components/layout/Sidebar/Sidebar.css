@@ -1,0 +1,236 @@
+.sidebar {
+  width: 280px;
+  background: var(--color-bg-secondary);
+  border-right: 1px solid var(--color-border-primary);
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow-y: auto;
+  position: relative;
+  transition: transform 0.3s ease;
+}
+
+.sidebar__header {
+  padding: var(--space-2);
+  border-bottom: 1px solid var(--color-border-primary);
+  background: var(--color-bg-tertiary);
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.sidebar__header-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-1);
+  gap: var(--space-1);
+}
+
+.sidebar__title {
+  margin: 0;
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  color: var(--color-text-primary);
+  text-align: center;
+}
+
+.sidebar__actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.sidebar__actions-row {
+  display: flex;
+  gap: var(--space-2);
+  align-items: stretch;
+  width: 100%;
+}
+
+.sidebar__actions-row .btn--full {
+  flex: 1;
+  min-width: 0;
+  height: auto;
+}
+
+
+.sidebar__content {
+  flex: 1;
+  padding: var(--space-4);
+  overflow-y: auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.sidebar__cars {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.sidebar__empty {
+  text-align: center;
+  padding: var(--space-8) var(--space-4);
+}
+
+.sidebar__empty-text {
+  margin: 0;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+@media (max-width: 768px) {
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 300px;
+    max-width: 85vw;
+    z-index: 1001;
+    transform: translateX(-100%);
+  }
+  
+  .sidebar--open {
+    transform: translateX(0);
+  }
+
+  .sidebar__header,
+  .sidebar__content,
+  .sidebar__footer {
+    padding: var(--space-3);
+  }
+  
+  .sidebar__actions-row {
+    gap: var(--space-1);
+  }
+  
+}
+
+@media (max-width: 480px) {
+  .sidebar {
+    width: 280px;
+    max-width: 90vw;
+  }
+  
+  .sidebar__header,
+  .sidebar__content,
+  .sidebar__footer {
+    padding: var(--space-2);
+  }
+  
+}
+
+.sidebar__footer {
+  margin-top: auto;
+  padding: var(--space-3) var(--space-4);
+  border-top: 1px solid var(--color-border-primary);
+  background: var(--color-bg-tertiary);
+  flex-shrink: 0;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  min-height: 60px;
+  position: relative;
+  z-index: 10;
+  margin-bottom: 20px;
+  border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
+  overflow: hidden;
+  width: 100%;
+}
+
+/* ✅ ДОБАВИТЬ новый класс для кнопки настроек */
+.sidebar__settings-btn {
+  width: 44px;
+  height: 44px; /* ← Сделать такую же высоту как у кнопки */
+  padding: var(--space-2);
+  border: 1px solid var(--color-border-secondary);
+  border-radius: var(--radius-md);
+  background: var(--color-bg-card);
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--transition-fast);
+  flex-shrink: 0;
+}
+
+.sidebar__settings-btn:hover {
+  border-color: var(--color-border-accent);
+  color: var(--color-text-primary);
+  background: var(--color-bg-tertiary);
+}
+
+/* ===== ПОДПИСЬ В ОДНУ СТРОКУ ===== */
+.sidebar-footer__credits {
+  font-size: var(--font-size-base);
+  color: var(--color-text-muted);
+  font-weight: 500;
+  flex: 1;
+  white-space: nowrap; /* Запрещаем перенос строк */
+  
+}
+
+/* Убираем отдельный класс для названия приложения */
+.sidebar-footer__app-name {
+  display: inline; /* Делаем inline вместо block */
+  margin-left: 4px; /* Небольшой отступ между годом и названием */
+}
+
+.sidebar__header-actions {
+  display: flex;
+  gap: var(--space-2);
+  align-items: center;
+}
+
+/* Мобильная версия */
+@media (max-width: 768px) {
+  .sidebar__footer {
+    margin-bottom: 15px;
+    border-radius: 0 var(--radius-md) var(--radius-md) 0;
+    padding: var(--space-3) var(--space-3);
+  }
+  
+  .sidebar__settings-btn {
+    width: 40px;
+    height: 40px; /* ← Такая же высота на мобильных */
+    padding: var(--space-1);
+  }
+
+  .sidebar__header-actions {
+    gap: var(--space-1);
+  }
+  
+  .sidebar-footer__credits {
+    font-size: var(--font-size-xs);
+    margin-left: 0; /* ← УДАЛИТЬ margin-left */
+    padding-left: var(--space-1); /* ← ДОБАВИТЬ padding-left */
+  }
+}
+
+@media (max-width: 480px) {
+  .sidebar__footer {
+    margin-bottom: 12px;
+    padding: var(--space-2) var(--space-3);
+  }
+  
+  .sidebar__settings-btn {
+    width: 40px;
+    height: 42px; /* ← Такая же высота на маленьких экранах */
+  }
+  
+  .sidebar__header-actions {
+    gap: 2px;
+  }
+  
+  .sidebar-footer__credits {
+    font-size: 0.7rem;
+    padding-left: var(--space-1); /* ← ДОБАВИТЬ отступ */
+  }
+}
+

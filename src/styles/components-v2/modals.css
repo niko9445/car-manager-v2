@@ -98,30 +98,67 @@
   justify-content: flex-end;
 }
 
+
+.modal__actions-container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  margin-top: var(--space-6);
+  width: 100%;
+}
+
+/* Центрированные кнопки */
+.modal__actions--centered {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: var(--space-3);
+  width: 100%;
+}
+
+.modal__actions--centered .btn {
+  min-width: 140px;
+  flex-shrink: 0;
+}
+
+/* Стили для подписи */
+.modal__footer-signature {
+  text-align: center;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--color-border-primary);
+  margin-top: var(--space-4);
+}
+
+.modal__footer-app-name {
+  font-weight: 600;
+}
+
 .modal__actions--center { justify-content: center; }
 
 /* Улучшенные стили для модального окна */
 .modal__form-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: var(--space-3); /* Меньше расстояние между полями */
+  gap: var(--space-2); /* Меньше расстояние между полями */
 }
 
 /* === ФОРМЫ В МОДАЛКАХ === */
 .modal__form {
   display: flex;
   flex-direction: column;
-  gap: var(--space-5);
+  gap: var(--space-1);
 }
 
 .modal__form-group {
   display: flex;
   flex-direction: column;
-  gap: var(--space-2);
+  gap: var(--space-1);
 }
 
 .modal__form-group {
-  margin-bottom: var(--space-2); /* Меньше отступ снизу */
+  margin-bottom: var(--space-1); /* Меньше отступ снизу */
 }
 
 .modal__label {
@@ -561,6 +598,28 @@
   .modal__actions {
     flex-direction: column;
   }
+
+  .modal__actions-container {
+    gap: var(--space-3);
+    margin-top: var(--space-4);
+  }
+  
+  .modal__actions--centered {
+    flex-direction: row !important;
+    gap: var(--space-2) !important;
+  }
+  
+  .modal__actions--centered .btn {
+    flex: 1 !important;
+    min-width: auto !important;
+    width: 100% !important;
+  }
+  
+  .modal__footer-signature {
+    font-size: var(--font-size-xs) !important;
+    padding-top: var(--space-3) !important;
+    margin-top: var(--space-3) !important;
+  }
   
   /* СТИЛИ ТОЛЬКО ДЛЯ ПОЛЯ ДАТЫ */
   .modal__input[type="date"] {
@@ -580,6 +639,18 @@
     direction: ltr;
     text-align-last: left; /* Для некоторых браузеров */
   }
+  
+  .modal__footer-signature {
+    font-size: var(--font-size-xs);
+    padding-top: var(--space-3);
+    margin-top: var(--space-3);
+  }
+  
+  .modal__actions-container {
+    gap: var(--space-3);
+    margin-top: var(--space-4);
+  }
+  
   
   /* Улучшение для iOS */
   @supports (-webkit-touch-callout: none) {
@@ -611,7 +682,7 @@
 
   .modal__form-grid {
     grid-template-columns: 1fr;
-    gap: var(--space-3);
+    gap: var(--space-2);
   }
   
   .modal__item {
@@ -815,7 +886,7 @@
 .modal__form-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: var(--space-4);
+  gap: var(--space-2);
 }
 
 /* settings-modal.css */

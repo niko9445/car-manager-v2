@@ -1,218 +1,9 @@
-/* ===== УНИФИЦИРОВАННАЯ СИСТЕМА КАРТОЧЕК ===== */
-
-/* === БАЗОВЫЕ СТИЛИ КАРТОЧЕК === */
 .section__list {
   display: flex;
   flex-direction: column;
   gap: var(--space-4);
 }
 
-/* Основной стиль карточки */
-.card {
-  background: var(--color-bg-card);
-  border: 1px solid var(--color-border-primary);
-  border-radius: var(--radius-lg);
-  padding: var(--space-5);
-  transition: all var(--transition-normal);
-  position: relative;
-  margin-bottom: var(--space-2);
-  animation: cardSlideIn 0.3s ease-out;
-}
-
-.card--interactive {
-  cursor: pointer;
-}
-
-.card--interactive:hover {
-  border-color: var(--color-border-accent);
-  transform: translateY(-1px);
-}
-
-.card--expanded {
-  border-color: var(--color-border-accent);
-  background: var(--color-bg-tertiary);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-}
-
-/* === СТРУКТУРА КАРТОЧКИ === */
-.card__header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: var(--space-3);
-  gap: var(--space-3);
-}
-
-.card__main-info {
-  flex: 1;
-  min-width: 0;
-}
-
-.card__title {
-  margin: 0 0 var(--space-2) 0;
-  font-size: var(--font-size-base);
-  font-weight: 600;
-  color: var(--color-text-primary);
-  line-height: 1.4;
-}
-
-.card__description {
-  margin: 0;
-  font-size: var(--font-size-sm);
-  color: var(--color-text-secondary);
-  line-height: 1.4;
-}
-
-/* Превью карточки */
-.card__preview {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
-  margin-top: var(--space-3);
-}
-
-.card__preview-item {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  font-size: var(--font-size-sm);
-}
-
-.card__preview-label {
-  color: var(--color-text-secondary);
-  font-weight: 500;
-}
-
-.card__preview-value {
-  color: var(--color-text-primary);
-  font-weight: 600;
-}
-
-.card__preview-more {
-  color: var(--color-accent);
-  font-size: var(--font-size-xs);
-  font-weight: 500;
-  margin-top: var(--space-1);
-}
-
-/* Раскрытый контент */
-.card__expanded-content {
-  margin-top: var(--space-4);
-  padding-top: var(--space-4);
-  border-top: 1px solid var(--color-border-primary);
-  animation: slideDown 0.2s ease-out;
-}
-
-/* Кнопки действий */
-.card__corner-actions {
-  display: flex;
-  gap: var(--space-1);
-  align-items: center;
-}
-
-.card__corner-action {
-  padding: var(--space-1);
-  border: 1px solid var(--color-border-secondary);
-  border-radius: var(--radius-sm);
-  background: transparent;
-  color: var(--color-text-secondary);
-  cursor: pointer;
-  transition: all var(--transition-fast);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 28px;
-  height: 28px;
-}
-
-.card__corner-action:hover {
-  border-color: var(--color-border-accent);
-  color: var(--color-text-primary);
-  background: var(--color-bg-tertiary);
-}
-
-.card__corner-action--danger:hover {
-  border-color: var(--color-accent-red);
-  color: var(--color-accent-red);
-}
-
-/* Убираем стрелки раскрытия */
-.card__expand-indicator {
-  display: none;
-}
-
-/* ===== РАЗДЕЛ: ТЕХНИЧЕСКОЕ ОБСЛУЖИВАНИЕ ===== */
-
-/* Специфичные элементы MaintenanceCard */
-.card__section {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-3);
-  margin: var(--space-3) 0;
-  padding: var(--space-4);
-  background: var(--color-bg-tertiary);
-  border-radius: var(--radius-lg);
-  border-left: 3px solid var(--color-border-accent);
-}
-
-.maintenance-date-label {
-  background: var(--color-bg-tertiary);
-  color: var(--color-text-secondary);
-  padding: var(--space-1) var(--space-3);
-  border-radius: var(--radius-md);
-  border: 1px solid var(--color-border-secondary);
-  font-size: var(--font-size-sm);
-  font-weight: 600;
-  display: inline-block;
-  margin-bottom: var(--space-3);
-  letter-spacing: 0.5px;
-}
-
-.card__section-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: var(--space-3);
-}
-
-.card__section-label {
-  font-size: var(--font-size-xs);
-  color: var(--color-text-secondary);
-  flex-shrink: 0;
-}
-
-.card__section-value {
-  font-size: var(--font-size-xs);
-  color: var(--color-text-primary);
-  font-weight: 600;
-  text-align: right;
-}
-
-.card__additional {
-  margin-top: var(--space-3);
-  padding-top: var(--space-3);
-  border-top: 1px solid var(--color-border-primary);
-}
-
-.card__additional-label {
-  font-size: var(--font-size-xs);
-  color: var(--color-text-secondary);
-  font-weight: 500;
-  display: block;
-  margin-bottom: var(--space-2);
-}
-
-.card__additional-item {
-  font-size: var(--font-size-xs);
-  color: var(--color-text-primary);
-  padding: var(--space-1) 0;
-  margin-left: var(--space-3);
-  line-height: 1.4;
-}
-
-/* ===== РАЗДЕЛ: ДАННЫЕ АВТОМОБИЛЯ ===== */
-
-/* DataCard сетка */
 .card__grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -235,6 +26,13 @@
   background: var(--color-bg-card);
 }
 
+.card__grid--unified {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: var(--space-2);
+  width: 100%;
+}
+
 .card__grid-label {
   font-size: var(--font-size-xs);
   color: var(--color-text-muted);
@@ -249,291 +47,13 @@
   line-height: 1.3;
 }
 
-/* ===== РАЗДЕЛ: РАСХОДЫ ===== */
 
-.expense-list-container {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-1);
-}
 
-.expense-list {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-4);
-}
-
-.expense-stats {
-  width: 100%;
-  margin-bottom: var(--space-4); /* Уменьшил отступ */
-}
-.expense-stats__grid {
-  display: grid !important;
-  grid-template-columns: 1fr 1fr !important;
-  gap: var(--space-2) !important;
-}
-
-/* Основной стиль карточки расходов */
-.expense-card {
-  background: var(--color-bg-card);
-  border: 1px solid var(--color-border-primary);
-  border-radius: var(--radius-lg);
-  padding: var(--space-4);
-  transition: all var(--transition-normal);
-  position: relative;
-  animation: cardSlideIn 0.3s ease-out;
-  cursor: pointer;
-}
-
-.expense-card:hover {
-  border-color: var(--color-border-accent);
-  transform: translateY(-1px);
-}
-
-.expense-card--expanded {
-  border-color: var(--color-border-accent);
-  background: var(--color-bg-tertiary);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-}
-
-/* Заголовок карточки расходов */
-.expense-card__header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: var(--space-3);
-}
-
-.expense-card__main-info {
-  flex: 1;
-  min-width: 0;
-}
-
-.expense-card__title {
-  font-size: var(--font-size-base);
-  font-weight: 600;
-  color: var(--color-text-primary);
-  margin: 0 0 var(--space-3) 0;
-  line-height: 1.4;
-  word-break: break-word;
-}
-
-/* Превью в сокращенном виде для расходов */
-.expense-card__preview {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
-}
-
-.expense-card__preview-row {
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
-  margin-bottom: var(--space-2);
-}
-
-.expense-card__category {
-  background: var(--color-bg-tertiary);
-  border: 1px solid var(--color-border-secondary);
-  border-radius: var(--radius-md);
-  padding: var(--space-1) var(--space-2);
-  font-size: var(--font-size-xs);
-  font-weight: 500;
-  color: var(--color-text-secondary);
-  white-space: nowrap;
-}
-
-/* Специфичные стили категорий для расходов */
-.expense-card__category--fuel {
-  border-left: 3px solid var(--color-accent);
-}
-
-.expense-card__category--maintenance {
-  border-left: 3px solid var(--color-accent-blue);
-}
-
-.expense-card__category--repairs {
-  border-left: 3px solid var(--color-accent-red);
-}
-
-.expense-card__category--parts {
-  border-left: 3px solid var(--color-accent);
-}
-
-.expense-card__category--insurance {
-  border-left: 3px solid var(--color-accent-green);
-}
-
-.expense-card__amount {
-  font-size: var(--font-size-lg);
-  font-weight: 700;
-  color: var(--color-accent);
-  white-space: nowrap;
-}
-
-.expense-card__preview-date {
-  font-size: var(--font-size-sm);
-  color: var(--color-text-secondary);
-  font-weight: 500;
-}
-
-/* Кнопки действий в правом верхнем углу */
-.expense-card__corner-actions {
-  display: flex;
-  gap: var(--space-1);
-  align-items: flex-start;
-  flex-shrink: 0;
-}
-
-.expense-card__corner-action {
-  padding: var(--space-1);
-  border: 1px solid var(--color-border-secondary);
-  border-radius: var(--radius-sm);
-  background: transparent;
-  color: var(--color-text-secondary);
-  cursor: pointer;
-  transition: all var(--transition-fast);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 28px;
-  height: 28px;
-}
-
-.expense-card__corner-action:hover {
-  border-color: var(--color-border-accent);
-  color: var(--color-text-primary);
-  background: var(--color-bg-tertiary);
-}
-
-.expense-card__corner-action--danger:hover {
-  border-color: var(--color-accent-red);
-  color: var(--color-accent-red);
-}
-
-/* Раскрытый контент для расходов */
-.expense-card__expanded-content {
-  margin-top: var(--space-4);
-  padding-top: var(--space-4);
-  border-top: 1px solid var(--color-border-primary);
-  animation: slideDown 0.2s ease-out;
-}
-
-/* Детали в раскрытом виде для расходов */
-.expense-card__details {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-  gap: var(--space-3);
-}
-
-.expense-card__detail {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-1);
-  padding: var(--space-2);
-  background: var(--color-bg-card);
-  border-radius: var(--radius-md);
-  border: 1px solid var(--color-border-secondary);
-  transition: all var(--transition-fast);
-}
-
-.expense-card__detail:hover {
-  border-color: var(--color-border-accent);
-  background: var(--color-bg-tertiary);
-}
-
-.expense-card__detail-label {
-  font-size: var(--font-size-xs);
-  color: var(--color-text-muted);
-  font-weight: 500;
-  line-height: 1.2;
-}
-
-.expense-card__detail-value {
-  font-size: var(--font-size-sm);
-  color: var(--color-text-primary);
-  font-weight: 600;
-  line-height: 1.3;
-}
-
-/* Убираем кнопки действий при раскрытии и стрелки */
-.expense-card__actions,
-.expense-card__expand-indicator {
-  display: none;
-}
-
-/* ===== СТАТИСТИКА - КОМПАКТНЫЕ КАРТОЧКИ ===== */
-
-.expense-stat-card {
-  background: var(--color-bg-card);
-  border: 1px solid var(--color-border-primary);
-  border-radius: var(--radius-lg);
-  padding: var(--space-3);
-  transition: all var(--transition-fast);
-  position: relative;
-  overflow: hidden;
-  box-shadow: var(--shadow-sm);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  min-height: 80px;
-}
-
-.expense-stat-card:hover {
-  border-color: var(--color-border-accent);
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-md);
-}
-
-.expense-stat-card__content {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-1);
-  width: 100%;
-}
-
-.expense-stat-card__title {
-  font-size: var(--font-size-xs);
-  color: var(--color-text-secondary);
-  font-weight: 600;
-  line-height: 1.2;
-  text-transform: none; /* Убрал все заглавные */
-}
-
-.expense-stat-card__value {
-  font-size: var(--font-size-base);
-  font-weight: 700;
-  color: var(--color-text-secondary);
-  line-height: 1.1;
-}
-
-.expense-stat-card__value--consumption {
-  color: var(--color-text-secondary);
-  font-size: var(--font-size-lg);
-  font-weight: 800;
-}
-
-/* === АДАПТИВНОСТЬ ДЛЯ МОБИЛЬНЫХ === */
-
-/* Планшеты */
 @media (max-width: 768px) {
   .section__list {
     gap: var(--space-3);
   }
   
-  .card {
-    padding: var(--space-4);
-    margin-bottom: var(--space-1);
-  }
-  
-  .card__header {
-    flex-direction: column;
-    align-items: stretch;
-    gap: var(--space-3);
-  }
   
   .card__grid {
     grid-template-columns: 1fr;
@@ -544,123 +64,12 @@
     padding: var(--space-3);
   }
   
-  .card__section {
-    padding: var(--space-3);
-  }
-  
-  .card__section-item {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: var(--space-1);
-  }
-  
-  .card__section-value {
-    text-align: left;
-  }
-  
-  .card__additional-item {
-    margin-left: var(--space-2);
-  }
-  
-  .expense-list {
-    gap: var(--space-3);
-  }
-  
-  .expense-card {
-    padding: var(--space-3);
-  }
-  
-  .expense-card__header {
-    flex-direction: row;
-    align-items: flex-start;
-    gap: var(--space-3);
-  }
-  
-  .expense-card__corner-actions {
-    align-self: flex-start;
-  }
-  
-  .expense-card__preview-row {
-    flex-direction: row;
-    align-items: center;
-    gap: var(--space-3);
-  }
-  
-  .expense-card__details {
+  .card__grid--unified {
     grid-template-columns: 1fr;
     gap: var(--space-2);
   }
-  
-  .expense-stats__grid {
-    grid-template-columns: 1fr 1fr;
-    gap: var(--space-1);
-  }
-  
-  .expense-stat-card {
-    padding: var(--space-3);
-    min-height: 70px;
-  }
-  
-  .expense-stat-card__title {
-    font-size: 0.7rem;
-  }
-  
-  .expense-stat-card__value {
-    font-size: var(--font-size-sm);
-  }
-  
-  .expense-stat-card__value--consumption {
-    font-size: var(--font-size-base);
-  }
 }
 
-/* Десктопная версия - ВАЖНО: оставляем 2 колонки */
-@media (min-width: 769px) {
-  .expense-stats__grid {
-    grid-template-columns: 1fr 1fr; /* Фиксируем 2 колонки */
-    gap: var(--space-4);
-  }
-  
-  .expense-stat-card {
-    padding: var(--space-4);
-    min-height: 90px;
-  }
-  
-  .expense-stat-card__title {
-    font-size: var(--font-size-sm);
-  }
-  
-  .expense-stat-card__value {
-    font-size: var(--font-size-lg);
-    font-weight: 800; /* Делаем темнее и жирнее */
-    color: var(--color-text-primary);
-  }
-  
-  .expense-stat-card__value--consumption {
-    font-size: var(--font-size-xl);
-    color: var(--color-accent);
-  }
-}
-
-/* Десктопная версия */
-@media (min-width: 1024px) {
-  .expense-stats__grid {
-    gap: var(--space-5);
-  }
-  
-  .expense-stat-card {
-    padding: var(--space-5);
-    min-height: 100px;
-  }
-  
-  .expense-stat-card__value {
-    font-size: var(--font-size-xl);
-  }
-  
-  .expense-stat-card__value--consumption {
-    font-size: var(--font-size-2xl);
-  }
-}
 
 /* Мобильные */
 @media (max-width: 480px) {
@@ -675,106 +84,111 @@
   .card__grid-item {
     padding: var(--space-3);
   }
-  
-  .expense-card {
-    padding: var(--space-2);
-  }
-  
-  .expense-card__title {
-    font-size: var(--font-size-sm);
-  }
-  
-  .expense-card__amount {
-    font-size: var(--font-size-base);
-  }
-  
-  .expense-card__preview-date {
-    font-size: var(--font-size-xs);
-  }
-  
-  .expense-card__details {
-    gap: var(--space-1);
-  }
-  
-  .expense-card__detail {
-    padding: var(--space-1) var(--space-2);
-  }
-  
-  .expense-stats {
-    margin-bottom: var(--space-3); /* Еще уменьшил отступ */
-  }
-  
-  .expense-stats__grid {
-    gap: var(--space-2);
-  }
 
-  .expense-stat-card {
-    padding: var(--space-2);
-    min-height: 60px;
+  .card__grid--unified {
+    gap: var(--space-2) !important;
   }
   
-  .expense-stat-card__title {
-    font-size: 0.65rem;
-  }
-  
-  .expense-stat-card__value {
-    font-size: var(--font-size-xs);
-    font-weight: 800;
-  }
-  
-  .expense-stat-card__value--consumption {
-    font-size: var(--font-size-sm);
-  }
 }
 
-/* Очень маленькие экраны */
-@media (max-width: 360px) {
-  .expense-card__header {
-    flex-direction: column;
-    align-items: stretch;
-    gap: var(--space-2);
-  }
-  
-  .expense-card__corner-actions {
-    align-self: flex-end;
-  }
-  
-  .expense-card__preview-row {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: var(--space-2);
-  }
-  
-  .expense-stats__grid {
-    grid-template-columns: 1fr;
-    gap: var(--space-2);
-  }
-  
-  .expense-stat-card {
-    padding: var(--space-2);
-    min-height: 55px;
-  }
-  
-  .expense-stat-card__value {
-    font-size: 0.8rem;
-  }
-  
-  .expense-stat-card__value--consumption {
-    font-size: 0.9rem;
-  }
+
+/* Основные стили CarCard */
+.car-card {
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border-secondary);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  position: relative;
 }
 
-/* Принудительное исправление для десктопа */
-@media (min-width: 769px) {
-  .expense-stats__grid {
-    grid-template-columns: 1fr 1fr !important;
-  }
+.car-card:hover {
+  border-color: var(--color-border-accent);
+  transform: translateY(-1px);
 }
 
-.car-data-section__subtitle {
-  margin-top: var(--space-1) !important;
-  margin-bottom: var(--space-2) !important;
+.car-card--selected {
+  border-color: var(--color-border-accent);
+  background: var(--color-bg-tertiary);
+}
+
+.car-card__header {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  width: 100%;
+}
+
+.car-card__info {
+  flex: 1;
+  min-width: 0;
+}
+
+.car-card__title {
+  margin: 0 0 var(--space-1) 0;
   font-size: var(--font-size-base);
   font-weight: 600;
+  color: var(--color-text-primary);
   line-height: 1.3;
+}
+
+.car-card__description {
+  margin: 0;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  line-height: 1.4;
+}
+
+.car-card__delete-btn {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 32px;
+  height: 32px;
+  padding: var(--space-2);
+  border: transparent;
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: #ff4757;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all var(--transition-fast);
+}
+
+.car-card__delete-btn:hover {
+  background: linear-gradient(135deg, #ff4757 0%, #ff3742 100%);
+  color: white;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(255, 71, 87, 0.4);
+}
+
+/* Мобильная версия */
+@media (max-width: 768px) {
+  .car-card {
+    padding: var(--space-3);
+  }
+  
+  .car-card__header {
+    gap: var(--space-2);
+  }
+  
+  .car-card__delete-btn {
+    top: 8px; /* ← ДОБАВИТЬ */
+    right: 8px; /* ← ДОБАВИТЬ */
+    width: 28px;
+    height: 28px;
+    padding: var(--space-1);
+  }
+  
+  .car-card__title {
+    font-size: var(--font-size-sm);
+  }
+  
+  .car-card__description {
+    font-size: var(--font-size-xs);
+  }
 }

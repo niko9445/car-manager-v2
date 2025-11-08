@@ -15,7 +15,7 @@ const AddMaintenanceModal: React.FC<AddMaintenanceModalProps> = ({ onClose, onSa
     oilChangeStep: '10000',
     filterChangeStep: '10000',
     cost: '',
-    date: '',
+    date: new Date().toISOString().split('T')[0], // ← ДОБАВЛЕНО поле даты
     additionalItems: [] as AdditionalItem[]
   });
 
@@ -27,14 +27,14 @@ const AddMaintenanceModal: React.FC<AddMaintenanceModalProps> = ({ onClose, onSa
 
   const handleSubmit = (e: React.FormEvent): void => {
     e.preventDefault();
-    if (formData.mileage) {
+    if (formData.mileage && formData.date) { // ← ДОБАВЛЕНА проверка даты
       onSave({
         ...formData,
         mileage: parseInt(formData.mileage),
         oilChangeStep: parseInt(formData.oilChangeStep),
         filterChangeStep: parseInt(formData.filterChangeStep),
         cost: formData.cost ? parseInt(formData.cost) : null,
-        date: formData.date,
+        date: formData.date, // ← ПЕРЕДАЕМ дату
         additionalItems: formData.additionalItems
       });
     }
@@ -66,6 +66,18 @@ const AddMaintenanceModal: React.FC<AddMaintenanceModalProps> = ({ onClose, onSa
           </div>
           <div className="card__content">
             <div className="modal__form-grid">
+              {/* ← ДОБАВЛЕНО поле даты */}
+              <div className="modal__form-group">
+                <label className="modal__label modal__label--required">Дата</label>
+                <input
+                  type="date"
+                  className="modal__input"
+                  value={formData.date}
+                  onChange={(e) => setFormData({...formData, date: e.target.value})}
+                  required
+                />
+              </div>
+
               <div className="modal__form-group">
                 <label className="modal__label">Затраты ({getCurrencySymbol()})</label>
                 <input
@@ -186,17 +198,23 @@ const AddMaintenanceModal: React.FC<AddMaintenanceModalProps> = ({ onClose, onSa
         </div>
 
         {/* Кнопки действий */}
-        <div className="modal__actions modal__actions--between">
-          <button type="button" className="btn btn--cancel" onClick={onClose}>
-            Отмена
-          </button>
-          <button 
-            type="submit" 
-            className="btn btn--primary"
-            disabled={!formData.mileage}
-          >
-            Добавить ТО
-          </button>
+        <div className="modal__actions-container">
+          <div className="modal__actions modal__actions--centered">
+            <button type="button" className="btn btn--cancel" onClick={onClose}>
+              Отмена
+            </button>
+            <button 
+              type="submit" 
+              className="btn btn--action"
+              disabled={!formData.mileage || !formData.date}
+            >
+              Добавить
+            </button>
+          </div>
+          
+          <div className="modal__footer-signature">
+            © 2025 <span className="modal__footer-app-name">RuNiko</span>
+          </div>
         </div>
       </form>
     </Modal>

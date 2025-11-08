@@ -1,0 +1,286 @@
+.maintenance-section{
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+}
+
+.maintenance-section .section-content {
+  background: var(--color-bg-secondary);
+  border-radius: var(--radius-lg);
+  margin: 0;
+  padding: var(--space-4);
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  height: 0;
+}
+
+.maintenance-section .section__empty {
+  margin: 0;
+  background: transparent;
+  border: none;
+  padding: var(--space-8) var(--space-4);
+}
+
+.maintenance-section .section__list {
+  margin: 0;
+}
+
+.maintenance-welcome {
+  position: relative;
+  background: var(--color-bg-tertiary);
+  border: 1px solid var(--color-border-primary);
+  border-radius: var(--radius-xl);
+  padding: var(--space-8);
+  text-align: center;
+  overflow: hidden;
+  min-height: 400px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: var(--space-4) 0;
+}
+
+.maintenance-welcome__background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  opacity: 0.03;
+  pointer-events: none;
+}
+
+.maintenance-welcome__grid {
+  width: 100%;
+  height: 100%;
+  background-image: 
+    linear-gradient(var(--color-text-primary) 1px, transparent 1px),
+    linear-gradient(90deg, var(--color-text-primary) 1px, transparent 1px);
+  background-size: 35px 35px;
+  animation: maintenanceGridFlow 25s linear infinite;
+}
+
+@keyframes maintenanceGridFlow {
+  0% { transform: translate(0, 0); }
+  100% { transform: translate(35px, 35px); }
+}
+
+.maintenance-welcome__content {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-6);
+  max-width: 320px;
+}
+
+.maintenance-welcome__icon {
+  position: relative;
+  width: 80px;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.maintenance-welcome__tools {
+  position: absolute;
+  width: 60px;
+  height: 60px;
+  animation: toolsRotate 8s ease-in-out infinite;
+}
+
+.maintenance-welcome__wrench {
+  position: absolute;
+  width: 30px;
+  height: 8px;
+  background: var(--color-border-accent);
+  border-radius: 4px;
+  top: 15px;
+  left: 15px;
+  transform: rotate(45deg);
+  animation: wrenchMove 4s ease-in-out infinite;
+}
+
+.maintenance-welcome__wrench::before {
+  content: '';
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  border: 2px solid var(--color-border-accent);
+  border-radius: 50%;
+  top: -2px;
+  left: -6px;
+}
+
+.maintenance-welcome__screwdriver {
+  position: absolute;
+  width: 25px;
+  height: 6px;
+  background: var(--color-text-secondary);
+  border-radius: 3px;
+  bottom: 20px;
+  right: 10px;
+  transform: rotate(-30deg);
+  animation: screwdriverMove 3s ease-in-out infinite;
+}
+
+.maintenance-welcome__screwdriver::before {
+  content: '';
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  background: var(--color-text-secondary);
+  border-radius: 1px;
+  top: -1px;
+  right: -4px;
+  transform: rotate(45deg);
+}
+
+.maintenance-welcome__gear {
+  font-size: 24px;
+  animation: gearSpin 6s linear infinite;
+  opacity: 0.7;
+}
+
+@keyframes toolsRotate {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(90deg); }
+  50% { transform: rotate(180deg); }
+  75% { transform: rotate(270deg); }
+}
+
+@keyframes wrenchMove {
+  0%, 100% { transform: rotate(45deg) scale(1); }
+  50% { transform: rotate(50deg) scale(1.1); }
+}
+
+@keyframes screwdriverMove {
+  0%, 100% { transform: rotate(-30deg) translateX(0); }
+  50% { transform: rotate(-25deg) translateX(3px); }
+}
+
+@keyframes gearSpin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.maintenance-welcome__text {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.maintenance-welcome__title {
+  font-size: var(--font-size-xl);
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin: 0;
+  line-height: 1.3;
+}
+
+.maintenance-welcome__subtitle {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  margin: 0;
+  line-height: 1.5;
+  opacity: 0.8;
+}
+
+.maintenance-welcome__button {
+  padding: var(--space-3) var(--space-6);
+  border-radius: var(--radius-lg);
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  transition: all var(--transition-normal);
+  box-shadow: var(--shadow-md);
+}
+
+.maintenance-welcome__button:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+/* Мобильная адаптация */
+@media (max-width: 768px) {
+  .maintenance-welcome {
+    padding: var(--space-6);
+    min-height: 350px;
+    margin: var(--space-3) 0;
+  }
+  
+  .maintenance-welcome__content {
+    gap: var(--space-5);
+    max-width: 280px;
+  }
+  
+  .maintenance-welcome__icon {
+    width: 70px;
+    height: 70px;
+  }
+  
+  .maintenance-welcome__tools {
+    width: 50px;
+    height: 50px;
+  }
+  
+  .maintenance-welcome__wrench {
+    width: 25px;
+    height: 6px;
+    top: 12px;
+    left: 12px;
+  }
+  
+  .maintenance-welcome__screwdriver {
+    width: 20px;
+    height: 5px;
+    bottom: 15px;
+    right: 8px;
+  }
+  
+  .maintenance-welcome__title {
+    font-size: var(--font-size-lg);
+  }
+  
+  .maintenance-welcome__subtitle {
+    font-size: var(--font-size-xs);
+  }
+  
+  .maintenance-welcome__button {
+    padding: var(--space-3) var(--space-5);
+  }
+}
+
+@media (max-width: 480px) {
+  .maintenance-welcome {
+    padding: var(--space-5);
+    min-height: 300px;
+  }
+  
+  .maintenance-welcome__content {
+    gap: var(--space-4);
+    max-width: 100%;
+  }
+  
+  .maintenance-welcome__icon {
+    width: 60px;
+    height: 60px;
+  }
+  
+  .maintenance-welcome__tools {
+    width: 45px;
+    height: 45px;
+  }
+  
+  .maintenance-welcome__gear {
+    font-size: 20px;
+  }
+}

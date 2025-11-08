@@ -137,7 +137,7 @@ const AddCarDataModal: React.FC<AddCarDataModalProps> = ({ onClose, onSave }) =>
         </div>
 
         {/* Кнопка добавления поля */}
-        <div className="modal__actions" style={{ justifyContent: 'center', marginTop: 'var(--space-4)' }}>
+        <div className="modal__actions modal__actions--centered" style={{ marginTop: 'var(--space-4)' }}>
           <button 
             type="button" 
             className="btn btn--secondary"
@@ -148,17 +148,23 @@ const AddCarDataModal: React.FC<AddCarDataModalProps> = ({ onClose, onSave }) =>
         </div>
 
         {/* Кнопки действий */}
-          <div className="modal__actions modal__actions--between">
-            <button type="button" className="btn btn--cancel" onClick={onClose}>
-              Отмена
-            </button>
-            <button 
-              type="submit" 
-              className="btn btn--primary"
-              disabled={!fields.every(f => f.name.trim() && f.value.trim())}
-            >
-              Сохранить {/* ← ИЗМЕНИТЬ НАПИСАНИЕ */}
-            </button>
+          <div className="modal__actions-container">
+            <div className="modal__actions modal__actions--centered">
+              <button type="button" className="btn btn--cancel" onClick={onClose}>
+                Отмена
+              </button>
+              <button 
+                type="submit" 
+                className="btn btn--action"
+                disabled={!fields.every(f => f.name.trim() && f.value.trim())}
+              >
+                Добавить
+              </button>
+            </div>
+            
+            <div className="modal__footer-signature">
+              © 2025 <span className="modal__footer-app-name">RuNiko</span>
+            </div>
           </div>
       </form>
     </Modal>

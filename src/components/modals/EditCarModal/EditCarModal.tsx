@@ -294,21 +294,27 @@ const EditCarModal: React.FC<EditCarModalProps> = ({
         )}
 
         {/* Кнопки действий */}
-        <div className="modal__actions modal__actions--between">
-          <button 
-            type="button" 
-            onClick={onClose}
-            className="btn btn--cancel"
-          >
-            Отмена
-          </button>
-          <button 
-            type="submit" 
-            className="btn btn--primary"
-            disabled={!formData.brand || !formData.model}
-          >
-            Сохранить изменения
-          </button>
+        <div className="modal__actions-container">
+          <div className="modal__actions modal__actions--centered">
+            <button 
+              type="button" 
+              onClick={onClose}
+              className="btn btn--cancel"
+            >
+              Отмена
+            </button>
+            <button 
+              type="submit" 
+              className="btn btn--action"
+              disabled={!formData.brand || !formData.model}
+            >
+              Сохранить
+            </button>
+          </div>
+          
+          <div className="modal__footer-signature">
+            © 2025 <span className="modal__footer-app-name">RuNiko</span>
+          </div>
         </div>
       </form>
     </Modal>

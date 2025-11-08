@@ -5,11 +5,14 @@
 @import './components-v2/layout.css';
 @import './components-v2/modals.css';
 @import './components-v2/notification.css';
-
-
-
-
-
+@import '../components/expenses/ExpenseFilters/ExpenseFilters.css';
+@import '../components/expenses/ExpenseList/ExpenceList.css';
+@import '../components/expenses/ExpenseTracker/ExpenceTracker.css';
+@import '../components/features/CarDataSection/CarDataSection.css';
+@import '../components//features/MaintenanceSection/MaintenanceSection.css';
+@import '../components/features//MaintenanceSection/MaintenanceCard.css';
+@import '../components/layout/MainContent/MainContent.css';
+@import '../components/layout/Sidebar/Sidebar.css'; 
 /* ===== ОСНОВНЫЕ СТИЛИ ПРИЛОЖЕНИЯ ===== */
 
 /* Типография */

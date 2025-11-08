@@ -1,0 +1,433 @@
+.main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background: var(--color-bg-primary);
+  height: 100vh;
+  overflow-y: auto;
+  margin-left: 0;
+  transition: margin-left 0.3s ease;
+}
+
+.main-content__header {
+  background: var(--color-bg-secondary);
+  border-bottom: 1px solid var(--color-border-primary);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  padding: var(--space-4) var(--space-5);
+}
+
+.main-content__header-top {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
+}
+
+.main-content__title {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin: 0;
+  font-size: var(--font-size-xl);
+  font-weight: 600;
+  color: var(--color-text-primary);
+  line-height: 1.3;
+  flex-wrap: wrap;
+}
+
+
+.main-content__tabs {
+  display: flex;
+  gap: var(--space-2);
+  overflow-x: visible;
+  width: 100%;
+}
+
+.main-content__tabs .btn {
+  flex: 1;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: var(--font-size-xs);
+  padding: var(--space-2) var(--space-3);
+}
+
+.main-content__tabs .btn__icon {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+}
+
+.main-content__tabs .btn--primary {
+  background: var(--color-accent);
+  border-color: var(--color-border-accent);
+  color: var(--color-text-primary);
+  box-shadow: var(--shadow-md);
+}
+
+.main-content__content {
+  flex: 1;
+  padding: 0;
+  margin: 0;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  height: 100%;
+}
+
+.main-welcome {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-8);
+  overflow: hidden;
+  background: var(--color-bg-primary);
+}
+
+.main-welcome__background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+}
+
+.main-welcome__content {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-8);
+  max-width: 480px;
+  text-align: center;
+}
+
+.main-welcome__icon {
+  width: 100px;
+  height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.main-welcome__steering-wheel {
+  position: relative;
+  width: 60px;
+  height: 60px;
+  animation: wheelFloat 4s ease-in-out infinite;
+}
+
+.main-welcome__wheel {
+  width: 100%;
+  height: 100%;
+  border: 3px solid var(--color-border-accent);
+  border-radius: 50%;
+  position: relative;
+}
+
+.main-welcome__wheel::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 20px;
+  height: 20px;
+  background: var(--color-bg-tertiary);
+  border: 2px solid var(--color-border-accent);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.main-welcome__spokes {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 100%;
+  height: 3px;
+  background: var(--color-border-accent);
+  transform: translate(-50%, -50%) rotate(0deg);
+  animation: wheelSpin 8s linear infinite;
+}
+
+.main-welcome__spokes::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 100%;
+  height: 3px;
+  background: var(--color-border-accent);
+  transform: translate(-50%, -50%) rotate(90deg);
+}
+
+@keyframes wheelFloat {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-10px) rotate(5deg); }
+}
+
+@keyframes wheelSpin {
+  0% { transform: translate(-50%, -50%) rotate(0deg); }
+  100% { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+.main-welcome__text {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.main-welcome__title {
+  font-size: 3rem;
+  font-weight: 300;
+  color: var(--color-text-primary);
+  margin: 0;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+
+.main-welcome__subtitle {
+  font-size: var(--font-size-lg);
+  color: var(--color-text-secondary);
+  margin: 0;
+  font-weight: 400;
+  line-height: 1.5;
+  opacity: 0.8;
+}
+
+.main-welcome__action {
+  animation: actionFadeIn 1s ease-out 0.5s both;
+}
+
+.main-welcome__button {
+  padding: var(--space-4) var(--space-8);
+  border-radius: var(--radius-xl);
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  transition: all var(--transition-normal);
+  box-shadow: var(--shadow-lg);
+}
+
+.main-welcome__button:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-xl);
+}
+
+.main-welcome__hint {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  color: var(--color-text-muted);
+  font-size: var(--font-size-base);
+  padding: var(--space-4) var(--space-6);
+  border: 1px solid var(--color-border-secondary);
+  border-radius: var(--radius-xl);
+  background: var(--color-bg-tertiary);
+  animation: hintPulse 3s ease-in-out infinite;
+}
+
+@keyframes actionFadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes hintPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+/* Мобильная адаптация */
+@media (max-width: 768px) {
+  .main-welcome {
+    padding: var(--space-6);
+  }
+  
+  .main-welcome__content {
+    gap: var(--space-6);
+    max-width: 100%;
+  }
+  
+  .main-welcome__icon {
+    width: 80px;
+    height: 80px;
+  }
+  
+  .main-welcome__steering-wheel {
+    width: 50px;
+    height: 50px;
+  }
+  
+  .main-welcome__title {
+    font-size: 2.5rem;
+  }
+  
+  .main-welcome__subtitle {
+    font-size: var(--font-size-base);
+  }
+  
+  .main-welcome__button {
+    padding: var(--space-4) var(--space-6);
+  }
+  
+  .main-welcome__hint {
+    padding: var(--space-3) var(--space-4);
+    font-size: var(--font-size-sm);
+  }
+  
+  .main-welcome__car-silhouette {
+    width: 100px;
+    height: 35px;
+    bottom: 25%;
+  }
+}
+
+@media (max-width: 480px) {
+  .main-welcome {
+    padding: var(--space-4);
+  }
+  
+  .main-welcome__content {
+    gap: var(--space-5);
+  }
+  
+  .main-welcome__icon {
+    width: 70px;
+    height: 70px;
+  }
+  
+  .main-welcome__steering-wheel {
+    width: 45px;
+    height: 45px;
+  }
+  
+  .main-welcome__title {
+    font-size: 2rem;
+  }
+  
+  .main-welcome__subtitle {
+    font-size: var(--font-size-sm);
+  }
+  
+  .main-welcome__hint {
+    flex-direction: column;
+    gap: var(--space-2);
+    text-align: center;
+  }
+}
+
+.menu-toggle-compact {
+  width: 28px;
+  height: 28px;
+  padding: 4px;
+  border: 1px solid var(--color-border-secondary);
+  border-radius: var(--radius-md);
+  background: var(--color-bg-card);
+  color: var(--color-text-primary);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  transition: all var(--transition-fast);
+  flex-shrink: 0;
+}
+
+.menu-toggle-compact:hover {
+  border-color: var(--color-border-accent);
+  background: var(--color-bg-tertiary);
+}
+
+.menu-toggle-compact__line {
+  width: 12px;
+  height: 1px;
+  background: currentColor;
+  border-radius: 1px;
+  transition: all var(--transition-fast);
+}
+
+.car-year-badge {
+  background: var(--color-bg-tertiary);
+  border: 1px solid var(--color-border-primary);
+  border-radius: var(--radius-md);
+  padding: var(--space-1) var(--space-3);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  line-height: 1;
+}
+
+@media (max-width: 768px) {
+
+  .main-content {
+    margin-left: 0;
+    width: 100%;
+  }
+  
+  .main-content__header {
+    padding: var(--space-3) var(--space-4);
+  }
+  
+  .main-content__welcome-screen {
+    padding: var(--space-6);
+  }
+  
+  .welcome-content {
+    gap: var(--space-6);
+  }
+  
+  .welcome-icon {
+    width: 80px;
+    height: 80px;
+  }
+  
+  .welcome-title {
+    font-size: 2.5rem;
+  }
+  
+  .welcome-subtitle {
+    font-size: var(--font-size-lg);
+  }
+  
+  .welcome-btn {
+    padding: var(--space-4) var(--space-6);
+    font-size: var(--font-size-base);
+  }
+  
+}
+
+@media (max-width: 480px) {
+  .main-content__header {
+    padding: var(--space-3);
+  }
+  
+  
+  .main-content__welcome-screen {
+    padding: var(--space-4);
+  }
+  
+  .welcome-title {
+    font-size: 2rem;
+  }
+  
+  .welcome-subtitle {
+    font-size: var(--font-size-base);
+  }
+  
+  .welcome-hint {
+    font-size: var(--font-size-sm);
+    padding: var(--space-3) var(--space-4);
+  }
+  
+  
+}

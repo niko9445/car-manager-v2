@@ -22,6 +22,68 @@
 }
 
 /* Варианты кнопок */
+/* Активная кнопка */
+.btn--action {
+  background: rgba(16, 185, 129, 0.1) !important;
+  border: 1px solid #10b981 !important;
+  color: #10b981 !important;
+  font-weight: 600;
+  box-shadow: none;
+  backdrop-filter: blur(10px);
+  cursor: pointer;
+}
+
+.btn--action:hover {
+  background: #10b981;
+  color: white;
+  transform: translateY(-1px);
+}
+
+/* Или более яркий вариант для disabled */
+/* Перебиваем все стили для disabled кнопки */
+.btn.btn--action:disabled {
+  opacity: 1.0 !important;
+  background: rgba(16, 185, 129, 0.1) !important;
+  border: 1px solid #10b981 !important;
+  color: #10b981 !important;
+  flex: 1 1 !important;
+  min-width: auto !important;
+  width: 100% !important;
+  cursor: not-allowed !important;
+  
+}
+
+
+.btn--save {
+  background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+  border: 1px solid #10b981;
+  color: white;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(5, 150, 105, 0.3);
+}
+
+.btn--save:hover {
+  background: linear-gradient(135deg, #047857 0%, #059669 100%);
+  border-color: #059669;
+  box-shadow: 0 4px 12px rgba(5, 150, 105, 0.4);
+  transform: translateY(-2px);
+}
+
+.btn--confirm {
+  background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+  border: 1px solid #10b981;
+  color: white;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(5, 150, 105, 0.3);
+}
+
+.btn--confirm:hover {
+  background: linear-gradient(135deg, #047857 0%, #059669 100%);
+  border-color: #059669;
+  box-shadow: 0 4px 12px rgba(5, 150, 105, 0.4);
+  transform: translateY(-2px);
+}
+
 .btn--primary {
   background: var(--color-accent);
   border-color: var(--color-border-accent);
@@ -57,14 +119,16 @@
 
 /* Специально для кнопки Отмена */
 .btn--cancel {
-  color: #d32f2f !important;
-  border-color: var(--color-accent-red) !important;
-  background: transparent !important;
+  background: transparent;
+  border: 1px solid var(--color-text-secondary);
+  color: var(--color-text-secondary);
+  font-weight: 500;
 }
 
 .btn--cancel:hover {
-  background: var(--color-accent-red) !important;
-  color: var(--color-text-primary) !important;
+  background: var(--color-text-secondary);
+  color: var(--color-bg-primary);
+  transform: translateY(-1px);
 }
 
 
@@ -377,57 +441,3 @@
 
 
 
-/* ===== ИСПРАВЛЕННАЯ КНОПКА НАСТРОЕК ===== */
-.sidebar__settings-btn {
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
-  width: 100%;
-  padding: var(--space-3) var(--space-4);
-  border: none;
-  border-radius: var(--radius-md);
-  background: transparent;
-  color: var(--color-text-secondary);
-  cursor: pointer;
-  transition: all var(--transition-fast);
-  font-size: var(--font-size-sm);
-  font-weight: 500;
-  text-align: left;
-}
-
-.sidebar__settings-btn:hover {
-  background: var(--color-bg-tertiary);
-  border-color: none;
-  color: var(--color-text-primary);
-  transform: translateY(-1px);
-}
-
-.sidebar__settings-icon {
-  color: var(--color-text-secondary);
-  transition: color var(--transition-fast);
-  flex-shrink: 0;
-}
-
-.sidebar__settings-btn:hover .sidebar__settings-icon {
-  color: var(--color-text-primary);
-}
-
-/* Мобильная адаптация */
-@media (max-width: 768px) {
-  .sidebar__settings-btn {
-    padding: var(--space-3);
-    min-height: 44px;
-  }
-  
-  .sidebar__settings-icon {
-    width: 16px;
-    height: 16px;
-  }
-}
-
-@media (max-width: 480px) {
-  .sidebar__settings-btn {
-    padding: var(--space-2) var(--space-3);
-    font-size: var(--font-size-xs);
-  }
-} 

@@ -616,22 +616,28 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({
         </div>
       </div>
 
-      <div className="modal__actions modal__actions--between">
-        <button
-          type="button"
-          className="btn btn--secondary"
-          onClick={onCancel}
-          disabled={loading}
-        >
-          Отмена
-        </button>
-        <button
-          type="submit"
-          className="btn btn--primary"
-          disabled={loading}
-        >
-          {loading ? 'Сохранение...' : expense ? 'Обновить' : 'Добавить расход'}
-        </button>
+      <div className="modal__actions-container">
+        <div className="modal__actions modal__actions--centered">
+          <button
+            type="button"
+            className="btn btn--cancel"
+            onClick={onCancel}
+            disabled={loading}
+          >
+            Отмена
+          </button>
+          <button
+            type="submit"
+            className={`btn btn--action ${loading ? 'btn--action-loading' : ''}`}
+            disabled={loading}
+          >
+            {loading ? 'Сохранение...' : expense ? 'Сохранить' : 'Сохранить'}
+          </button>
+        </div>
+        
+        <div className="modal__footer-signature">
+          © 2025 <span className="modal__footer-app-name">RuNiko</span>
+        </div>
       </div>
     </form>
   );

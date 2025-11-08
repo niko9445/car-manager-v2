@@ -101,43 +101,41 @@ const DataManager: React.FC<DataManagerProps> = ({ hideTitle = false }) => {
 
   return (
     <>
-      <div className="data-manager-simple">
-        <div className="data-manager__actions">
-          <button 
-            className="btn btn--success btn--full"
-            onClick={handleExport}
-            type="button"
-          >
-            <svg className="btn__icon" viewBox="0 0 24 24" fill="none" width="16" height="16">
-              <path d="M12 16L12 8" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-              <path d="M9 13L12 16L15 13" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-              <path d="M8 12H6a2 2 0 00-2 2v4a2 2 0 002 2h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2" stroke="currentColor" strokeWidth="2"/>
-            </svg>
-            Скачать
-          </button>
-          
-          <button 
-            className="btn btn--primary btn--full"
-            onClick={handleImportClick}
-            type="button"
-          >
-            <svg className="btn__icon" viewBox="0 0 24 24" fill="none" width="16" height="16">
-              <path d="M12 8L12 16" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-              <path d="M9 11L12 8L15 11" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-              <path d="M8 12H6a2 2 0 00-2 2v4a2 2 0 002 2h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2" stroke="currentColor" strokeWidth="2"/>
-            </svg>
-            Загрузить
-          </button>
-          
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept=".json"
-            onChange={handleImport}
-            style={{ display: 'none' }}
-          />
-        </div>
-      </div>
+      <button 
+        className="btn btn--success btn--full"
+        onClick={handleExport}
+        type="button"
+      >
+        <svg className="btn__icon" viewBox="0 0 24 24" fill="none" width="16" height="16">
+          <path d="M12 16L12 8" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+          <path d="M9 13L12 16L15 13" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+          <path d="M8 12H6a2 2 0 00-2 2v4a2 2 0 002 2h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2" stroke="currentColor" strokeWidth="2"/>
+        </svg>
+        Скачать
+      </button>
+      
+      <button 
+        className="btn btn--primary btn--full"
+        onClick={handleImportClick}
+        type="button"
+      >
+        <svg className="btn__icon" viewBox="0 0 24 24" fill="none" width="16" height="16">
+          <path d="M12 8L12 16" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+          <path d="M9 11L12 8L15 11" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+          <path d="M8 12H6a2 2 0 00-2 2v4a2 2 0 002 2h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2" stroke="currentColor" strokeWidth="2"/>
+        </svg>
+        Загрузить
+      </button>
+      
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept=".json"
+        onChange={handleImport}
+        style={{ display: 'none' }}
+      />
+    
+  
 
       <Notification
         isOpen={notification.isOpen}

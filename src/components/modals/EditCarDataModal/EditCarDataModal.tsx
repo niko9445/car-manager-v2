@@ -74,7 +74,7 @@ const EditCarDataModal: React.FC<EditCarDataModalProps> = ({ data, onClose, onSa
                     className="btn btn--danger btn--sm modal__remove-button"
                     disabled={fields.length === 1}
                   >
-                    ×
+                    Отмена
                   </button>
                 </div>
               ))}
@@ -94,13 +94,19 @@ const EditCarDataModal: React.FC<EditCarDataModalProps> = ({ data, onClose, onSa
         </div>
 
         {/* Кнопки действий */}
-        <div className="modal__actions modal__actions--between">
-          <button type="button" className="btn btn--cancel" onClick={onClose}>
-            Отмена
-          </button>
-          <button type="submit" className="btn btn--primary">
-            Сохранить изменения
-          </button>
+        <div className="modal__actions-container">
+          <div className="modal__actions modal__actions--centered">
+            <button type="button" className="btn btn--cancel" onClick={onClose}>
+              Отмена
+            </button>
+            <button type="submit" className="btn btn--action">
+              Сохранить
+            </button>
+          </div>
+          
+          <div className="modal__footer-signature">
+            © 2025 <span className="modal__footer-app-name">RuNiko</span>
+          </div>
         </div>
       </form>
     </Modal>
