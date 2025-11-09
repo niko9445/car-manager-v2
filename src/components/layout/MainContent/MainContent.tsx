@@ -20,13 +20,8 @@ const MainContent: React.FC<MainContentProps> = ({
   isMobile = false,
   onOpenSidebar
 }) => {
-  const [showSplash, setShowSplash] = useState(true);
   const [editingMaintenance, setEditingMaintenance] = useState<Maintenance | null>(null);
   const [isEditMaintenanceModalOpen, setIsEditMaintenanceModalOpen] = useState(false);
-
-  const handleSplashComplete = () => {
-    setShowSplash(false);
-  };
 
   const handleEditMaintenance = (maintenance: Maintenance): void => {
     setIsEditMaintenanceModalOpen(false);
