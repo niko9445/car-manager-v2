@@ -280,7 +280,7 @@ const EditMaintenanceModal: React.FC<EditMaintenanceModalProps> = ({
                             </button>
                             <button 
                               type="button"
-                              className="btn btn--cancel btn--sm"
+                              className="btn btn--secondary btn--sm"
                               onClick={cancelEditing}
                             >
                               Отмена
@@ -325,7 +325,7 @@ const EditMaintenanceModal: React.FC<EditMaintenanceModalProps> = ({
         {/* Кнопки действий */}
         <div className="modal__actions-container">
           <div className="modal__actions modal__actions--centered">
-            <button type="button" className="btn btn--cancel" onClick={onClose}>
+            <button type="button" className="btn btn--secondary" onClick={onClose}>
               Отмена
             </button>
             <button type="submit" className="btn btn--action">

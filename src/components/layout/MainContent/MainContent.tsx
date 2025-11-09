@@ -3,7 +3,7 @@ import MaintenanceSection from '../../features/MaintenanceSection/MaintenanceSec
 import CarDataSection from '../../features/CarDataSection/CarDataSection';
 import ExpenseTracker from '../../expenses/ExpenseTracker/ExpenseTracker';
 import EditMaintenanceModal from '../../modals/EditMaintenanceModal/EditMaintenanceModal';
-import { MainContentProps, Maintenance} from '../../../types';
+import { MainContentProps, Maintenance } from '../../../types';
 
 const MainContent: React.FC<MainContentProps> = ({ 
   selectedCar, 
@@ -20,8 +20,13 @@ const MainContent: React.FC<MainContentProps> = ({
   isMobile = false,
   onOpenSidebar
 }) => {
+  const [showSplash, setShowSplash] = useState(true);
   const [editingMaintenance, setEditingMaintenance] = useState<Maintenance | null>(null);
   const [isEditMaintenanceModalOpen, setIsEditMaintenanceModalOpen] = useState(false);
+
+  const handleSplashComplete = () => {
+    setShowSplash(false);
+  };
 
   const handleEditMaintenance = (maintenance: Maintenance): void => {
     setIsEditMaintenanceModalOpen(false);
@@ -38,8 +43,8 @@ const MainContent: React.FC<MainContentProps> = ({
 
     const updatedCars = cars.map(car => {
       if (car.id === selectedCar.id) {
-        const updatedMaintenance = car.maintenance?.map(m => 
-          m.id === maintenanceId ? { ...m, ...updatedData } : m
+        const updatedMaintenance = car.maintenance?.map(maintenanceItem => 
+          maintenanceItem.id === maintenanceId ? { ...maintenanceItem, ...updatedData } : maintenanceItem
         );
         return { ...car, maintenance: updatedMaintenance };
       }
@@ -49,6 +54,8 @@ const MainContent: React.FC<MainContentProps> = ({
     setIsEditMaintenanceModalOpen(false);
     setEditingMaintenance(null);
   };
+
+
 
   if (!selectedCar) {
     return (

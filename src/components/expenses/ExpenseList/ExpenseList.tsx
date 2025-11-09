@@ -202,6 +202,8 @@ const ExpenseList: React.FC<ExpenseListProps> = ({
                     </svg>
                   </button>
                 </div>
+                
+                
               </div>
 
               {/* Полный вид - появляется ТОЛЬКО при раскрытии */}

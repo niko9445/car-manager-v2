@@ -52,6 +52,7 @@ const ExpenseFilters: React.FC<ExpenseFiltersProps> = ({ onFilterChange }) => {
     { value: 'parking', label: 'Парковка' },
     { value: 'washing', label: 'Мойка' },
     { value: 'fines', label: 'Штрафы' },
+    { value: 'inspection', label: 'Техосмотр'},
     { value: 'other', label: 'Прочее' }
   ];
 

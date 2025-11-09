@@ -133,7 +133,7 @@ const AddCarModal: React.FC<AddCarModalProps> = ({ onClose, onSave }) => {
           <div className="modal__actions modal__actions--centered">
             <button 
               type="button" 
-              className="btn btn--cancel" 
+              className="btn btn--secondary" 
               onClick={onClose}
             >
               Отмена
