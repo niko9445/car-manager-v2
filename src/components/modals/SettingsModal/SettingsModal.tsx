@@ -1,6 +1,7 @@
 import React from 'react';
 import Modal from '../../ui/Modal/Modal';
 import CurrencySwitcher from '../../ui/CurrencySwitcher/CurrencySwitcher';
+import DataManager from '../../DataManager/DataManager';
 
 interface SettingsModalProps {
   isOpen: boolean;
@@ -85,73 +86,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
             gap: '12px',
             width: '100%'
           }}>
-            {/* Кнопка Скачать - зеленый акцент */}
-            <button 
-              onClick={handleExport}
-              style={{ 
-                padding: '12px 16px', 
-                border: '1px solid var(--color-accent-green)', 
-                background: 'var(--color-accent-green)',
-                borderRadius: 'var(--radius-md)',
-                minHeight: '44px',
-                color: 'white',
-                fontWeight: '600',
-                fontSize: '14px',
-                cursor: 'pointer',
-                transition: 'all 0.2s ease',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '8px'
-              }}
-              onMouseOver={(e) => {
-                e.currentTarget.style.background = 'var(--color-accent-green-dark)';
-                e.currentTarget.style.transform = 'translateY(-1px)';
-              }}
-              onMouseOut={(e) => {
-                e.currentTarget.style.background = 'var(--color-accent-green)';
-                e.currentTarget.style.transform = 'translateY(0)';
-              }}
-            >
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M12 16L12 8M9 13L12 16L15 13M8 12H6a2 2 0 00-2 2v4a2 2 0 002 2h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2"/>
-              </svg>
-              Скачать
-            </button>
-
-            {/* Кнопка Загрузить - синий акцент */}
-            <button 
-              onClick={handleImport}
-              style={{ 
-                padding: '12px 16px', 
-                border: '1px solid var(--color-accent-blue)', 
-                background: 'var(--color-accent-blue)',
-                borderRadius: 'var(--radius-md)',
-                minHeight: '44px',
-                color: 'white',
-                fontWeight: '600',
-                fontSize: '14px',
-                cursor: 'pointer',
-                transition: 'all 0.2s ease',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '8px'
-              }}
-              onMouseOver={(e) => {
-                e.currentTarget.style.background = 'var(--color-accent-blue-dark)';
-                e.currentTarget.style.transform = 'translateY(-1px)';
-              }}
-              onMouseOut={(e) => {
-                e.currentTarget.style.background = 'var(--color-accent-blue)';
-                e.currentTarget.style.transform = 'translateY(0)';
-              }}
-            >
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M12 8L12 16M9 11L12 8L15 11M8 12H6a2 2 0 00-2 2v4a2 2 0 002 2h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2"/>
-              </svg>
-              Загрузить
-            </button>
+            <DataManager />
           </div>
         </div>
 

@@ -20,6 +20,7 @@ const CarCard: React.FC<CarCardProps> = ({
       <div className="car-card__header">
         {/* Кнопка удаления - в левом верхнем углу */}
         {isSelected && onDelete && (
+          
           <button 
             className="car-card__delete-btn"
             onClick={(e) => {
@@ -30,7 +31,11 @@ const CarCard: React.FC<CarCardProps> = ({
             title="Удалить автомобиль"
           >
             <svg viewBox="0 0 24 24" fill="none" width="16" height="16">
-              <path d="M3 6h18m-2 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" stroke="currentColor" strokeWidth="2"/>
+              <path 
+                d="M3 6h18m-2 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" 
+                stroke="currentColor" // ← ТОЛЬКО ОБВОДКА
+                strokeWidth="2"
+              />
             </svg>
           </button>
         )}

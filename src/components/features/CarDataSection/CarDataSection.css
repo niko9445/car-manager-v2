@@ -12,22 +12,53 @@
   padding: var(--space-4);
 }
 
-
-
 .car-data-section__all-data {
   display: flex;
   flex-direction: column;
   gap: var(--space-2); 
 }
 
+/* ДЕСКТОПНАЯ ВЕРСИЯ - 5 КАРТОЧЕК В РЯД */
+@media (min-width: 1025px) {
+  .card__grid--unified {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr); /* ← 5 карточек в ряд */
+    gap: var(--space-3);
+    width: 100%;
+  }
+  
+  .card__grid-item {
+    width: 100%; /* ← Фиксированная ширина */
+    min-width: 0; /* ← Предотвращает растягивание */
+    flex: 0 0 auto; /* ← Запрещает растягивание */
+  }
+}
+
+/* ПЛАНШЕТНАЯ ВЕРСИЯ - 3 КАРТОЧКИ В РЯД */
+@media (max-width: 1024px) and (min-width: 769px) {
+  .card__grid--unified {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-3);
+    width: 100%;
+  }
+}
+
+/* МОБИЛЬНАЯ ВЕРСИЯ - 1 КАРТОЧКА В РЯД (как было) */
 @media (max-width: 768px) {
+  .card__grid--unified {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+  
   .car-data-section__all-data {
-    gap: var(--space-3) !important; /* ← Одинаковый отступ на планшетах */
+    gap: var(--space-3) !important;
   }
 }
 
 @media (max-width: 480px) {
   .car-data-section__all-data {
-    gap: var(--space-2) !important; /* ← Одинаковый отступ на мобильных */
+    gap: var(--space-2) !important;
   }
 }

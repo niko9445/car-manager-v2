@@ -49,7 +49,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                 <svg className="btn__icon" viewBox="0 0 24 24" fill="none" width="16" height="16">
                   <path d="M12 5v14m-7-7h14" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
                 </svg>
-                Добавить автомобиль
+                Добавить
               </button>
               
               {/* Кнопка настроек справа от кнопки добавления */}

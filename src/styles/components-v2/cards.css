@@ -139,7 +139,6 @@
   color: var(--color-text-secondary);
   line-height: 1.4;
 }
-
 .car-card__delete-btn {
   position: absolute;
   top: 12px;
@@ -150,7 +149,7 @@
   border: transparent;
   border-radius: var(--radius-md);
   background: transparent;
-  color: #ff4757;
+  color: #ff4757; /* ← Цвет обводки по умолчанию */
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -160,10 +159,27 @@
 }
 
 .car-card__delete-btn:hover {
-  background: linear-gradient(135deg, #ff4757 0%, #ff3742 100%);
-  color: white;
+  background: transparent;
+  color: #ff3742; /* ← Цвет заливки при наведении */
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(255, 71, 87, 0.4);
+}
+
+.car-card__delete-btn:hover svg {
+  filter: drop-shadow(0 2px 4px rgba(255, 71, 87, 0.3));
+  transform: scale(1.1);
+}
+
+.car-card__delete-btn svg {
+  transition: all var(--transition-fast);
+}
+
+.car-card__delete-btn svg path {
+  fill: transparent; /* ← Внутренность прозрачная по умолчанию */
+  transition: fill var(--transition-fast);
+}
+
+.car-card__delete-btn:hover svg path {
+  fill: currentColor; /* ← Внутренность заливается при наведении */
 }
 
 /* Мобильная версия */
@@ -177,8 +193,8 @@
   }
   
   .car-card__delete-btn {
-    top: 8px; /* ← ДОБАВИТЬ */
-    right: 8px; /* ← ДОБАВИТЬ */
+    top: 8px;
+    right: 8px;
     width: 28px;
     height: 28px;
     padding: var(--space-1);

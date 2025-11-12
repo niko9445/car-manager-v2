@@ -9,31 +9,21 @@ interface EditCarDataModalProps {
 }
 
 const EditCarDataModal: React.FC<EditCarDataModalProps> = ({ data, onClose, onSave }) => {
-  const [fields, setFields] = useState<CarDataField[]>(data.fields);
+  // Берем только первое поле (теперь всегда одно поле)
+  const [field, setField] = useState<CarDataField>(data.fields[0]);
 
   const handleSubmit = (e: React.FormEvent): void => {
     e.preventDefault();
-    onSave(data.id, { fields });
+    // Передаем массив с одним полем
+    onSave(data.id, { fields: [field] });
   };
 
-  const updateField = (index: number, field: Partial<CarDataField>) => {
-    const updatedFields = fields.map((f, i) => 
-      i === index ? { ...f, ...field } : f
-    );
-    setFields(updatedFields);
-  };
-
-  const addField = () => {
-    setFields([...fields, { name: '', value: '', unit: '' }]);
-  };
-
-  const removeField = (index: number) => {
-    const updatedFields = fields.filter((_, i) => i !== index);
-    setFields(updatedFields);
+  const updateField = (updates: Partial<CarDataField>) => {
+    setField(prev => ({ ...prev, ...updates }));
   };
 
   return (
-    <Modal isOpen={true} onClose={onClose} title="Редактировать данные" size="lg">
+    <Modal isOpen={true} onClose={onClose} title="Редактировать данные" size="md">
       <form className="modal__form" onSubmit={handleSubmit}>
         
         {/* Редактирование данных */}
@@ -43,52 +33,42 @@ const EditCarDataModal: React.FC<EditCarDataModalProps> = ({ data, onClose, onSa
           </div>
           <div className="card__content">
             
-            {/* Поля для редактирования */}
-            <div className="modal__edit-fields">
-              {fields.map((field, index) => (
-                <div key={index} className="modal__field-row">
-                  <input
-                    type="text"
-                    placeholder="Название параметра"
-                    value={field.name}
-                    onChange={(e) => updateField(index, { name: e.target.value })}
-                    className="modal__input"
-                  />
-                  <input
-                    type="text"
-                    placeholder="Значение"
-                    value={field.value}
-                    onChange={(e) => updateField(index, { value: e.target.value })}
-                    className="modal__input"
-                  />
-                  <input
-                    type="text"
-                    placeholder="Ед. измерения"
-                    value={field.unit}
-                    onChange={(e) => updateField(index, { unit: e.target.value })}
-                    className="modal__input"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => removeField(index)}
-                    className="btn btn--danger btn--sm modal__remove-button"
-                    disabled={fields.length === 1}
-                  >
-                    Отмена
-                  </button>
-                </div>
-              ))}
-            </div>
+            {/* Одно поле для редактирования */}
+            <div className="modal__form-grid">
+              <div className="modal__form-group">
+                <label className="modal__label">Название параметра</label>
+                <input
+                  type="text"
+                  placeholder="Название параметра"
+                  value={field.name}
+                  onChange={(e) => updateField({ name: e.target.value })}
+                  className="modal__input"
+                  required
+                />
+              </div>
 
-            {/* Кнопка добавления поля */}
-            <div className="modal__actions">
-              <button
-                type="button"
-                onClick={addField}
-                className="btn btn--secondary btn--sm"
-              >
-                + Добавить поле
-              </button>
+              <div className="modal__form-group">
+                <label className="modal__label">Значение</label>
+                <input
+                  type="text"
+                  placeholder="Значение"
+                  value={field.value}
+                  onChange={(e) => updateField({ value: e.target.value })}
+                  className="modal__input"
+                  required
+                />
+              </div>
+
+              <div className="modal__form-group">
+                <label className="modal__label">Единица измерения</label>
+                <input
+                  type="text"
+                  placeholder="Ед. измерения"
+                  value={field.unit}
+                  onChange={(e) => updateField({ unit: e.target.value })}
+                  className="modal__input"
+                />
+              </div>
             </div>
           </div>
         </div>
@@ -99,7 +79,11 @@ const EditCarDataModal: React.FC<EditCarDataModalProps> = ({ data, onClose, onSa
             <button type="button" className="btn btn--secondary" onClick={onClose}>
               Отмена
             </button>
-            <button type="submit" className="btn btn--action">
+            <button 
+              type="submit" 
+              className="btn btn--action"
+              disabled={!field.name.trim() || !field.value.trim()}
+            >
               Сохранить
             </button>
           </div>

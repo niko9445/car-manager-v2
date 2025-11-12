@@ -30,7 +30,7 @@ const EditCarModal: React.FC<EditCarModalProps> = ({
   });
 
   const [editingDataId, setEditingDataId] = useState<string | null>(null);
-  const [editingDataFields, setEditingDataFields] = useState<CarDataField[]>([]);
+  const [editingDataField, setEditingDataField] = useState<CarDataField>({ name: '', value: '', unit: '' });
 
   useEffect(() => {
     if (car) {
@@ -54,31 +54,25 @@ const EditCarModal: React.FC<EditCarModalProps> = ({
 
   const startEditingData = (dataEntry: CarDataEntry) => {
     setEditingDataId(dataEntry.id);
-    setEditingDataFields([...dataEntry.fields]);
+    // Берем только первое поле (теперь всегда одно поле)
+    setEditingDataField(dataEntry.fields[0] || { name: '', value: '', unit: '' });
   };
 
   const cancelEditingData = () => {
     setEditingDataId(null);
-    setEditingDataFields([]);
+    setEditingDataField({ name: '', value: '', unit: '' });
   };
 
   const handleSaveEditedData = (dataId: string) => {
-    const validFields = editingDataFields.filter(field => field.name.trim() && field.value.trim());
-    if (validFields.length > 0) {
-      onEditCarData(car.id, dataId, { fields: validFields });
+    if (editingDataField.name.trim() && editingDataField.value.trim()) {
+      // Передаем массив с одним полем
+      onEditCarData(car.id, dataId, { fields: [editingDataField] });
       setEditingDataId(null);
     }
   };
 
-  const updateEditingField = (index: number, field: Partial<CarDataField>) => {
-    const updatedFields = editingDataFields.map((f, i) => 
-      i === index ? { ...f, ...field } : f
-    );
-    setEditingDataFields(updatedFields);
-  };
-
-  const addEditingField = () => {
-    setEditingDataFields([...editingDataFields, { name: '', value: '', unit: '' }]);
+  const updateEditingField = (updates: Partial<CarDataField>) => {
+    setEditingDataField(prev => ({ ...prev, ...updates }));
   };
 
   return (
@@ -189,75 +183,63 @@ const EditCarModal: React.FC<EditCarModalProps> = ({
                 {carDataEntries.map((dataEntry) => (
                   <div key={dataEntry.id} className="modal__item">
                     {editingDataId === dataEntry.id ? (
-                      /* Режим редактирования */
+                      /* Режим редактирования - ТЕПЕРЬ ОДНО ПОЛЕ */
                       <div className="modal__item-edit">
                         <div className="modal__edit-grid">
-                          {editingDataFields.map((field, index) => (
-                            <React.Fragment key={index}>
-                              <input
-                                type="text"
-                                className="modal__input modal__input--sm"
-                                value={field.name}
-                                onChange={(e) => updateEditingField(index, { name: e.target.value })}
-                                placeholder="Название параметра"
-                              />
-                              <input
-                                type="text"
-                                className="modal__input modal__input--sm"
-                                value={field.value}
-                                onChange={(e) => updateEditingField(index, { value: e.target.value })}
-                                placeholder="Значение"
-                              />
-                              <input
-                                type="text"
-                                className="modal__input modal__input--sm"
-                                value={field.unit}
-                                onChange={(e) => updateEditingField(index, { unit: e.target.value })}
-                                placeholder="Ед. измерения"
-                              />
-                              <div className="modal__edit-actions">
-                                <button 
-                                  type="button"
-                                  className="btn btn--primary btn--sm"
-                                  onClick={() => handleSaveEditedData(dataEntry.id)}
-                                  disabled={!editingDataFields.some(f => f.name.trim() && f.value.trim())}
-                                >
-                                  Сохранить
-                                </button>
-                                <button 
-                                  type="button"
-                                  className="btn btn--secondary btn--sm"
-                                  onClick={cancelEditingData}
-                                >
-                                  Отмена
-                                </button>
-                              </div>
-                            </React.Fragment>
-                          ))}
+                          <input
+                            type="text"
+                            className="modal__input modal__input--sm"
+                            value={editingDataField.name}
+                            onChange={(e) => updateEditingField({ name: e.target.value })}
+                            placeholder="Название параметра"
+                          />
+                          <input
+                            type="text"
+                            className="modal__input modal__input--sm"
+                            value={editingDataField.value}
+                            onChange={(e) => updateEditingField({ value: e.target.value })}
+                            placeholder="Значение"
+                          />
+                          <input
+                            type="text"
+                            className="modal__input modal__input--sm"
+                            value={editingDataField.unit}
+                            onChange={(e) => updateEditingField({ unit: e.target.value })}
+                            placeholder="Ед. измерения"
+                          />
+                          <div className="modal__edit-actions">
+                            <button 
+                              type="button"
+                              className="btn btn--primary btn--sm"
+                              onClick={() => handleSaveEditedData(dataEntry.id)}
+                              disabled={!editingDataField.name.trim() || !editingDataField.value.trim()}
+                            >
+                              Сохранить
+                            </button>
+                            <button 
+                              type="button"
+                              className="btn btn--secondary btn--sm"
+                              onClick={cancelEditingData}
+                            >
+                              Отмена
+                            </button>
+                          </div>
                         </div>
-                        {/* Кнопка добавления поля с отступом */}
-                        <div className="modal__add-field-section">
-                          <button 
-                            type="button" 
-                            className="btn btn--secondary btn--sm"
-                            onClick={addEditingField}
-                          >
-                            + Добавить поле
-                          </button>
-                        </div>
+                        {/* УДАЛИЛИ КНОПКУ ДОБАВЛЕНИЯ ПОЛЯ */}
                       </div>
                     ) : (
-                      /* Режим просмотра */
+                      /* Режим просмотра - ТЕПЕРЬ ОДНО ПОЛЕ */
                       <div className="modal__item-content">
                         <div className="modal__item-info">
-                          {dataEntry.fields.map((field, index) => (
-                            <div key={index} style={{ display: 'flex', flexDirection: 'column', gap: '4px', marginBottom: '8px' }}>
-                              <span className="modal__item-name">{field.name}</span>
+                          {/* Отображаем только первое поле */}
+                          {dataEntry.fields[0] && (
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                              <span className="modal__item-name">{dataEntry.fields[0].name}</span>
                               <span className="modal__item-value">
-                                {field.value} {field.unit || ''}
+                                {dataEntry.fields[0].value} {dataEntry.fields[0].unit || ''}
                               </span>
                             </div>
-                          ))}
+                          )}
                         </div>
                         <div className="modal__item-actions">
                           <button 
