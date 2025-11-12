@@ -9,15 +9,7 @@ interface SettingsModalProps {
 }
 
 const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
-  const handleExport = () => {
-    // Ваша логика экспорта
-    console.log('Export data');
-  };
-
-  const handleImport = () => {
-    // Ваша логика импорта
-    console.log('Import data');
-  };
+  
 
   return (
     <Modal 
