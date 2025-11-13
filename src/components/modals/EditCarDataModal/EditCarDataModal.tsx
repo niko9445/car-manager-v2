@@ -76,7 +76,7 @@ const EditCarDataModal: React.FC<EditCarDataModalProps> = ({ data, onClose, onSa
         {/* Кнопки действий */}
         <div className="modal__actions-container">
           <div className="modal__actions modal__actions--centered">
-            <button type="button" className="btn btn--secondary" onClick={onClose}>
+            <button type="button" className="btn btn--cancel" onClick={onClose}>
               Отмена
             </button>
             <button 

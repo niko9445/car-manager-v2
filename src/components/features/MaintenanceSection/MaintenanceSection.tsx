@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { MaintenanceSectionProps } from '../../../types';
 import MaintenanceCard from './MaintenanceCard';
 
@@ -11,6 +11,15 @@ const MaintenanceSection: React.FC<MaintenanceSectionProps> = ({
 }) => {
   const currentCar = cars.find(c => c.id === car.id) || car;
   const [expandedCardId, setExpandedCardId] = useState<string | null>(null);
+
+  // 🔥 СОРТИРОВКА по дате (новые сверху)
+  const sortedMaintenance = useMemo(() => {
+    if (!currentCar.maintenance) return [];
+    
+    return [...currentCar.maintenance].sort((a, b) => {
+      return new Date(b.date).getTime() - new Date(a.date).getTime();
+    });
+  }, [currentCar.maintenance]);
 
   const handleToggleCard = (cardId: string) => {
     setExpandedCardId(expandedCardId === cardId ? null : cardId);
@@ -39,9 +48,9 @@ const MaintenanceSection: React.FC<MaintenanceSectionProps> = ({
       </div>
 
       <div className="section-content">
-        {currentCar.maintenance && currentCar.maintenance.length > 0 ? (
+        {sortedMaintenance.length > 0 ? (
           <div className="section__list">
-            {currentCar.maintenance.map((maintenance, index) => (
+            {sortedMaintenance.map((maintenance, index) => (
               <MaintenanceCard
                 key={maintenance.id}
                 maintenance={maintenance}

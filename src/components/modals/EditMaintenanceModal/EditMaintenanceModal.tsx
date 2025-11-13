@@ -280,7 +280,7 @@ const EditMaintenanceModal: React.FC<EditMaintenanceModalProps> = ({
                             </button>
                             <button 
                               type="button"
-                              className="btn btn--secondary btn--sm"
+                              className="btn btn--cancel btn--sm"
                               onClick={cancelEditing}
                             >
                               Отмена

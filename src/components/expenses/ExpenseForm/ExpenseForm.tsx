@@ -620,7 +620,7 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({
         <div className="modal__actions modal__actions--centered">
           <button
             type="button"
-            className="btn btn--secondary"
+            className="btn btn--cancel"
             onClick={onCancel}
             disabled={loading}
           >
