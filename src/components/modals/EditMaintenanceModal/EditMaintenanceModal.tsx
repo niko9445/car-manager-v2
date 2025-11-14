@@ -1,53 +1,50 @@
 import React, { useState, useEffect } from 'react';
 import Modal from '../../ui/Modal/Modal';
-import { EditMaintenanceModalProps, AdditionalItem } from '../../../types';
-import { useCurrency } from '../../../contexts/CurrencyContext'; // ← ДОБАВИТЬ
+import { EditMaintenanceModalProps } from '../../../types';
+import { useCurrency } from '../../../contexts/CurrencyContext';
+import { MAINTENANCE_CATEGORIES } from '../../../data/maintenanceCategories';
 
 const EditMaintenanceModal: React.FC<EditMaintenanceModalProps> = ({ 
   maintenance, 
   onClose, 
   onSave 
 }) => {
+  const { getCurrencySymbol } = useCurrency();
+
   const [formData, setFormData] = useState({
-    mileage: '',
-    cost: '',
-    oilChangeStep: '',
-    filterChangeStep: '',
-    date: '',
-    additionalItems: [] as AdditionalItem[]
+    date: maintenance.date,
+    mileage: maintenance.mileage.toString(),
+    cost: maintenance.cost ? maintenance.cost.toString() : ''
   });
 
-  const [newItem, setNewItem] = useState<AdditionalItem>({ 
-    name: '', 
-    value: '', 
-    unit: '' 
-  });
+  const [customFields, setCustomFields] = useState<Record<string, any>>(
+    maintenance.customFields || {}
+  );
 
-  const { getCurrencySymbol } = useCurrency(); // ← ДОБАВИТЬ
+  // Получаем данные о категории и подкатегории
+  const categoryData = MAINTENANCE_CATEGORIES.find(cat => cat.id === maintenance.categoryId);
+  const subcategoryData = categoryData?.subcategories.find(sub => sub.id === maintenance.subcategoryId);
 
   useEffect(() => {
-    if (maintenance) {
-      setFormData({
-        mileage: maintenance.mileage.toString(),
-        cost: maintenance.cost?.toString() || '',
-        oilChangeStep: maintenance.oilChangeStep.toString(),
-        filterChangeStep: maintenance.filterChangeStep.toString(),
-        date: maintenance.date,
-        additionalItems: maintenance.additionalItems || []
-      });
-    }
+    // Инициализируем форму данными из maintenance
+    setFormData({
+      date: maintenance.date,
+      mileage: maintenance.mileage.toString(),
+      cost: maintenance.cost ? maintenance.cost.toString() : ''
+    });
+    setCustomFields(maintenance.customFields || {});
   }, [maintenance]);
 
   const handleSubmit = (e: React.FormEvent): void => {
     e.preventDefault();
-    if (formData.mileage) {
+    if (formData.date) {
       const updatedData = {
-        mileage: parseInt(formData.mileage),
-        cost: formData.cost ? parseInt(formData.cost) : null,
-        oilChangeStep: parseInt(formData.oilChangeStep),
-        filterChangeStep: parseInt(formData.filterChangeStep),
         date: formData.date,
-        additionalItems: formData.additionalItems
+        mileage: formData.mileage ? parseInt(formData.mileage) : 0,
+        cost: formData.cost ? parseInt(formData.cost) : null,
+        categoryId: maintenance.categoryId,
+        subcategoryId: maintenance.subcategoryId,
+        customFields
       };
       onSave(maintenance.id, updatedData);
     }
@@ -60,70 +57,20 @@ const EditMaintenanceModal: React.FC<EditMaintenanceModalProps> = ({
     }));
   };
 
-  const addAdditionalItem = (): void => {
-    if (newItem.name.trim() && newItem.value.trim()) {
-      setFormData({
-        ...formData,
-        additionalItems: [...formData.additionalItems, { ...newItem }]
-      });
-      setNewItem({ name: '', value: '', unit: '' });
-    }
-  };
-
-  const removeAdditionalItem = (index: number): void => {
-    const updatedItems = formData.additionalItems.filter((_, i) => i !== index);
-    setFormData({ ...formData, additionalItems: updatedItems });
-  };
-
-  const startEditingItem = (index: number): void => {
-    setEditingIndex(index);
-    setEditingItem({ ...formData.additionalItems[index] });
-  };
-
-  const saveEditingItem = (): void => {
-    if (editingIndex !== null) {
-      const updatedItems = [...formData.additionalItems];
-      updatedItems[editingIndex] = { ...editingItem };
-      
-      setFormData({
-        ...formData,
-        additionalItems: updatedItems
-      });
-      
-      cancelEditing();
-    }
-  };
-
-  const cancelEditing = (): void => {
-    setEditingIndex(null);
-    setEditingItem({ name: '', value: '', unit: '' });
-  };
-
-  const updateEditingItem = (field: keyof AdditionalItem, value: string): void => {
-    setEditingItem(prev => ({
+  const handleCustomFieldChange = (fieldName: string, value: any): void => {
+    setCustomFields(prev => ({
       ...prev,
-      [field]: value
+      [fieldName]: value
     }));
   };
 
-  const updateNewItem = (field: keyof AdditionalItem, value: string): void => {
-    setNewItem(prev => ({
-      ...prev,
-      [field]: value
-    }));
-  };
-
-  const [editingIndex, setEditingIndex] = useState<number | null>(null);
-  const [editingItem, setEditingItem] = useState<AdditionalItem>({ 
-    name: '', 
-    value: '', 
-    unit: '' 
-  });
+  const isFormValid = formData.date;
 
   return (
     <Modal isOpen={true} onClose={onClose} title="Редактировать ТО" size="lg">
       <form className="modal__form" onSubmit={handleSubmit}>
         
+
         {/* Основные параметры */}
         <div className="card card--compact">
           <div className="card__header">
@@ -132,7 +79,7 @@ const EditMaintenanceModal: React.FC<EditMaintenanceModalProps> = ({
           <div className="card__content">
             <div className="modal__form-grid">
               <div className="modal__form-group">
-                <label className="modal__label modal__label--required">Дата ТО</label>
+                <label className="modal__label modal__label--required">Дата</label>
                 <input
                   type="date"
                   className="modal__input"
@@ -141,20 +88,19 @@ const EditMaintenanceModal: React.FC<EditMaintenanceModalProps> = ({
                   required
                 />
               </div>
-              
+
               <div className="modal__form-group">
-                <label className="modal__label modal__label--required">Пробег (км)</label>
+                <label className="modal__label">Пробег (км)</label>
                 <input
                   type="number"
                   className="modal__input"
                   value={formData.mileage}
                   onChange={(e) => handleInputChange('mileage', e.target.value)}
                   min="0"
-                  required
+                  placeholder="Текущий пробег"
                 />
               </div>
-              
-              {/* ИСПРАВЛЕНО: Затраты с текущей валютой */}
+
               <div className="modal__form-group">
                 <label className="modal__label">Затраты ({getCurrencySymbol()})</label>
                 <input
@@ -163,172 +109,95 @@ const EditMaintenanceModal: React.FC<EditMaintenanceModalProps> = ({
                   value={formData.cost}
                   onChange={(e) => handleInputChange('cost', e.target.value)}
                   min="0"
-                  step="0.01"
-                />
-              </div>
-
-              <div className="modal__form-group">
-                <label className="modal__label">Интервал замены масла (км)</label>
-                <input
-                  type="number"
-                  className="modal__input"
-                  value={formData.oilChangeStep}
-                  onChange={(e) => handleInputChange('oilChangeStep', e.target.value)}
-                  min="0"
-                  required
-                />
-              </div>
-              
-              <div className="modal__form-group">
-                <label className="modal__label">Интервал замены фильтров (км)</label>
-                <input
-                  type="number"
-                  className="modal__input"
-                  value={formData.filterChangeStep}
-                  onChange={(e) => handleInputChange('filterChangeStep', e.target.value)}
-                  min="0"
-                  required
+                  placeholder="Необязательно"
                 />
               </div>
             </div>
           </div>
         </div>
 
-        {/* Дополнительные работы */}
-        <div className="card card--compact">
-          <div className="card__header">
-            <div className="card__main-info">
-              <h3 className="card__title card__title--sm">Дополнительные работы</h3>
-              <p className="card__description">
-                Управление дополнительными работами или замененными деталями
-              </p>
+        {/* Детали работ (если есть кастомные поля) */}
+        {subcategoryData && subcategoryData.fields.length > 0 && (
+          <div className="card card--compact">
+            <div className="card__header">
+              <h3 className="card__title card__title--sm">Детали работ</h3>
             </div>
-          </div>
-          <div className="card__content">
-            
-            {/* Форма добавления нового элемента */}
-            <div className="modal__add-grid">
-              <input
-                type="text"
-                className="modal__input"
-                value={newItem.name}
-                onChange={(e) => updateNewItem('name', e.target.value)}
-                placeholder="Название работы"
-              />
-              <input
-                type="text"
-                className="modal__input"
-                value={newItem.value}
-                onChange={(e) => updateNewItem('value', e.target.value)}
-                placeholder="Значение"
-              />
-              <input
-                type="text"
-                className="modal__input"
-                value={newItem.unit}
-                onChange={(e) => updateNewItem('unit', e.target.value)}
-                placeholder="Единица измерения"
-              />
-              <button 
-                type="button" 
-                className="btn btn--secondary btn--sm modal__add-button"
-                onClick={addAdditionalItem}
-                disabled={!newItem.name.trim() || !newItem.value.trim()}
-              >
-                Добавить
-              </button>
-            </div>
-            
-            {/* Список добавленных элементов */}
-            {formData.additionalItems.length > 0 && (
-              <div className="modal__items-list">
-                {formData.additionalItems.map((item, index) => (
-                  <div key={index} className="modal__item">
-                    {editingIndex === index ? (
-                      /* Режим редактирования */
-                      <div className="modal__item-edit">
-                        <div className="modal__edit-grid">
+            <div className="card__content">
+              <div className="modal__form-grid">
+                {subcategoryData.fields
+                  .filter(field => field.name !== 'cost') // Исключаем поле стоимости
+                  .map(field => (
+                    <div key={field.name} className="modal__form-group">
+                      <label className={`modal__label ${field.required ? 'modal__label--required' : ''}`}>
+                        {field.label}
+                      </label>
+                      
+                      {field.type === 'text' && (
+                        <input
+                          type="text"
+                          className="modal__input"
+                          value={customFields[field.name] || ''}
+                          onChange={(e) => handleCustomFieldChange(field.name, e.target.value)}
+                          required={field.required}
+                          placeholder={field.placeholder}
+                        />
+                      )}
+                      
+                      {field.type === 'number' && (
+                        <input
+                          type="number"
+                          className="modal__input"
+                          value={customFields[field.name] || ''}
+                          onChange={(e) => handleCustomFieldChange(field.name, e.target.value)}
+                          required={field.required}
+                          placeholder={field.placeholder}
+                          min={field.min}
+                          step={field.step}
+                        />
+                      )}
+
+                      {field.type === 'select' && field.options && (
+                        <select
+                          className="modal__input"
+                          value={customFields[field.name] || ''}
+                          onChange={(e) => handleCustomFieldChange(field.name, e.target.value)}
+                          required={field.required}
+                        >
+                          <option value="">Выберите...</option>
+                          {field.options.map(option => (
+                            <option key={option} value={option}>{option}</option>
+                          ))}
+                        </select>
+                      )}
+
+                      {field.type === 'checkbox' && (
+                        <label className="modal__checkbox">
                           <input
-                            type="text"
-                            className="modal__input modal__input--sm"
-                            value={editingItem.name}
-                            onChange={(e) => updateEditingItem('name', e.target.value)}
-                            placeholder="Название работы"
+                            type="checkbox"
+                            checked={customFields[field.name] || false}
+                            onChange={(e) => handleCustomFieldChange(field.name, e.target.checked)}
                           />
-                          <input
-                            type="text"
-                            className="modal__input modal__input--sm"
-                            value={editingItem.value}
-                            onChange={(e) => updateEditingItem('value', e.target.value)}
-                            placeholder="Значение"
-                          />
-                          <input
-                            type="text"
-                            className="modal__input modal__input--sm"
-                            value={editingItem.unit}
-                            onChange={(e) => updateEditingItem('unit', e.target.value)}
-                            placeholder="Единица измерения"
-                          />
-                          <div className="modal__edit-actions">
-                            <button 
-                              type="button"
-                              className="btn btn--primary btn--sm"
-                              onClick={saveEditingItem}
-                              disabled={!editingItem.name.trim() || !editingItem.value.trim()}
-                            >
-                              Сохранить
-                            </button>
-                            <button 
-                              type="button"
-                              className="btn btn--cancel btn--sm"
-                              onClick={cancelEditing}
-                            >
-                              Отмена
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                    ) : (
-                      /* Режим просмотра */
-                      <div className="modal__item-content">
-                        <div className="modal__item-info">
-                          <span className="modal__item-name">{item.name}</span>
-                          <span className="modal__item-value">
-                            {item.value} {item.unit || ''}
-                          </span>
-                        </div>
-                        <div className="modal__item-actions">
-                          <button 
-                            type="button"
-                            className="btn btn--secondary btn--sm"
-                            onClick={() => startEditingItem(index)}
-                          >
-                            Редактировать
-                          </button>
-                          <button 
-                            type="button"
-                            className="btn btn--danger btn--sm"
-                            onClick={() => removeAdditionalItem(index)}
-                          >
-                            Удалить
-                          </button>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                ))}
+                          <span className="modal__checkbox-label">{field.label}</span>
+                        </label>
+                      )}
+                    </div>
+                  ))}
               </div>
-            )}
+            </div>
           </div>
-        </div>
+        )}
 
         {/* Кнопки действий */}
         <div className="modal__actions-container">
           <div className="modal__actions modal__actions--centered">
-            <button type="button" className="btn btn--secondary" onClick={onClose}>
+            <button type="button" className="btn btn--cancel" onClick={onClose}>
               Отмена
             </button>
-            <button type="submit" className="btn btn--action">
+            <button 
+              type="submit" 
+              className="btn btn--action"
+              disabled={!isFormValid}
+            >
               Сохранить
             </button>
           </div>

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Maintenance, Car } from '../../../types';
 import { useCurrency } from '../../../contexts/CurrencyContext';
+import { MAINTENANCE_CATEGORIES } from '../../../data/maintenanceCategories';
 
 interface MaintenanceCardProps {
   maintenance: Maintenance;
@@ -21,6 +22,12 @@ const MaintenanceCard: React.FC<MaintenanceCardProps> = ({
   isExpanded,
   onToggle
 }) => {
+  const { formatCurrency } = useCurrency();
+
+  // Получаем данные о категории и подкатегории
+  const categoryData = MAINTENANCE_CATEGORIES.find(cat => cat.id === maintenance.categoryId);
+  const subcategoryData = categoryData?.subcategories.find(sub => sub.id === maintenance.subcategoryId);
+
   const handleCardClick = () => {
     onToggle();
   };
@@ -38,9 +45,33 @@ const MaintenanceCard: React.FC<MaintenanceCardProps> = ({
     return num.toLocaleString('ru-RU');
   };
 
-  const hasAdditionalItems = maintenance.additionalItems && maintenance.additionalItems.length > 0;
+  // Форматируем кастомные поля для отображения
+  const formatCustomFields = () => {
+    if (!maintenance.customFields) return null;
+    
+    return Object.entries(maintenance.customFields)
+      .filter(([key, value]) => 
+        value !== '' && 
+        value !== null && 
+        value !== undefined && 
+        value !== false &&
+        key !== 'cost' // Исключаем стоимость
+      )
+      .map(([key, value]) => {
+        const fieldConfig = subcategoryData?.fields.find(field => field.name === key);
+        const label = fieldConfig?.label || key;
+        
+        let displayValue = value;
+        if (typeof value === 'boolean') {
+          displayValue = '✓';
+        }
+        
+        return { label, value: displayValue };
+      });
+  };
 
-  const { formatCurrency } = useCurrency();
+  const customFields = formatCustomFields();
+  const hasCustomFields = customFields && customFields.length > 0;
 
   return (
     <div 
@@ -50,33 +81,30 @@ const MaintenanceCard: React.FC<MaintenanceCardProps> = ({
     >
       <div className="card__header">
         <div className="card__main-info">
-          {/* Красивый лейбл с датой */}
+          {/* Дата как лейбл сверху */}
           <div className="maintenance-date-label">
             {formatDate(maintenance.date)}
           </div>
           
+          {/* Тип работ как заголовок */}
+          <div className="maintenance-type">
+            {subcategoryData?.name || 'Техническое обслуживание'}
+          </div>
+          
+          {/* В нераскрытой карточке ТОЛЬКО затраты */}
           <div className="card__preview">
-            <div className="card__preview-item">
-              <span className="card__preview-label">Пробег:</span>
-              <span className="card__preview-value">{formatNumber(maintenance.mileage)} км</span>
-            </div>
-            <div className="card__preview-item">
-              <span className="card__preview-label">Затраты:</span>
-              <span className="card__preview-value">
-                {maintenance.cost ? formatCurrency(maintenance.cost) : 'Не указано'}
-              </span>
-            </div>
-            {hasAdditionalItems && !isExpanded && (
-              <div className="card__preview-more">
-                + {maintenance.additionalItems.length} доп. работ
+            {maintenance.cost && (
+              <div className="card__preview-item">
+                <span className="card__preview-label">Затраты:</span>
+                <span className="card__preview-value">
+                  {formatCurrency(maintenance.cost)}
+                </span>
               </div>
             )}
           </div>
         </div>
         
         <div className="card__header-actions">
-          
-          {/* Кнопки действий в углу */}
           <div className="card__corner-actions">
             <button 
               className="card__corner-action"
@@ -106,30 +134,57 @@ const MaintenanceCard: React.FC<MaintenanceCardProps> = ({
       {/* Полный вид - появляется при раскрытии */}
       {isExpanded && (
         <div className="card__expanded-content">
-          <div className="card__section">
-            <div className="card__section-item">
-              <span className="card__section-label">Следующая замена масла:</span>
-              <span className="card__section-value">
-                {formatNumber(maintenance.mileage + maintenance.oilChangeStep)} км
-              </span>
+          {/* Основная информация */}
+          <div className="card__info-grid">
+            <div className="card__info-item">
+              <div className="card__info-label">Категория</div>
+              <div className="card__info-value">
+                {categoryData?.icon} {categoryData?.name}
+              </div>
             </div>
             
-            <div className="card__section-item">
-              <span className="card__section-label">Следующая замена фильтров:</span>
-              <span className="card__section-value">
-                {formatNumber(maintenance.mileage + maintenance.filterChangeStep)} км
-              </span>
-            </div>
+            {maintenance.mileage > 0 && (
+              <div className="card__info-item">
+                <div className="card__info-label">Пробег</div>
+                <div className="card__info-value">{formatNumber(maintenance.mileage)} км</div>
+              </div>
+            )}
+            
           </div>
 
-          {hasAdditionalItems && (
-            <div className="card__additional">
-              <span className="card__additional-label">Дополнительные работы:</span>
-              {maintenance.additionalItems.map((item, index) => (
-                <div key={index} className="card__additional-item">
-                  • {item.name}: {item.value} {item.unit || ''}
-                </div>
-              ))}
+          {/* Детали работ */}
+          {hasCustomFields && (
+            <div style={{ 
+              marginTop: '20px'
+            }}>
+              <div style={{ 
+                display: 'grid', 
+                gridTemplateColumns: '1fr',
+                gap: '12px'
+              }}>
+                {customFields.map((field, index) => (
+                  <div key={index} style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '4px'
+                  }}>
+                    <div style={{
+                      color: 'var(--color-text-secondary)',
+                      fontWeight: '500',
+                      fontSize: '12px'
+                    }}>
+                      {field.label}
+                    </div>
+                    <div style={{
+                      color: 'var(--color-text-primary)',
+                      fontWeight: '600',
+                      fontSize: '14px'
+                    }}>
+                      {field.value}
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
           )}
         </div>

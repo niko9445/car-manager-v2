@@ -1197,3 +1197,72 @@
     font-size: 13px;
   }
 }
+
+
+/* Избранные работы */
+.favorites-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.favorite-card {
+  padding: 12px;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  background: white;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.favorite-card:hover {
+  border-color: #007bff;
+  background: #f8f9ff;
+}
+
+.favorite-card__name {
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+
+.favorite-card__count {
+  font-size: 12px;
+  color: #666;
+}
+
+/* Предупреждения */
+.alert {
+  padding: 12px;
+  border-radius: 6px;
+  margin: 16px 0;
+}
+
+.alert--warning {
+  background: #fff3cd;
+  border: 1px solid #ffeaa7;
+  color: #856404;
+}
+
+/* Модалка сохранения в избранное */
+.modal__overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal__favorite-save {
+  background: white;
+  padding: 24px;
+  border-radius: 8px;
+  max-width: 400px;
+  width: 90%;
+}
+

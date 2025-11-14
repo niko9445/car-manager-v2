@@ -13,6 +13,7 @@
 @import '../components/features//MaintenanceSection/MaintenanceCard.css';
 @import '../components/layout/MainContent/MainContent.css';
 @import '../components/layout/Sidebar/Sidebar.css'; 
+@import '../components/modals/AddMaintenanceModal/newStyle.css';
 /* ===== ОСНОВНЫЕ СТИЛИ ПРИЛОЖЕНИЯ ===== */
 
 /* Типография */

@@ -1,0 +1,112 @@
+/* Стили для системы категорий */
+.modal__steps {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+  gap: 10px;
+}
+
+.modal__step {
+  padding: 8px 16px;
+  border-radius: 20px;
+  background: #f5f5f5;
+  color: #666;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.modal__step--active {
+  background: #007bff;
+  color: white;
+}
+
+.categories-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 12px;
+}
+
+.category-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 16px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  background: white;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.category-card:hover {
+  border-color: #007bff;
+  transform: translateY(-2px);
+}
+
+.category-card__icon {
+  font-size: 24px;
+  margin-bottom: 8px;
+}
+
+.category-card__name {
+  font-size: 12px;
+  text-align: center;
+  font-weight: 500;
+}
+
+.subcategories-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.subcategory-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  background: white;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.subcategory-item:hover {
+  border-color: #007bff;
+  background: #f8f9ff;
+}
+
+.subcategory-item__name {
+  font-weight: 500;
+}
+
+.subcategory-item__arrow {
+  color: #666;
+}
+
+.modal__form-section {
+  margin-bottom: 20px;
+}
+
+.modal__section-title {
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 12px;
+  color: #333;
+}
+
+.card__header-back {
+  margin-bottom: 8px;
+}
+
+.modal__checkbox {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.modal__checkbox-label {
+  font-size: 14px;
+}

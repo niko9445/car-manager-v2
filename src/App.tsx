@@ -16,11 +16,11 @@ import {
   AppModalType, 
   Maintenance, 
   CarDataEntry, 
-  CarFormData, 
-  MaintenanceFormData,
+  CarFormData,
   ConfirmType,
   ModalData,
   CarDataField,
+  MaintenanceFormData, 
   SectionType 
 } from './types';
 import './styles/globals.css';
@@ -130,7 +130,6 @@ const AppContent = () => {
     });
   };
 
-  // Функции для ТО
   const handleAddMaintenance = (maintenanceData: MaintenanceFormData) => {
     if (!selectedCar) return;
     
@@ -138,13 +137,15 @@ const AppContent = () => {
       if (car.id === selectedCar.id) {
         const newMaintenance: Maintenance = {
           id: Date.now().toString(),
+          carId: selectedCar.id, // ← ДОБАВЬ ЭТУ СТРОКУ
+          date: maintenanceData.date,
           mileage: maintenanceData.mileage,
           cost: maintenanceData.cost ?? null,
-          oilChangeStep: maintenanceData.oilChangeStep,
-          filterChangeStep: maintenanceData.filterChangeStep,
-          additionalItems: maintenanceData.additionalItems,
-          date: maintenanceData.date,
-          createdAt: new Date().toISOString()
+          createdAt: new Date().toISOString(),
+          // Добавляем новые поля из системы категорий
+          categoryId: maintenanceData.categoryId,
+          subcategoryId: maintenanceData.subcategoryId,
+          customFields: maintenanceData.customFields
         };
         return {
           ...car,

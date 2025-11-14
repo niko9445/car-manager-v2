@@ -35,20 +35,18 @@ export interface SidebarProps {
 
 export interface Maintenance {
   id: string;
+  carId: string;
   date: string;
   mileage: number;
   cost: number | null;
-  oilChangeStep: number;
-  filterChangeStep: number;
-  additionalItems: AdditionalItem[];
   createdAt: string;
+  
+  // Новые поля для системы категорий
+  categoryId?: string;
+  subcategoryId?: string;
+  customFields?: Record<string, any>;
 }
 
-export interface AdditionalItem {
-  name: string;
-  value: string;
-  unit: string;
-}
 
 export interface CarDataEntry {
   id: string;
@@ -72,15 +70,6 @@ export interface CarFormData {
   vin: string;
 }
 
-export interface MaintenanceFormData {
-  date: string;
-  mileage: number;
-  cost?: number | null;
-  oilChangeStep: number;
-  filterChangeStep: number;
-  description?: string;
-  additionalItems: AdditionalItem[];
-}
 
 export interface EditCarModalProps {
   car: Car;
@@ -133,6 +122,17 @@ export interface AppState {
   sidebarOpen: boolean;
   modals: Record<AppModalType, boolean>;
   modalData: Record<string, any>; // ← УПРОЩАЕМ ДЛЯ ГИБКОСТИ
+  favorites: FavoriteMaintenance[];
+}
+
+export interface FavoriteMaintenance {
+  id: string;
+  categoryId: string;
+  subcategoryId: string;
+  customFields: Record<string, any>;
+  name: string;
+  usedCount: number;
+  lastUsed: string;
 }
 
 export type ModalData = 
@@ -385,4 +385,45 @@ export interface InspectionData {
   series: string;
   number: string;
   validUntil: string;
+}
+
+
+/////////////////////////////////////
+
+// ===== ТИПЫ ДЛЯ СИСТЕМЫ КАТЕГОРИЙ ТЕХОБСЛУЖИВАНИЯ =====
+
+export interface MaintenanceCategory {
+  id: string;
+  name: string;
+  icon: string;
+  subcategories: MaintenanceSubcategory[];
+}
+
+export interface MaintenanceSubcategory {
+  id: string;
+  name: string;
+  fields: FormField[];
+  defaultValues?: Record<string, any>;
+}
+
+export interface FormField {
+  type: 'text' | 'number' | 'select' | 'checkbox' | 'date';
+  name: string;
+  label: string;
+  required?: boolean;
+  options?: string[];
+  placeholder?: string;
+  min?: number;
+  max?: number;
+  step?: number;
+}
+
+export interface MaintenanceFormData {
+  categoryId: string;
+  subcategoryId: string;
+  date: string;
+  mileage: number;
+  cost: number | null;
+  customFields: Record<string, any>;
+  description?: string;
 }

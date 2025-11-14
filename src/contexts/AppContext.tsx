@@ -35,7 +35,8 @@ const initialState: AppState = {
     editExpense: false,
     expenseReport: false
   },
-  modalData: {}
+  modalData: {},
+  favorites: []
 };
 
 function appReducer(state: AppState, action: AppAction): AppState {
