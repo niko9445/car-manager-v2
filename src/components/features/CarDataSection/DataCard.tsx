@@ -1,7 +1,6 @@
-// DataCard.tsx
 import React from 'react';
 import { CarDataEntry } from '../../../types';
-import { useCurrency } from '../../../contexts/CurrencyContext'; // ← ДОБАВИТЬ
+import { useCurrency } from '../../../contexts/CurrencyContext';
 
 interface DataCardProps {
   data: CarDataEntry;
@@ -12,7 +11,7 @@ const DataCard: React.FC<DataCardProps> = ({
   data, 
   position = 0
 }) => {
-  const { getCurrencySymbol } = useCurrency(); // ← ДОБАВИТЬ
+  const { getCurrencySymbol } = useCurrency();
   
   // Берем первое поле для отображения (название и значение)
   const mainField = data.fields[0];
@@ -30,6 +29,11 @@ const DataCard: React.FC<DataCardProps> = ({
       if (unit.includes('руб') || unit.includes('₽')) {
         unit = unit.replace(/руб|₽/g, getCurrencySymbol());
       }
+    }
+    
+    // ДЛЯ СТРАХОВКИ И ТЕХОСМОТРА - УБИРАЕМ ВАЛЮТУ ИЗ ОТОБРАЖЕНИЯ
+    if (field.name === 'Страховка' || field.name === 'Техосмотр') {
+      return value; // Просто возвращаем значение без валюты
     }
     
     return `${value}${unit ? ` ${unit}` : ''}`;

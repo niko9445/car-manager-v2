@@ -52,6 +52,10 @@ export interface CarDataEntry {
   id: string;
   fields: CarDataField[];
   createdAt: string;
+  // Добавим новые поля для специальных типов данных
+  dataType?: 'insurance' | 'inspection' | 'custom';
+  insuranceData?: InsuranceData;
+  inspectionData?: InspectionData;
 }
 
 export interface CarDataField {
@@ -379,12 +383,14 @@ export interface InsuranceData {
   number: string;
   startDate: string;
   endDate: string;
+  cost?: number;
 }
 
 export interface InspectionData {
   series: string;
   number: string;
   validUntil: string;
+  cost?: number;
 }
 
 

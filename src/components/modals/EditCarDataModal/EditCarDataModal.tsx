@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import Modal from '../../ui/Modal/Modal';
 import { CarDataEntry, CarDataField } from '../../../types';
+import { useCurrency } from '../../../contexts/CurrencyContext';
 
 interface EditCarDataModalProps {
   data: CarDataEntry;
@@ -9,17 +10,54 @@ interface EditCarDataModalProps {
 }
 
 const EditCarDataModal: React.FC<EditCarDataModalProps> = ({ data, onClose, onSave }) => {
-  // Берем только первое поле (теперь всегда одно поле)
   const [field, setField] = useState<CarDataField>(data.fields[0]);
+  const { getCurrencySymbol } = useCurrency();
+
+  const predefinedFields = useMemo(() => [
+    { name: 'Пробег', unit: 'км' },
+    { name: 'Расход топлива', unit: 'л/100км' },
+    { name: 'Страховка', unit: '' },
+    { name: 'Техосмотр', unit: '' },
+    { name: 'Мощность', unit: 'л.с.' },
+    { name: 'Объем двигателя', unit: 'л' },
+    { name: 'Стоимость', unit: getCurrencySymbol() },
+    { name: 'Дата покупки', unit: '' },
+    { name: 'Цвет', unit: '' },
+    { name: 'Тип кузова', unit: '' },
+    { name: 'Привод', unit: '' },
+    { name: 'Разгон до 100', unit: 'сек' },
+    { name: 'Макс. скорость', unit: 'км/ч' },
+    { name: 'Крутящий момент', unit: 'Н⋅м' },
+    { name: 'Вес', unit: 'кг' },
+    { name: 'Объем багажника', unit: 'л' },
+    { name: 'Расход в городе', unit: 'л/100км' },
+    { name: 'Расход по трассе', unit: 'л/100км' },
+    { name: 'Страна производства', unit: '' },
+    { name: 'Гарантия', unit: 'мес' },
+    { name: 'Налог', unit: `${getCurrencySymbol()}/год` }
+  ], [getCurrencySymbol]);
 
   const handleSubmit = (e: React.FormEvent): void => {
     e.preventDefault();
-    // Передаем массив с одним полем
     onSave(data.id, { fields: [field] });
   };
 
-  const updateField = (updates: Partial<CarDataField>) => {
-    setField(prev => ({ ...prev, ...updates }));
+  const handleParameterChange = (selectedName: string) => {
+    const selectedField = predefinedFields.find(f => f.name === selectedName);
+    
+    if (selectedField) {
+      setField(prev => ({ 
+        ...prev, 
+        name: selectedField.name,
+        unit: selectedField.unit
+      }));
+    } else {
+      setField(prev => ({ ...prev, name: selectedName, unit: '' }));
+    }
+  };
+
+  const updateField = (key: keyof CarDataField, value: string) => {
+    setField(prev => ({ ...prev, [key]: value }));
   };
 
   return (
@@ -27,49 +65,36 @@ const EditCarDataModal: React.FC<EditCarDataModalProps> = ({ data, onClose, onSa
       <form className="modal__form" onSubmit={handleSubmit}>
         
         {/* Редактирование данных */}
-        <div className="card card--compact">
-          <div className="card__header">
-            <h3 className="card__title card__title--sm">Редактирование данных</h3>
+        <div className="modal__form-grid">
+          <div className="modal__form-group">
+            <label className="modal__label">Название параметра</label>
+            <select
+              className="modal__input"
+              value={field.name}
+              onChange={(e) => handleParameterChange(e.target.value)}
+              required
+            >
+              <option value="">Выберите параметр</option>
+              {predefinedFields.map(item => (
+                <option key={item.name} value={item.name}>
+                  {item.name} {item.unit && `(${item.unit})`}
+                </option>
+              ))}
+            </select>
           </div>
-          <div className="card__content">
-            
-            {/* Одно поле для редактирования */}
-            <div className="modal__form-grid">
-              <div className="modal__form-group">
-                <label className="modal__label">Название параметра</label>
-                <input
-                  type="text"
-                  placeholder="Название параметра"
-                  value={field.name}
-                  onChange={(e) => updateField({ name: e.target.value })}
-                  className="modal__input"
-                  required
-                />
-              </div>
 
-              <div className="modal__form-group">
-                <label className="modal__label">Значение</label>
-                <input
-                  type="text"
-                  placeholder="Значение"
-                  value={field.value}
-                  onChange={(e) => updateField({ value: e.target.value })}
-                  className="modal__input"
-                  required
-                />
-              </div>
-
-              <div className="modal__form-group">
-                <label className="modal__label">Единица измерения</label>
-                <input
-                  type="text"
-                  placeholder="Ед. измерения"
-                  value={field.unit}
-                  onChange={(e) => updateField({ unit: e.target.value })}
-                  className="modal__input"
-                />
-              </div>
-            </div>
+          <div className="modal__form-group">
+            <label className="modal__label">
+              Значение {field.unit && `(${field.unit})`}
+            </label>
+            <input
+              type="text"
+              className="modal__input"
+              placeholder={`Введите значение ${field.unit ? `в ${field.unit}` : ''}`}
+              value={field.value}
+              onChange={(e) => updateField('value', e.target.value)}
+              required
+            />
           </div>
         </div>
 
