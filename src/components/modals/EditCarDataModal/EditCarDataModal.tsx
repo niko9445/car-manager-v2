@@ -14,10 +14,12 @@ const EditCarDataModal: React.FC<EditCarDataModalProps> = ({ data, onClose, onSa
   const { getCurrencySymbol } = useCurrency();
 
   const predefinedFields = useMemo(() => [
-    { name: 'Пробег', unit: 'км' },
-    { name: 'Расход топлива', unit: 'л/100км' },
     { name: 'Страховка', unit: '' },
     { name: 'Техосмотр', unit: '' },
+    { name: 'Размеры', unit: '' },
+    { name: 'Код двигателя', unit: '' },
+    { name: 'Марка топлива', unit: '' },
+    { name: 'Расход', unit: '' },
     { name: 'Мощность', unit: 'л.с.' },
     { name: 'Объем двигателя', unit: 'л' },
     { name: 'Стоимость', unit: getCurrencySymbol() },
@@ -30,8 +32,6 @@ const EditCarDataModal: React.FC<EditCarDataModalProps> = ({ data, onClose, onSa
     { name: 'Крутящий момент', unit: 'Н⋅м' },
     { name: 'Вес', unit: 'кг' },
     { name: 'Объем багажника', unit: 'л' },
-    { name: 'Расход в городе', unit: 'л/100км' },
-    { name: 'Расход по трассе', unit: 'л/100км' },
     { name: 'Страна производства', unit: '' },
     { name: 'Гарантия', unit: 'мес' },
     { name: 'Налог', unit: `${getCurrencySymbol()}/год` }
@@ -60,11 +60,12 @@ const EditCarDataModal: React.FC<EditCarDataModalProps> = ({ data, onClose, onSa
     setField(prev => ({ ...prev, [key]: value }));
   };
 
+  const isDateField = field.name === 'Дата покупки';
+
   return (
     <Modal isOpen={true} onClose={onClose} title="Редактировать данные" size="md">
       <form className="modal__form" onSubmit={handleSubmit}>
         
-        {/* Редактирование данных */}
         <div className="modal__form-grid">
           <div className="modal__form-group">
             <label className="modal__label">Название параметра</label>
@@ -85,20 +86,29 @@ const EditCarDataModal: React.FC<EditCarDataModalProps> = ({ data, onClose, onSa
 
           <div className="modal__form-group">
             <label className="modal__label">
-              Значение {field.unit && `(${field.unit})`}
+              {isDateField ? 'Дата' : 'Значение'} {field.unit && `(${field.unit})`}
             </label>
-            <input
-              type="text"
-              className="modal__input"
-              placeholder={`Введите значение ${field.unit ? `в ${field.unit}` : ''}`}
-              value={field.value}
-              onChange={(e) => updateField('value', e.target.value)}
-              required
-            />
+            {isDateField ? (
+              <input
+                type="date"
+                className="modal__input"
+                value={field.value}
+                onChange={(e) => updateField('value', e.target.value)}
+                required
+              />
+            ) : (
+              <input
+                type="text"
+                className="modal__input"
+                placeholder={`Введите ${isDateField ? 'дату' : 'значение'} ${field.unit ? `в ${field.unit}` : ''}`}
+                value={field.value}
+                onChange={(e) => updateField('value', e.target.value)}
+                required={field.name !== 'Стоимость'}
+              />
+            )}
           </div>
         </div>
 
-        {/* Кнопки действий */}
         <div className="modal__actions-container">
           <div className="modal__actions modal__actions--centered">
             <button type="button" className="btn btn--cancel" onClick={onClose}>
@@ -107,7 +117,7 @@ const EditCarDataModal: React.FC<EditCarDataModalProps> = ({ data, onClose, onSa
             <button 
               type="submit" 
               className="btn btn--action"
-              disabled={!field.name.trim() || !field.value.trim()}
+              disabled={!field.name.trim() || (field.name !== 'Стоимость' && !field.value.trim())}
             >
               Сохранить
             </button>

@@ -336,6 +336,8 @@ export interface ExpenseListProps {
   onEditExpense: (expense: Expense) => void;
   onDeleteExpense: (expense: Expense) => void;
   onRefresh: () => void;
+  onFilterChange?: (filters: any) => void;
+  hasOriginalExpenses?: boolean;
 }
 
 export interface ExpenseFiltersProps {
@@ -433,3 +435,4 @@ export interface MaintenanceFormData {
   customFields: Record<string, any>;
   description?: string;
 }
+

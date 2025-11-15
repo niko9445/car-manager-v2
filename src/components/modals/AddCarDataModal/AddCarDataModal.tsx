@@ -16,8 +16,8 @@ const AddCarDataModal: React.FC<AddCarDataModalProps> = ({ onClose, onSave }) =>
   const [insuranceData, setInsuranceData] = useState({
     series: '',
     number: '',
-    startDate: '', // ДОБАВЛЕНО поле "С"
-    endDate: ''    // поле "ДО"
+    startDate: '',
+    endDate: ''
   });
 
   const [inspectionData, setInspectionData] = useState({
@@ -26,11 +26,29 @@ const AddCarDataModal: React.FC<AddCarDataModalProps> = ({ onClose, onSave }) =>
     validUntil: ''
   });
 
+  const [dimensionsData, setDimensionsData] = useState({
+    length: '',
+    width: '',
+    height: '',
+    clearance: '',
+    wheelSize: '',
+    boltPattern: '',
+    wheelDimensions: ''
+  });
+
+  const [consumptionData, setConsumptionData] = useState({
+    mixed: '',
+    city: '',
+    highway: ''
+  });
+
   const predefinedFields = useMemo(() => [
-    { name: 'Пробег', unit: 'км' },
     { name: 'Страховка', unit: '' },
     { name: 'Техосмотр', unit: '' },
-    { name: 'Расход топлива', unit: 'л/100км' },
+    { name: 'Размеры', unit: '' },
+    { name: 'Код двигателя', unit: '' },
+    { name: 'Марка топлива', unit: '' },
+    { name: 'Расход', unit: '' },
     { name: 'Мощность', unit: 'л.с.' },
     { name: 'Объем двигателя', unit: 'л' },
     { name: 'Стоимость', unit: getCurrencySymbol() },
@@ -43,21 +61,19 @@ const AddCarDataModal: React.FC<AddCarDataModalProps> = ({ onClose, onSave }) =>
     { name: 'Крутящий момент', unit: 'Н⋅м' },
     { name: 'Вес', unit: 'кг' },
     { name: 'Объем багажника', unit: 'л' },
-    { name: 'Расход в городе', unit: 'л/100км' },
-    { name: 'Расход по трассе', unit: 'л/100км' },
     { name: 'Страна производства', unit: '' },
     { name: 'Гарантия', unit: 'мес' },
     { name: 'Налог', unit: `${getCurrencySymbol()}/год` }
   ], [getCurrencySymbol]);
 
   const selectedCategory = fields[0].name;
-  const isSpecialCategory = selectedCategory === 'Страховка' || selectedCategory === 'Техосмотр';
+  const isSpecialCategory = selectedCategory === 'Страховка' || selectedCategory === 'Техосмотр' || selectedCategory === 'Размеры' || selectedCategory === 'Расход';
+  const showValueField = !isSpecialCategory && selectedCategory !== 'Дата покупки';
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
     if (selectedCategory === 'Страховка') {
-      // Форматируем данные для страховки: серияномер с ДД.ММ.ГГГГ до ДД.ММ.ГГГГ
       const formattedStartDate = new Date(insuranceData.startDate).toLocaleDateString('ru-RU');
       const formattedEndDate = new Date(insuranceData.endDate).toLocaleDateString('ru-RU');
       const insuranceValue = `${insuranceData.series}${insuranceData.number} с ${formattedStartDate} до ${formattedEndDate}`;
@@ -70,7 +86,6 @@ const AddCarDataModal: React.FC<AddCarDataModalProps> = ({ onClose, onSave }) =>
       onSave({ fields: [insuranceField] });
     } 
     else if (selectedCategory === 'Техосмотр') {
-      // Форматируем данные для техосмотра: серияномер до ДД.ММ.ГГГГ
       const formattedDate = new Date(inspectionData.validUntil).toLocaleDateString('ru-RU');
       const inspectionValue = `${inspectionData.series}${inspectionData.number} до ${formattedDate}`;
       
@@ -81,8 +96,33 @@ const AddCarDataModal: React.FC<AddCarDataModalProps> = ({ onClose, onSave }) =>
       };
       onSave({ fields: [inspectionField] });
     }
+    else if (selectedCategory === 'Размеры') {
+      const dimensionsValue = `Д:${dimensionsData.length} Ш:${dimensionsData.width} В:${dimensionsData.height} Клиренс:${dimensionsData.clearance} Колёса:${dimensionsData.wheelSize} Сверловка:${dimensionsData.boltPattern} Диски:${dimensionsData.wheelDimensions}`;
+      const dimensionsField = { 
+        name: 'Размеры', 
+        value: dimensionsValue, 
+        unit: ''
+      };
+      onSave({ fields: [dimensionsField] });
+    }
+    else if (selectedCategory === 'Расход') {
+      const consumptionValue = `Смешанный:${consumptionData.mixed} Город:${consumptionData.city} Трасса:${consumptionData.highway}`;
+      const consumptionField = { 
+        name: 'Расход', 
+        value: consumptionValue, 
+        unit: ''
+      };
+      onSave({ fields: [consumptionField] });
+    }
+    else if (selectedCategory === 'Дата покупки') {
+      const dateField = { 
+        name: 'Дата покупки', 
+        value: fields[0].value, 
+        unit: ''
+      };
+      onSave({ fields: [dateField] });
+    }
     else {
-      // Для обычных полей
       if (fields.every(f => f.name.trim() && f.value.trim())) {
         onSave({ fields });
       }
@@ -119,21 +159,41 @@ const AddCarDataModal: React.FC<AddCarDataModalProps> = ({ onClose, onSave }) =>
     setInspectionData(prev => ({ ...prev, [field]: value }));
   };
 
+  const handleDimensionsChange = (field: string, value: string) => {
+    setDimensionsData(prev => ({ ...prev, [field]: value }));
+  };
+
+  const handleConsumptionChange = (field: string, value: string) => {
+    setConsumptionData(prev => ({ ...prev, [field]: value }));
+  };
+
   const isFormValid = () => {
     if (selectedCategory === 'Страховка') {
-      return insuranceData.series && insuranceData.number && insuranceData.startDate && insuranceData.endDate && fields[0].value.trim();
+      return insuranceData.series && insuranceData.number && insuranceData.startDate && insuranceData.endDate;
     }
     if (selectedCategory === 'Техосмотр') {
-      return inspectionData.series && inspectionData.number && inspectionData.validUntil && fields[0].value.trim();
+      return inspectionData.series && inspectionData.number && inspectionData.validUntil;
+    }
+    if (selectedCategory === 'Размеры') {
+      return dimensionsData.length || dimensionsData.width || dimensionsData.height || dimensionsData.clearance || dimensionsData.wheelSize || dimensionsData.boltPattern || dimensionsData.wheelDimensions;
+    }
+    if (selectedCategory === 'Расход') {
+      return consumptionData.mixed || consumptionData.city || consumptionData.highway;
+    }
+    if (selectedCategory === 'Стоимость') {
+      return fields[0].name.trim();
+    }
+    if (selectedCategory === 'Дата покупки') {
+      return fields[0].value.trim();
     }
     return fields[0].name.trim() && fields[0].value.trim();
   };
 
   return (
-    <Modal isOpen={true} onClose={onClose} title="Добавить данные об авто" size="md">
+    <Modal isOpen={true} onClose={onClose} title="Добавить данные об авто" size="lg">
       <form className="modal__form" onSubmit={handleSubmit}>
         
-        {/* Выбор категории и стоимость */}
+        {/* Выбор категории */}
         <div className="modal__form-grid">
           <div className="modal__form-group">
             <label className="modal__label">Название параметра</label>
@@ -152,28 +212,42 @@ const AddCarDataModal: React.FC<AddCarDataModalProps> = ({ onClose, onSave }) =>
             </select>
           </div>
 
-          {/* Поле значения для ВСЕХ категорий */}
-          <div className="modal__form-group">
-            <label className="modal__label">
-              {isSpecialCategory ? 'Стоимость' : 'Значение'} 
-              {fields[0].unit && ` (${fields[0].unit})`}
-            </label>
-            <input
-              className="modal__input"
-              type="text"
-              placeholder={isSpecialCategory ? 'Введите стоимость' : `Введите значение ${fields[0].unit ? `в ${fields[0].unit}` : ''}`}
-              value={fields[0].value}
-              onChange={(e) => updateField(0, 'value', e.target.value)}
-              required
-            />
-          </div>
+          {/* Поле значения для обычных категорий */}
+          {showValueField && (
+            <div className="modal__form-group">
+              <label className="modal__label">
+                Значение {fields[0].unit && `(${fields[0].unit})`}
+              </label>
+              <input
+                className="modal__input"
+                type="text"
+                placeholder={`Введите значение ${fields[0].unit ? `в ${fields[0].unit}` : ''}`}
+                value={fields[0].value}
+                onChange={(e) => updateField(0, 'value', e.target.value)}
+                required={selectedCategory !== 'Стоимость'}
+              />
+            </div>
+          )}
+
+          {/* Поле даты для категории "Дата покупки" */}
+          {selectedCategory === 'Дата покупки' && (
+            <div className="modal__form-group">
+              <label className="modal__label">Дата покупки</label>
+              <input
+                type="date"
+                className="modal__input"
+                value={fields[0].value}
+                onChange={(e) => updateField(0, 'value', e.target.value)}
+                required
+              />
+            </div>
+          )}
         </div>
 
         {/* Дополнительные поля для Страховки */}
         {selectedCategory === 'Страховка' && (
           <div className="modal__form-section">
             <div className="modal__form-grid">
-              {/* Серия и номер на одной строке */}
               <div className="modal__form-group" style={{ gridColumn: '1 / -1' }}>
                 <div style={{ display: 'flex', gap: '12px', alignItems: 'flex-end' }}>
                   <div style={{ flex: '0 0 80px' }}>
@@ -189,7 +263,7 @@ const AddCarDataModal: React.FC<AddCarDataModalProps> = ({ onClose, onSave }) =>
                     />
                   </div>
                   <div style={{ flex: 1 }}>
-                    <label className="modal__label">Номер полиса</label>
+                    <label className="modal__label">Номер</label>
                     <input
                       type="text"
                       className="modal__input"
@@ -202,7 +276,6 @@ const AddCarDataModal: React.FC<AddCarDataModalProps> = ({ onClose, onSave }) =>
                 </div>
               </div>
               
-              {/* Две даты на одной строке */}
               <div className="modal__form-group" style={{ gridColumn: '1 / -1' }}>
                 <div style={{ display: 'flex', gap: '12px', alignItems: 'flex-end' }}>
                   <div style={{ flex: 1 }}>
@@ -235,7 +308,6 @@ const AddCarDataModal: React.FC<AddCarDataModalProps> = ({ onClose, onSave }) =>
         {selectedCategory === 'Техосмотр' && (
           <div className="modal__form-section">
             <div className="modal__form-grid">
-              {/* Серия и номер на одной строке */}
               <div className="modal__form-group" style={{ gridColumn: '1 / -1' }}>
                 <div style={{ display: 'flex', gap: '12px', alignItems: 'flex-end' }}>
                   <div style={{ flex: '0 0 80px' }}>
@@ -251,7 +323,7 @@ const AddCarDataModal: React.FC<AddCarDataModalProps> = ({ onClose, onSave }) =>
                     />
                   </div>
                   <div style={{ flex: 1 }}>
-                    <label className="modal__label">Номер карты</label>
+                    <label className="modal__label">Номер</label>
                     <input
                       type="text"
                       className="modal__input"
@@ -272,6 +344,122 @@ const AddCarDataModal: React.FC<AddCarDataModalProps> = ({ onClose, onSave }) =>
                   value={inspectionData.validUntil}
                   onChange={(e) => handleInspectionChange('validUntil', e.target.value)}
                   required
+                />
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Дополнительные поля для Размеров */}
+        {selectedCategory === 'Размеры' && (
+          <div className="modal__form-section">
+            <div className="modal__form-grid">
+              <div className="modal__form-group">
+                <label className="modal__label">Длина (мм)</label>
+                <input
+                  type="text"
+                  className="modal__input"
+                  placeholder="4500"
+                  value={dimensionsData.length}
+                  onChange={(e) => handleDimensionsChange('length', e.target.value)}
+                />
+              </div>
+              <div className="modal__form-group">
+                <label className="modal__label">Ширина (мм)</label>
+                <input
+                  type="text"
+                  className="modal__input"
+                  placeholder="1800"
+                  value={dimensionsData.width}
+                  onChange={(e) => handleDimensionsChange('width', e.target.value)}
+                />
+              </div>
+              <div className="modal__form-group">
+                <label className="modal__label">Высота (мм)</label>
+                <input
+                  type="text"
+                  className="modal__input"
+                  placeholder="1500"
+                  value={dimensionsData.height}
+                  onChange={(e) => handleDimensionsChange('height', e.target.value)}
+                />
+              </div>
+              <div className="modal__form-group">
+                <label className="modal__label">Клиренс (мм)</label>
+                <input
+                  type="text"
+                  className="modal__input"
+                  placeholder="180"
+                  value={dimensionsData.clearance}
+                  onChange={(e) => handleDimensionsChange('clearance', e.target.value)}
+                />
+              </div>
+              <div className="modal__form-group">
+                <label className="modal__label">Размер колес</label>
+                <input
+                  type="text"
+                  className="modal__input"
+                  placeholder="205/55 R16"
+                  value={dimensionsData.wheelSize}
+                  onChange={(e) => handleDimensionsChange('wheelSize', e.target.value)}
+                />
+              </div>
+              <div className="modal__form-group">
+                <label className="modal__label">Сверловка (PCD)</label>
+                <input
+                  type="text"
+                  className="modal__input"
+                  placeholder="5x114.3"
+                  value={dimensionsData.boltPattern}
+                  onChange={(e) => handleDimensionsChange('boltPattern', e.target.value)}
+                />
+              </div>
+              <div className="modal__form-group">
+                <label className="modal__label">Размеры дисков</label>
+                <input
+                  type="text"
+                  className="modal__input"
+                  placeholder="7Jx16 ET45"
+                  value={dimensionsData.wheelDimensions}
+                  onChange={(e) => handleDimensionsChange('wheelDimensions', e.target.value)}
+                />
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Дополнительные поля для Расхода */}
+        {selectedCategory === 'Расход' && (
+          <div className="modal__form-section">
+            <div className="modal__form-grid">
+              <div className="modal__form-group">
+                <label className="modal__label">Смешанный (л/100км)</label>
+                <input
+                  type="text"
+                  className="modal__input"
+                  placeholder="7.5"
+                  value={consumptionData.mixed}
+                  onChange={(e) => handleConsumptionChange('mixed', e.target.value)}
+                />
+              </div>
+              <div className="modal__form-group">
+                <label className="modal__label">По городу (л/100км)</label>
+                <input
+                  type="text"
+                  className="modal__input"
+                  placeholder="9.0"
+                  value={consumptionData.city}
+                  onChange={(e) => handleConsumptionChange('city', e.target.value)}
+                />
+              </div>
+              <div className="modal__form-group">
+                <label className="modal__label">По трассе (л/100км)</label>
+                <input
+                  type="text"
+                  className="modal__input"
+                  placeholder="6.5"
+                  value={consumptionData.highway}
+                  onChange={(e) => handleConsumptionChange('highway', e.target.value)}
                 />
               </div>
             </div>

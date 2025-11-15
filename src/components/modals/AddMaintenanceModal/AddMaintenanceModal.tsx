@@ -146,7 +146,6 @@ const AddMaintenanceModal: React.FC<AddMaintenanceModalProps> = ({ onClose, onSa
 
             {/* Основные поля */}
             <div className="modal__form-section">
-              <h4 className="modal__section-title">Основная информация</h4>
               <div className="modal__form-grid">
                 <div className="modal__form-group">
                   <label className="modal__label modal__label--required">Дата</label>
@@ -189,7 +188,6 @@ const AddMaintenanceModal: React.FC<AddMaintenanceModalProps> = ({ onClose, onSa
             {/* Поля выбранной подкатегории */}
             {selectedSubcategoryData.fields.length > 0 && (
               <div className="modal__form-section">
-                <h4 className="modal__section-title">Детали работ</h4>
                 <div className="modal__form-grid">
                   {selectedSubcategoryData.fields
                     .filter(field => field.name !== 'cost') // ← ФИЛЬТРУЕМ поле cost

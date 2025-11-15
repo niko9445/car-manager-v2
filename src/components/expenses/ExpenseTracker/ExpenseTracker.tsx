@@ -162,54 +162,20 @@ const ExpenseTracker: React.FC = () => {
       </div>
 
       <div className="section-content">
-        {/* ФИЛЬТРЫ - правильный компонент */}
-        <ExpenseFilters onFilterChange={handleFilterChange} />
-
         {loading ? (
           <div className="expense-tracker__loading">
             <div className="expense-tracker__spinner"></div>
             <p>Загрузка расходов...</p>
           </div>
-        ) : expenses.length === 0 ? (
-          <div className="expense-welcome">
-            <div className="expense-welcome__background">
-              <div className="expense-welcome__grid"></div>
-            </div>
-            <div className="expense-welcome__content">
-              <div className="expense-welcome__icon">
-                <div className="expense-welcome__chart">
-                  <div className="expense-welcome__bar expense-welcome__bar--1"></div>
-                  <div className="expense-welcome__bar expense-welcome__bar--2"></div>
-                  <div className="expense-welcome__bar expense-welcome__bar--3"></div>
-                  <div className="expense-welcome__bar expense-welcome__bar--4"></div>
-                </div>
-                <div className="expense-welcome__currency">₽</div>
-              </div>
-              <div className="expense-welcome__text">
-                <h3 className="expense-welcome__title">Начните отслеживать расходы</h3>
-                <p className="expense-welcome__subtitle">
-                  Добавьте первую запись для анализа затрат на автомобиль
-                </p>
-              </div>
-              <button
-                className="btn btn--primary expense-welcome__button"
-                onClick={handleAddExpense}
-              >
-                <span>Добавить расход</span>
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                  <path d="M12 5v14m-7-7h14" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-                </svg>
-              </button>
-            </div>
-          </div>
         ) : (
-          /* СПИСОК РАСХОДОВ - правильный компонент */
+          /* ВСЕГДА показываем ExpenseList, даже если расходов нет */
           <ExpenseList
             expenses={expenses}
             stats={calculateStats()}
             onEditExpense={handleEditExpense}
             onDeleteExpense={handleDeleteExpense}
             onRefresh={() => loadExpenses(currentFilters)}
+            onFilterChange={handleFilterChange}
           />
         )}
       </div>

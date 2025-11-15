@@ -119,9 +119,7 @@ const EditMaintenanceModal: React.FC<EditMaintenanceModalProps> = ({
         {/* Детали работ (если есть кастомные поля) */}
         {subcategoryData && subcategoryData.fields.length > 0 && (
           <div className="card card--compact">
-            <div className="card__header">
-              <h3 className="card__title card__title--sm">Детали работ</h3>
-            </div>
+            <div className="card__header"></div>
             <div className="card__content">
               <div className="modal__form-grid">
                 {subcategoryData.fields

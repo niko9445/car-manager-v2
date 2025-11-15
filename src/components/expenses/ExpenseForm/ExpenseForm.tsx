@@ -23,8 +23,6 @@ interface ExpenseFormErrors {
   description?: string;
   odometer?: string;
   liters?: string;
-  remainingRange?: string;
-  averageConsumption?: string;
   article?: string;
   link?: string;
   series?: string;
@@ -61,8 +59,11 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({
     inspectionData: undefined
   });
   
+  //Состояния
   const [errors, setErrors] = useState<ExpenseFormErrors>({});
   const [loading, setLoading] = useState(false);
+  const [quickTags, setQuickTags] = useState<string[]>([]);
+  const [activeTag, setActiveTag] = useState<string | null>(null);
 
   useEffect(() => {
     if (expense) {
@@ -91,6 +92,16 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({
       });
     }
   }, [expense]);
+
+  // Сброс описания при смене категории
+  useEffect(() => {
+    if (!expense) { // Только для новых расходов, не для редактирования
+      setFormData(prev => ({
+        ...prev,
+        description: ''
+      }));
+    }
+  }, [formData.category, expense]); // Срабатывает при изменении категории
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
@@ -205,7 +216,33 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({
           validUntil: prev.inspectionData?.validUntil || ''
         }
       }));
-    }
+    };
+  };
+
+  //Функция для быстрых слов
+  const handleQuickTagSelect = (tag: string) => {
+    setFormData(prev => {
+      const currentDescription = prev.description.trim();
+      
+      if (!currentDescription) {
+        return { ...prev, description: tag };
+      }
+      
+      const tagsInDescription = currentDescription
+        .split('+')
+        .map(t => t.trim())
+        .filter(t => t.length > 0);
+      
+      const isTagSelected = tagsInDescription.includes(tag);
+      
+      if (isTagSelected) {
+        const newTags = tagsInDescription.filter(t => t !== tag);
+        return { ...prev, description: newTags.join(' + ') };
+      } else {
+        const newTags = [...tagsInDescription, tag];
+        return { ...prev, description: newTags.join(' + ') };
+      }
+    });
   };
 
   const validateForm = (): boolean => {
@@ -231,14 +268,6 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({
     if (formData.category === 'fuel') {
       if (formData.fuelData?.liters !== undefined && formData.fuelData.liters <= 0) {
         newErrors.liters = 'Укажите корректное количество литров';
-      }
-
-      if (formData.fuelData?.remainingRange !== undefined && formData.fuelData.remainingRange < 0) {
-        newErrors.remainingRange = 'Запас хода не может быть отрицательным';
-      }
-
-      if (formData.fuelData?.averageConsumption !== undefined && formData.fuelData.averageConsumption <= 0) {
-        newErrors.averageConsumption = 'Укажите корректный расход';
       }
     }
 
@@ -328,6 +357,20 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({
     { value: 'other', label: '💰 Прочее', icon: '💰' }
   ];
 
+  const quickTagsByCategory: Record<ExpenseCategory, string[]> = {
+    fuel: ['АИ-92', 'АИ-95', 'АИ-98', 'Дизель', 'Газ', 'Премиум'],
+    maintenance: ['Масло', 'Фильтр', 'Тормоза', 'Шины', 'АКБ', 'Жидкости'],
+    repairs: ['Двигатель', 'Трансмиссия', 'Электрика', 'Кузов', 'Подвеска', 'Выхлопная'], // ← ЗАКОММЕНТИРОВАНО
+    parts: ['Свечи', 'Тормозные колодки', 'Амортизаторы', 'Ремень ГРМ', 'Диски', 'Щетки'],
+    insurance: ['ОСАГО', 'КАСКО', 'Расширенная', 'Базовая', 'Годовая', 'Полгода'], // ← ЗАКОММЕНТИРОВАНО
+    taxes: ['Транспортный', 'Имущественный', 'Земельный', 'Госпошлина'],
+    parking: ['ТЦ', 'Улица', 'Подземная', 'Аэропорт', 'Вокзал', 'Отель'],
+    washing: ['Автомат', 'Ручная', 'Самообслуживание', 'Полная', 'Бесконтактная', 'Полировка'],
+    fines: ['Скорость', 'Парковка', 'Пересечение', 'Стоянка', 'Ремень', 'Телефон'],
+    inspection: ['Плановый', 'Внеочередной', 'Предпродажный', 'Техосмотр', 'Диагностика'],
+    other: ['Кофе', 'Чай', 'Сигареты', 'Комбо', 'Еда', 'Вода', 'Снеки']
+  };
+
   const isFuelCategory = formData.category === 'fuel';
   const isPartsCategory = formData.category === 'parts';
   const isInsuranceCategory = formData.category === 'insurance';
@@ -390,23 +433,6 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({
           {errors.amount && <span className="modal__error">{errors.amount}</span>}
         </div>
 
-        <div className="modal__form-group">
-          <label htmlFor="odometer" className="modal__label">
-            Пробег (км)
-          </label>
-          <input
-            id="odometer"
-            name="odometer"
-            type="number"
-            min="0"
-            value={formData.odometer || ''}
-            onChange={handleInputChange}
-            className={`modal__input ${errors.odometer ? 'modal__input--error' : ''}`}
-            placeholder="Необязательно"
-          />
-          {errors.odometer && <span className="modal__error">{errors.odometer}</span>}
-        </div>
-
         {/* Поля для заправки */}
         {isFuelCategory && (
           <>
@@ -428,40 +454,6 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({
               {errors.liters && <span className="modal__error">{errors.liters}</span>}
             </div>
 
-            <div className="modal__form-group">
-              <label htmlFor="fuelData.remainingRange" className="modal__label">
-                Запас хода (км)
-              </label>
-              <input
-                id="fuelData.remainingRange"
-                name="fuelData.remainingRange"
-                type="number"
-                min="0"
-                value={formData.fuelData?.remainingRange || ''}
-                onChange={handleInputChange}
-                className={`modal__input ${errors.remainingRange ? 'modal__input--error' : ''}`}
-                placeholder="0"
-              />
-              {errors.remainingRange && <span className="modal__error">{errors.remainingRange}</span>}
-            </div>
-
-            <div className="modal__form-group">
-              <label htmlFor="fuelData.averageConsumption" className="modal__label">
-                Ср. расход (л/100км)
-              </label>
-              <input
-                id="fuelData.averageConsumption"
-                name="fuelData.averageConsumption"
-                type="number"
-                step="0.1"
-                min="0"
-                value={formData.fuelData?.averageConsumption || ''}
-                onChange={handleInputChange}
-                className={`modal__input ${errors.averageConsumption ? 'modal__input--error' : ''}`}
-                placeholder="0.0"
-              />
-              {errors.averageConsumption && <span className="modal__error">{errors.averageConsumption}</span>}
-            </div>
           </>
         )}
 
@@ -613,6 +605,31 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({
             required
           />
           {errors.description && <span className="modal__error">{errors.description}</span>}
+          {quickTagsByCategory[formData.category] && quickTagsByCategory[formData.category].length > 0 && (
+            <div className="quick-tags">
+              <div className="quick-tags__container">
+                {quickTagsByCategory[formData.category].map(tag => {
+                  const currentTags = formData.description
+                    .split('+')
+                    .map(t => t.trim())
+                    .filter(t => t.length > 0);
+                  
+                  const isSelected = currentTags.includes(tag);
+                  
+                  return (
+                    <button
+                      key={tag}
+                      type="button"
+                      className={`quick-tag ${isSelected ? 'quick-tag--selected' : ''}`}
+                      onClick={() => handleQuickTagSelect(tag)}
+                    >
+                      {tag}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          )}
         </div>
       </div>
 

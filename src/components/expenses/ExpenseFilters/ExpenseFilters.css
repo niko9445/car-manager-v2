@@ -2,8 +2,8 @@
 .expense-filters {
   display: flex;
   flex-direction: column;
-  gap: var(--space-4);
-  margin-bottom: var(--space-4);
+  gap: var(--space-2);
+  margin-bottom: var(--space-2);
   width: 100%;
   box-sizing: border-box;
   max-width: 100%;

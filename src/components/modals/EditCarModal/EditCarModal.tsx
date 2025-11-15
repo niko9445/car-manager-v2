@@ -171,9 +171,6 @@ const EditCarModal: React.FC<EditCarModalProps> = ({
             <div className="card__header">
               <div className="card__main-info">
                 <h3 className="card__title card__title--sm">Дополнительные данные</h3>
-                <p className="card__description">
-                  Управление дополнительными характеристиками автомобиля
-                </p>
               </div>
             </div>
             <div className="card__content">

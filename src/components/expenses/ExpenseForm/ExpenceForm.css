@@ -1,0 +1,64 @@
+/* Стили для быстрого выбора тегов - минимализм, темная тема */
+.quick-tags {
+  margin-top: var(--space-3);
+}
+
+.quick-tags__container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.quick-tag {
+  background: transparent;
+  border: 1px solid var(--color-border-primary); /* ← граница всегда видна */
+  border-radius: var(--radius-xl);
+  padding: var(--space-1) var(--space-3);
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  font-weight: 400;
+  line-height: 1.2;
+}
+
+/* Hover только для десктопа */
+@media (hover: hover) {
+  .quick-tag:hover {
+    color: white;
+    border-color: var(--color-primary); /* ← цветная граница при наведении */
+  }
+}
+
+.quick-tag--selected {
+  color: white;
+  font-weight: 500;
+  border-color: var(--color-primary); /* ← цветная граница для выбранного */
+}
+
+/* Активное состояние при нажатии */
+.quick-tag:active {
+  border-color: var(--color-primary); /* ← цветная граница при нажатии */
+  transform: scale(0.98);
+}
+
+/* Мобильная версия */
+@media (max-width: 768px) {
+  .quick-tags {
+    margin-top: var(--space-2);
+  }
+  
+  .quick-tags__container {
+    gap: var(--space-1);
+  }
+  
+  .quick-tag {
+    padding: var(--space-1) var(--space-2);
+    font-size: var(--font-size-xs);
+  }
+  
+  .quick-tag:active {
+    border-color: var(--color-primary);
+  }
+}

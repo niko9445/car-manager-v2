@@ -14,6 +14,7 @@
 @import '../components/layout/MainContent/MainContent.css';
 @import '../components/layout/Sidebar/Sidebar.css'; 
 @import '../components/modals/AddMaintenanceModal/newStyle.css';
+@import '../components/expenses/ExpenseForm/ExpenceForm.css';
 /* ===== ОСНОВНЫЕ СТИЛИ ПРИЛОЖЕНИЯ ===== */
 
 /* Типография */
