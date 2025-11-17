@@ -8,6 +8,7 @@
   --color-bg-tertiary: #e9ecef;
   --color-bg-card: #ffffff;
   --color-bg-overlay: rgba(255, 255, 255, 0.95);
+
   
   /* Цвета текста */
   --color-text-primary: #212529;
@@ -34,6 +35,14 @@
   --shadow-md: 0 1px 3px rgba(0, 0, 0, 0.1);
   --shadow-lg: 0 4px 6px rgba(0, 0, 0, 0.1);
   --shadow-xl: 0 10px 15px rgba(0, 0, 0, 0.1);
+
+  --color-tag-bg: #f8f9fa;
+  --color-tag-bg-selected: #007bff;
+  --color-tag-text: #6c757d;
+  --color-tag-text-selected: #ffffff;
+  --color-tag-border: #dee2e6;
+  --color-tag-border-selected: #007bff;
+  --color-tag-hover: #e9ecef;
 }
 
 /* ===== ТЕМНАЯ ТЕМА ===== */
@@ -44,6 +53,8 @@
   --color-bg-tertiary: #1a1a1a;
   --color-bg-card: #1a1a1a;
   --color-bg-overlay: rgba(0, 0, 0, 0.85);
+  --color-bg-card: #1a1a1a; 
+  --color-bg-tertiary: #252525;
   
   /* Цвета текста */
   --color-text-primary: #ffffff;
@@ -70,6 +81,14 @@
   --shadow-md: 0 1px 3px rgba(0, 0, 0, 0.4);
   --shadow-lg: 0 2px 6px rgba(0, 0, 0, 0.5);
   --shadow-xl: 0 4px 12px rgba(0, 0, 0, 0.6);
+
+  --color-tag-bg: #1a1a1a;
+  --color-tag-bg-selected: #3b82f6;
+  --color-tag-text: #888888;
+  --color-tag-text-selected: #ffffff;
+  --color-tag-border: #333333;
+  --color-tag-border-selected: #3b82f6;
+  --color-tag-hover: #2a2a2a;
 }
 
 /* ===== ОБЩИЕ ПЕРЕМЕННЫЕ (не зависят от темы) ===== */

@@ -46,7 +46,7 @@
     "selectBrand": "Select brand",
     "selectModel": "Select model",
     "noCars": "No cars added",
-    "selectCar": "Select a car from the list on the left",
+    "selectCar": "Select a car",
     "carInfo": "Car Information",
     "carDetails": "Car Data"
   },
@@ -323,9 +323,23 @@
     "link": "Link",
     "side": "Side"
   },
+
   "dataManager": {
     "export": "Export",
     "import": "Import"
+  },
+  
+  "backup": {
+    "exportSuccessTitle": "Export completed",
+    "exportSuccessMessage": "Data successfully exported to file",
+    "exportErrorTitle": "Export error", 
+    "exportErrorMessage": "Failed to export data",
+    "importSuccessTitle": "Import completed",
+    "importSuccessMessage": "Data successfully imported",
+    "importErrorTitle": "Import error",
+    "importErrorMessage": "Failed to import data. Please check the file",
+    "readErrorTitle": "Read error",
+    "readErrorMessage": "Failed to read file"
   }
 }
 

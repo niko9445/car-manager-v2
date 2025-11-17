@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { ExpenseCategory } from '../../../types';
-import { useTranslation } from '../../../contexts/LanguageContext'; // <-- ДОБАВИТЬ
+import { useTranslation } from '../../../contexts/LanguageContext';
 
 interface ExpenseFiltersType {
   carId?: string;
@@ -16,7 +16,7 @@ interface ExpenseFiltersProps {
 const ExpenseFilters: React.FC<ExpenseFiltersProps> = ({ onFilterChange }) => {
   const [filters, setFilters] = useState<ExpenseFiltersType>({});
   const [isExpanded, setIsExpanded] = useState(false);
-  const { t } = useTranslation(); // <-- ДОБАВИТЬ
+  const { t } = useTranslation();
 
   useEffect(() => {
     onFilterChange(filters);
@@ -44,23 +44,22 @@ const ExpenseFilters: React.FC<ExpenseFiltersProps> = ({ onFilterChange }) => {
   const hasActiveFilters = Object.keys(filters).length > 0;
 
   const categoryOptions: { value: ExpenseCategory | 'all'; label: string }[] = [
-    { value: 'all', label: t('common.all') }, // <-- ПЕРЕВОД
-    { value: 'fuel', label: t('expenseCategories.fuel') }, // <-- ПЕРЕВОД
-    { value: 'maintenance', label: t('expenseCategories.maintenance') }, // <-- ПЕРЕВОД
-    { value: 'repairs', label: t('expenseCategories.repairs') }, // <-- ПЕРЕВОД
-    { value: 'parts', label: t('expenseCategories.parts') }, // <-- ПЕРЕВОД
-    { value: 'insurance', label: t('expenseCategories.insurance') }, // <-- ПЕРЕВОД
-    { value: 'taxes', label: t('expenseCategories.taxes') }, // <-- ПЕРЕВОД
-    { value: 'parking', label: t('expenseCategories.parking') }, // <-- ПЕРЕВОД
-    { value: 'washing', label: t('expenseCategories.washing') }, // <-- ПЕРЕВОД
-    { value: 'fines', label: t('expenseCategories.fines') }, // <-- ПЕРЕВОД
-    { value: 'inspection', label: t('expenseCategories.inspection') }, // <-- ПЕРЕВОД
-    { value: 'other', label: t('expenseCategories.other') } // <-- ПЕРЕВОД
+    { value: 'all', label: t('common.all') },
+    { value: 'fuel', label: t('expenseCategories.fuel') },
+    { value: 'maintenance', label: t('expenseCategories.maintenance') },
+    { value: 'repairs', label: t('expenseCategories.repairs') },
+    { value: 'parts', label: t('expenseCategories.parts') },
+    { value: 'insurance', label: t('expenseCategories.insurance') },
+    { value: 'taxes', label: t('expenseCategories.taxes') },
+    { value: 'parking', label: t('expenseCategories.parking') },
+    { value: 'washing', label: t('expenseCategories.washing') },
+    { value: 'fines', label: t('expenseCategories.fines') },
+    { value: 'inspection', label: t('expenseCategories.inspection') },
+    { value: 'other', label: t('expenseCategories.other') }
   ];
 
   return (
     <div className="expense-filters">
-      {/* 👇 ТОЛЬКО КНОПКА РАСШИРЕННЫХ ФИЛЬТРОВ В ВЕРХУ */}
       <div className="expense-filters__advanced">
         <button
           className="btn btn--secondary btn--sm btn--borderless expense-filters__expand-btn"
@@ -69,46 +68,48 @@ const ExpenseFilters: React.FC<ExpenseFiltersProps> = ({ onFilterChange }) => {
           <span className="expense-filters__expand-icon">
             {isExpanded ? '▲' : '▼'}
           </span>
-          {t('expenses.additionalFilters')} {/* <-- ПЕРЕВОД */}
+          {t('expenses.additionalFilters')}
         </button>
 
         {isExpanded && (
           <div className="expense-filters__expanded-content">
-            {/* 👇 ФИЛЬТРЫ ПО ДАТЕ */}
-            <div className="expense-filters__date-grid">
-              <div className="expense-filters__date-group">
+            {/* 👇 ИЗМЕНЕННАЯ СТРУКТУРА ДЛЯ ДАТ - КАЖДАЯ ПАРА НА ОТДЕЛЬНОЙ СТРОКЕ */}
+            <div className="expense-filters__date-container">
+              {/* Строка для "Дата с" */}
+              <div className="expense-filters__date-row">
                 <label className="expense-filters__date-label">
-                  {t('expenses.dateFrom')} {/* <-- ПЕРЕВОД */}
+                  {t('expenses.dateFrom')}
                 </label>
                 <input
                   type="date"
                   value={filters.dateFrom || ''}
                   onChange={(e) => handleDateChange('dateFrom', e.target.value)}
                   className="expense-filters__date-input"
-                  placeholder={t('expenses.dateFrom')} 
-                  title={t('expenses.dateFrom')} 
+                  placeholder={t('expenses.dateFrom')}
+                  title={t('expenses.dateFrom')}
                 />
               </div>
               
-              <div className="expense-filters__date-group">
+              {/* Строка для "Дата по" */}
+              <div className="expense-filters__date-row">
                 <label className="expense-filters__date-label">
-                  {t('expenses.dateTo')} {/* <-- ПЕРЕВОД */}
+                  {t('expenses.dateTo')}
                 </label>
                 <input
                   type="date"
                   value={filters.dateTo || ''}
                   onChange={(e) => handleDateChange('dateTo', e.target.value)}
                   className="expense-filters__date-input"
-                  placeholder={t('expenses.dateTo')} 
-                  title={t('expenses.dateTo')} 
+                  placeholder={t('expenses.dateTo')}
+                  title={t('expenses.dateTo')}
                 />
               </div>
             </div>
 
-            {/* 👇 ФИЛЬТРЫ ПО КАТЕГОРИЯМ - ПЕРЕНЕСЕНЫ СЮДА */}
+            {/* 👇 ФИЛЬТРЫ ПО КАТЕГОРИЯМ */}
             <div className="expense-filters__categories-section">
               <label className="expense-filters__categories-label">
-                {t('expenses.categories')} {/* <-- ПЕРЕВОД */}
+                {t('expenses.categories')}
               </label>
               <div className="expense-filters__categories">
                 {categoryOptions.map(option => (
@@ -134,7 +135,7 @@ const ExpenseFilters: React.FC<ExpenseFiltersProps> = ({ onFilterChange }) => {
                   className="btn btn--secondary btn--sm expense-filters__reset-btn"
                   onClick={clearFilters}
                 >
-                  {t('expenses.resetFilters')} {/* <-- ПЕРЕВОД */}
+                  {t('expenses.resetFilters')}
                 </button>
               </div>
             )}

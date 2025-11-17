@@ -114,11 +114,13 @@
   align-items: center;
   gap: var(--space-3);
   width: 100%;
+  flex-direction: row;
 }
 
 .modal__actions--centered .btn {
   min-width: 140px;
   flex-shrink: 0;
+  flex-direction: row;
 }
 
 /* Стили для подписи */
@@ -613,6 +615,7 @@
     flex: 1 !important;
     min-width: auto !important;
     width: 100% !important;
+    flex-direction: row;
   }
   
   .modal__footer-signature {
@@ -783,6 +786,15 @@
     font-size: 14px; /* Уменьшили размер шрифта */
     text-align: left;
     direction: ltr;
+  }
+
+  .modal__actions--row {
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+  
+  .modal__actions--row .btn {
+    width: 100%;
   }
 }
 
@@ -1266,3 +1278,10 @@
   width: 90%;
 }
 
+.modal__actions--row {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: var(--space-3);
+  width: 100%;
+}

@@ -11,37 +11,10 @@ interface EditCarDataModalProps {
 }
 
 const EditCarDataModal: React.FC<EditCarDataModalProps> = ({ data, onClose, onSave }) => {
+  // Инициализируем поле с правильным ключом
   const [field, setField] = useState<CarDataField>(data.fields[0]);
   const { getCurrencySymbol } = useCurrency();
   const { t } = useTranslation();
-
-  // Функция для получения отображаемого имени из ключа
-  const getDisplayName = (fieldKey: string): string => {
-    const translationMap: Record<string, string> = {
-      'insurance': t('carDataFields.insurance'),
-      'inspection': t('carDataFields.inspection'),
-      'dimensions': t('carDataFields.dimensions'),
-      'engineCode': t('carDataFields.engineCode'),
-      'fuelType': t('carDataFields.fuelType'),
-      'consumption': t('carDataFields.consumption'),
-      'power': t('carDataFields.power'),
-      'engineVolume': t('carDataFields.engineVolume'),
-      'cost': t('carDataFields.cost'),
-      'purchaseDate': t('carDataFields.purchaseDate'),
-      'color': t('carDataFields.color'),
-      'bodyType': t('carDataFields.bodyType'),
-      'drive': t('carDataFields.drive'),
-      'acceleration': t('carDataFields.acceleration'),
-      'maxSpeed': t('carDataFields.maxSpeed'),
-      'torque': t('carDataFields.torque'),
-      'weight': t('carDataFields.weight'),
-      'trunkVolume': t('carDataFields.trunkVolume'),
-      'country': t('carDataFields.country'),
-      'warranty': t('carDataFields.warranty'),
-      'tax': t('carDataFields.tax')
-    };
-    return translationMap[fieldKey] || fieldKey;
-  };
 
   const predefinedFields = useMemo(() => [
     { key: 'insurance', name: t('carDataFields.insurance'), unit: '' },
@@ -67,32 +40,46 @@ const EditCarDataModal: React.FC<EditCarDataModalProps> = ({ data, onClose, onSa
     { key: 'tax', name: t('carDataFields.tax'), unit: `${getCurrencySymbol()}/${t('units.year')}` }
   ], [getCurrencySymbol, t]);
 
+  // Находим текущее поле в predefinedFields чтобы получить ключ
+  const currentFieldKey = useMemo(() => {
+    // Если в field.name уже ключ (из data), используем его
+    if (predefinedFields.some(f => f.key === field.name)) {
+      return field.name;
+    }
+    // Иначе ищем по переведенному имени
+    const found = predefinedFields.find(f => f.name === field.name);
+    return found?.key || field.name;
+  }, [field.name, predefinedFields]);
+
+  // Получаем отображаемое имя для текущего поля
+  const currentDisplayName = useMemo(() => {
+    const found = predefinedFields.find(f => f.key === currentFieldKey);
+    return found?.name || field.name;
+  }, [currentFieldKey, predefinedFields, field.name]);
+
   const handleSubmit = (e: React.FormEvent): void => {
     e.preventDefault();
     
-    // Находим ключ для текущего поля
-    const selectedField = predefinedFields.find(f => f.name === field.name);
-    const fieldKey = selectedField?.key || field.name;
-    
     const updatedField = {
       ...field,
-      name: fieldKey // Сохраняем ключ
+      name: currentFieldKey // Сохраняем ключ, а не переведенное имя
     };
     
     onSave(data.id, { fields: [updatedField] });
   };
 
-  const handleParameterChange = (selectedName: string) => {
-    const selectedField = predefinedFields.find(f => f.name === selectedName);
+  const handleParameterChange = (selectedKey: string) => {
+    const selectedField = predefinedFields.find(f => f.key === selectedKey);
     
     if (selectedField) {
       setField(prev => ({ 
         ...prev, 
-        name: selectedField.name, // Отображаем переведенное имя
-        unit: selectedField.unit
+        name: selectedField.key, // Сохраняем ключ
+        unit: selectedField.unit,
+        value: '' // Сбрасываем значение при смене категории
       }));
     } else {
-      setField(prev => ({ ...prev, name: selectedName, unit: '' }));
+      setField(prev => ({ ...prev, name: selectedKey, unit: '' }));
     }
   };
 
@@ -100,9 +87,8 @@ const EditCarDataModal: React.FC<EditCarDataModalProps> = ({ data, onClose, onSa
     setField(prev => ({ ...prev, [key]: value }));
   };
 
-  // Определяем является ли поле датой (по ключу, а не по тексту)
-  const selectedFieldKey = predefinedFields.find(f => f.name === field.name)?.key || '';
-  const isDateField = selectedFieldKey === 'purchaseDate';
+  // Определяем является ли поле датой (по ключу)
+  const isDateField = currentFieldKey === 'purchaseDate';
 
   return (
     <Modal isOpen={true} onClose={onClose} title={t('carData.edit')} size="md">
@@ -113,13 +99,13 @@ const EditCarDataModal: React.FC<EditCarDataModalProps> = ({ data, onClose, onSa
             <label className="modal__label">{t('carData.parameterName')}</label>
             <select
               className="modal__input"
-              value={field.name}
+              value={currentFieldKey} // Используем ключ как значение
               onChange={(e) => handleParameterChange(e.target.value)}
               required
             >
               <option value="">{t('carData.selectParameter')}</option>
               {predefinedFields.map(item => (
-                <option key={item.key} value={item.name}>
+                <option key={item.key} value={item.key}> {/* Используем ключ как значение */}
                   {item.name} {item.unit && `(${item.unit})`}
                 </option>
               ))}
@@ -145,7 +131,7 @@ const EditCarDataModal: React.FC<EditCarDataModalProps> = ({ data, onClose, onSa
                 placeholder={t('carData.enterValue')}
                 value={field.value}
                 onChange={(e) => updateField('value', e.target.value)}
-                required={selectedFieldKey !== 'cost'}
+                required={currentFieldKey !== 'cost'}
               />
             )}
           </div>
@@ -159,7 +145,7 @@ const EditCarDataModal: React.FC<EditCarDataModalProps> = ({ data, onClose, onSa
             <button 
               type="submit" 
               className="btn btn--action"
-              disabled={!field.name.trim() || (selectedFieldKey !== 'cost' && !field.value.trim())}
+              disabled={!currentFieldKey.trim() || (currentFieldKey !== 'cost' && !field.value.trim())}
             >
               {t('common.save')}
             </button>

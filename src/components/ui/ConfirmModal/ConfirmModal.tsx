@@ -157,7 +157,7 @@ const ConfirmModal: React.FC<ConfirmModalProps> = ({
             {displayMessage} {/* <-- Используем вычисленное значение */}
           </p>
           
-          <div className="modal__actions modal__actions--center">
+          <div className="modal__actions modal__actions--row">
             <button 
               className="btn btn--secondary"
               onClick={onClose}

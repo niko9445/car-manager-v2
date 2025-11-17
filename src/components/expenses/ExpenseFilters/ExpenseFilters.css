@@ -25,18 +25,18 @@
 }
 
 .expense-filters__category-btn {
-  padding: var(--space-1) var(--space-2); /* ← МЕНЬШЕ PADDING */
+  padding: var(--space-1) var(--space-2);
   border: 1px solid var(--color-border-secondary);
   border-radius: var(--radius-md);
   background: var(--color-bg-card);
   color: var(--color-text-secondary);
-  font-size: var(--font-size-xs); /* ← МЕНЬШЕ ШРИФТ */
+  font-size: var(--font-size-xs);
   font-weight: 500;
   cursor: pointer;
   transition: all var(--transition-fast);
   text-align: center;
   white-space: nowrap;
-  min-height: 28px; /* ← ФИКСИРОВАННАЯ ВЫСОТА */
+  min-height: 28px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -72,33 +72,32 @@
   max-width: 100%;
 }
 
-.expense-filters__date-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: var(--space-3);
-  width: 100%;
-  box-sizing: border-box;
-  max-width: 100%;
-}
-
-.expense-filters__date-group {
+/* 👇 СТРУКТУРА ДЛЯ ДАТ - КАЖДАЯ ПАРА НА ОТДЕЛЬНОЙ СТРОКЕ */
+.expense-filters__date-container {
   display: flex;
   flex-direction: column;
-  gap: var(--space-2);
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
+}
+
+.expense-filters__date-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
   width: 100%;
-  min-width: 0;
-  box-sizing: border-box;
-  max-width: 100%;
 }
 
 .expense-filters__date-label {
-  font-size: var(--font-size-sm);
+  font-size: var(--font-size-xs);
   color: var(--color-text-secondary);
   font-weight: 500;
+  white-space: nowrap;
+  min-width: 70px;
+  flex-shrink: 0;
 }
 
 .expense-filters__date-input {
-  width: 100%;
+  flex: 1;
   padding: var(--space-3);
   border: 1px solid var(--color-border-secondary);
   border-radius: var(--radius-md);
@@ -106,12 +105,13 @@
   color: var(--color-text-primary);
   font-size: var(--font-size-sm);
   box-sizing: border-box;
-  min-width: 0 !important;
-  max-width: 100%;
+  min-width: 0;
   transition: all var(--transition-fast);
   appearance: none;
   -webkit-appearance: none;
   -moz-appearance: none;
+  min-height: 36px;
+  height: auto;
 }
 
 .expense-filters__date-input:focus {
@@ -146,25 +146,6 @@
   max-width: 100%;
 }
 
-@media (max-width: 480px) {
-  
-  
-  .expense-filters__categories {
-    grid-template-columns: repeat(2, 1fr);
-  }
-  
-  .expense-filters__category-btn {
-    font-size: 0.7rem;
-    padding: var(--space-1) var(--space-2);
-  }
-  
-  .expense-filters__date-input {
-    padding: var(--space-2) var(--space-3);
-    font-size: 14px;
-  }
-  
-}
-
 /* Заголовок категорий */
 .expense-filters__categories-label {
   font-size: var(--font-size-base);
@@ -180,10 +161,29 @@
   width: 100%;
 }
 
-
-
+/* 👇 АДАПТИВНОСТЬ ДЛЯ МОБИЛЬНЫХ */
 @media (max-width: 768px) {
-
+  .expense-filters__date-container {
+    gap: var(--space-2);
+  }
+  
+  .expense-filters__date-row {
+    gap: var(--space-2);
+  }
+  
+  .expense-filters__date-label {
+    min-width: 60px;
+    font-size: 0.8rem;
+  }
+  
+  .expense-filters__date-input {
+    min-height: 36px;
+    height: 36px;
+    padding: var(--space-2) var(--space-3);
+    font-size: 16px;
+    line-height: 1.2;
+  }
+  
   .expense-filters__categories {
     grid-template-columns: repeat(3, 1fr);
     gap: var(--space-1);
@@ -192,32 +192,19 @@
   .expense-filters__category-btn {
     padding: var(--space-2);
     font-size: var(--font-size-xs);
-  }
-  
-  .expense-filters__date-grid {
-    grid-template-columns: 1fr;
-    gap: var(--space-2);
+    min-height: 36px;
   }
   
   .expense-filters__advanced {
     padding: var(--space-2);
   }
   
-  .expense-filters__date-input {
-    padding: var(--space-3);
-    font-size: 16px;
-    width: 100%;
-    min-width: 0 !important;
-    max-width: 100%;
-  }
-  
   .expense-filters__reset-btn {
     width: 100%;
     min-width: auto;
+    min-height: 44px;
   }
-}
-/* Мобильная версия фильтров */
-@media (max-width: 768px) {
+  
   .expense-filters__categories-section {
     margin-top: var(--space-4);
   }
@@ -227,20 +214,41 @@
     font-size: var(--font-size-sm);
     margin-bottom: var(--space-2);
   }
+}
+
+@media (max-width: 480px) {
+  .expense-filters__date-row {
+    gap: var(--space-2);
+  }
   
-  /* Уменьшаем кнопки категорий */
+  .expense-filters__date-label {
+    min-width: 55px;
+    font-size: 0.75rem;
+  }
+  
+  .expense-filters__date-input {
+    min-height: 36px;
+    height: 36px;
+    padding: var(--space-1) var(--space-2);
+    font-size: 14px;
+  }
+  
   .expense-filters__categories {
-    grid-template-columns: repeat(3, 1fr);
-    gap: var(--space-1);
+    grid-template-columns: repeat(2, 1fr);
   }
   
   .expense-filters__category-btn {
-    padding: var(--space-1);
-    font-size: 0.7rem; /* ← ЕЩЕ МЕНЬШЕ НА МОБИЛЬНЫХ */
-    min-height: 24px;
+    font-size: 0.7rem;
+    padding: var(--space-1) var(--space-2);
+    min-height: 32px;
   }
 }
 
-
-
-
+/* 👇 ДОПОЛНИТЕЛЬНЫЙ ФИКС ДЛЯ iOS */
+@supports (-webkit-touch-callout: none) {
+  .expense-filters__date-input {
+    min-height: 34px;
+    height: 34px;
+    font-size: 16px;
+  }
+}

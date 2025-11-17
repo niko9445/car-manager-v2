@@ -106,7 +106,9 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
         {/* Секция управления данными */}
         <div style={{ 
           padding: 'var(--space-5)',
-          background: 'var(--color-bg-tertiary)'
+          background: 'var(--color-bg-tertiary)',
+          width: '100%', // ← ДОБАВИТЬ
+          boxSizing: 'border-box' // ← ДОБАВИТЬ
         }}>
           <h3 style={{
             fontSize: '16px',
@@ -124,14 +126,9 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
           }}>
             {t('settings.backupRestore')}
           </p>
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: '1fr 1fr',
-            gap: '12px',
-            width: '100%'
-          }}>
-            <DataManager />
-          </div>
+          
+          {/* 👇 УБРАТЬ ЭТОТ DIV - DataManager уже содержит свой контейнер */}
+          <DataManager />
         </div>
 
         {/* Подпись */}

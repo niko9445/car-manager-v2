@@ -22,12 +22,13 @@
 }
 
 /* ===== КНОПКА "СОХРАНИТЬ/ДОБАВИТЬ" - ТЕМНО-ГОЛУБАЯ ===== */
+/* ===== КНОПКА "СОХРАНИТЬ/ДОБАВИТЬ" - СИНЯЯ ===== */
 .btn--action {
-  background: linear-gradient(135deg, #0c4a6e 0%, #0369a1 100%) !important;
-  border: 1px solid #0c4a6e !important;
+  background: var(--color-accent, #007bff) !important; /* ← ИЗМЕНИТЬ НА ПРОСТОЙ СИНИЙ */
+  border: 1px solid var(--color-accent, #007bff) !important; /* ← ИЗМЕНИТЬ НА ПРОСТОЙ СИНИЙ */
   color: white !important;
   font-weight: 600;
-  box-shadow: 0 4px 12px rgba(12, 74, 110, 0.4) !important;
+  box-shadow: 0 4px 12px rgba(0, 123, 255, 0.4) !important; /* ← ИЗМЕНИТЬ ЦВЕТ ТЕНИ */
   cursor: pointer;
   padding: 8px 20px !important;
   border-radius: 8px;
@@ -36,29 +37,29 @@
   transition: all 0.2s ease;
   opacity: 1 !important;
   backdrop-filter: none !important;
-  min-width: 100px !important;  /* ← Уменьшил ширину */
-  width: auto !important;       /* ← Не растягивается */
-  flex: 0 0 auto !important;    /* ← Не занимает всё пространство */
+  min-width: 100px !important;
+  width: auto !important;
+  flex: 0 0 auto !important;
 }
 
 .btn--action:hover {
-  background: linear-gradient(135deg, #075985 0%, #0284c7 100%) !important;
-  border-color: #075985 !important;
+  background: var(--color-accent-blue-hover, #0056b3) !important; /* ← ИСПОЛЬЗОВАТЬ ПЕРЕМЕННУЮ */
+  border-color: var(--color-accent-blue-hover, #0056b3) !important; /* ← ИСПОЛЬЗОВАТЬ ПЕРЕМЕННУЮ */
   transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(12, 74, 110, 0.6) !important;
+  box-shadow: 0 6px 16px rgba(0, 123, 255, 0.6) !important; /* ← ИЗМЕНИТЬ ЦВЕТ ТЕНИ */
 }
 
 .btn--action:active {
   transform: translateY(0);
-  box-shadow: 0 2px 8px rgba(12, 74, 110, 0.4) !important;
+  box-shadow: 0 2px 8px rgba(0, 123, 255, 0.4) !important; /* ← ИЗМЕНИТЬ ЦВЕТ ТЕНИ */
 }
 
 /* ===== КНОПКА "ОТМЕНА" - МИНИМАЛИСТИЧНАЯ ===== */
 .btn--cancel {
   background: transparent;
-  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+  border: 1px solid var(--color-border-primary, #dee2e6) !important; /* ← ИЗМЕНИТЬ НА CSS ПЕРЕМЕННУЮ */
   border-radius: 8px;
-  color: var(--color-text-secondary);
+  color: var(--color-text-secondary, #6c757d);
   font-weight: 500;
   padding: 8px 20px !important;
   font-size: 14px;
@@ -66,15 +67,15 @@
   transition: all 0.2s ease;
   backdrop-filter: none !important;
   opacity: 1 !important;
-  min-width: 100px !important;  /* ← Уменьшил ширину */
-  width: auto !important;       /* ← Не растягивается */
-  flex: 0 0 auto !important;    /* ← Не занимает всё пространство */
+  min-width: 100px !important;
+  width: auto !important;
+  flex: 0 0 auto !important;
 }
 
 .btn--cancel:hover {
-  background: rgba(255, 255, 255, 0.15) !important;
-  border-color: rgba(255, 255, 255, 0.4) !important;
-  color: white !important;
+  background: var(--color-bg-tertiary, #f8f9fa) !important; /* ← ИЗМЕНИТЬ НА CSS ПЕРЕМЕННУЮ */
+  border-color: var(--color-border-accent, #adb5bd) !important; /* ← ИЗМЕНИТЬ НА CSS ПЕРЕМЕННУЮ */
+  color: var(--color-text-primary, #212529) !important; /* ← ИЗМЕНИТЬ НА CSS ПЕРЕМЕННУЮ */
   transform: translateY(-1px);
 }
 
@@ -450,6 +451,17 @@
   color: white;
 }
 
+.modal__item-actions .btn--secondary {
+  border: 1px solid var(--color-border-primary);
+}
 
+[data-theme="light"] .modal__item-actions .btn--secondary {
+  border-color: var(--color-border-accent);
+}
+
+[data-theme="dark"] .modal__item-actions .btn--secondary {
+  border-color: var(--color-border-secondary);
+  background: transparent;
+}
 
 

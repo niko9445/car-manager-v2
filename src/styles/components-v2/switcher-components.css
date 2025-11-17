@@ -1,0 +1,223 @@
+/* switcher-components.css */
+/* Общие стили для всех компонентов переключателей в настройках */
+
+/* ===== БАЗОВЫЕ СТИЛИ ДЛЯ ВСЕХ ПЕРЕКЛЮЧАТЕЛЕЙ ===== */
+.switcher-component {
+  width: 100%;
+}
+
+.switcher-options {
+  display: grid;
+  gap: 6px;
+  width: 100%;
+}
+
+.switcher-option {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 4px;
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border-primary);
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  color: var(--color-text-primary);
+  font-size: 14px;
+  font-weight: 500;
+  text-align: center;
+  min-height: 32px;
+  white-space: nowrap;
+}
+
+.switcher-option:hover {
+  border-color: var(--color-accent-blue);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+.switcher-option--active {
+  border-color: var(--color-accent-blue);
+  background: var(--color-accent-blue);
+  color: white;
+  box-shadow: var(--shadow-md);
+}
+
+.switcher-option--active:hover {
+  background: var(--color-accent-blue);
+  border-color: var(--color-accent-blue);
+  transform: none;
+  box-shadow: var(--shadow-md);
+}
+
+/* ===== СТИЛИ ДЛЯ КНОПОК ИМПОРТ/ЭКСПОРТ ===== */
+.settings-action-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 6px 12px;
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border-primary);
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  color: var(--color-text-primary);
+  font-size: 14px;
+  font-weight: 500;
+  text-align: center;
+  min-height: 32px;
+  width: 100%;
+  white-space: nowrap;
+}
+
+.settings-action-btn:hover {
+  border-color: var(--color-accent-blue);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+/* Цветовые варианты для action кнопок */
+.settings-action-btn--success {
+  background: var(--color-accent-green);
+  border-color: var(--color-accent-green);
+  color: white;
+}
+
+.settings-action-btn--success:hover {
+  background: var(--color-accent-green-hover);
+  border-color: var(--color-accent-green-hover);
+}
+
+.settings-action-btn--primary {
+  background: var(--color-accent-blue);
+  border-color: var(--color-accent-blue);
+  color: white;
+}
+
+.settings-action-btn--primary:hover {
+  background: var(--color-accent-blue-hover);
+  border-color: var(--color-accent-blue-hover);
+}
+
+/* ===== КОНФИГУРАЦИЯ СЕТКИ ДЛЯ РАЗНЫХ КОМПОНЕНТОВ ===== */
+
+/* CurrencySwitcher - 4 колонки ВСЕГДА */
+.currency-switcher .switcher-options {
+  grid-template-columns: repeat(4, 1fr);
+}
+
+/* LanguageSwitcher - 3 колонки ВСЕГДА */
+.language-switcher .switcher-options {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+/* ThemeSwitcher - 3 колонки ВСЕГДА */
+.theme-switcher .switcher-options {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+/* DataManager - 2 колонки ВСЕГДА */
+.data-manager-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  width: 100%;
+  max-width: 100% !important;
+  box-sizing: border-box;
+}
+
+/* ===== МОБИЛЬНАЯ ВЕРСИЯ - СОХРАНЯЕМ СЕТКУ, МЕНЯЕМ РАЗМЕРЫ ===== */
+@media (max-width: 768px) {
+    
+  .switcher-option {
+    padding: 4px 2px;
+    font-size: 12px;
+    min-height: 28px;
+  }
+  
+  .settings-action-btn {
+    padding: 8px 6px;
+    font-size: 12px;
+    min-height: 28px;
+    gap: 6px;
+  }
+  
+  /* Уменьшаем иконки на мобильных */
+  .settings-action-btn .btn__icon {
+    width: 14px;
+    height: 14px;
+  }
+}
+
+/* 👇 ВАЖНО: УБИРАЕМ ИЗМЕНЕНИЕ СЕТКИ НА МОБИЛЬНЫХ */
+/* Вместо этого делаем кнопки более компактными но сохраняем сетку */
+
+@media (max-width: 480px) {
+  /* Еще более компактные размеры но сохраняем сетку */
+  .currency-switcher .switcher-options,
+  .language-switcher .switcher-options,
+  .theme-switcher .switcher-options {
+    gap: 4px;
+  }
+  
+  .switcher-option {
+    padding: 3px 1px;
+    font-size: 11px;
+    min-height: 26px;
+  }
+  
+  .data-manager-actions {
+    gap: 4px;
+  }
+  
+  .settings-action-btn {
+    padding: 3px 6px;
+    font-size: 11px;
+    min-height: 26px;
+    gap: 4px;
+  }
+  
+  .settings-action-btn .btn__icon {
+    width: 12px;
+    height: 12px;
+  }
+}
+
+/* Для экстремально маленьких экранов - минимальные размеры но сохраняем сетку */
+@media (max-width: 360px) {
+  .currency-switcher .switcher-options,
+  .language-switcher .switcher-options,
+  .theme-switcher .switcher-options {
+    gap: 3px;
+  }
+  
+  .switcher-option {
+    padding: 2px 1px;
+    font-size: 10px;
+    min-height: 24px;
+  }
+  
+  .data-manager-actions {
+    gap: 3px;
+  }
+  
+  .settings-action-btn {
+    padding: 2px 4px;
+    font-size: 10px;
+    min-height: 24px;
+    gap: 3px;
+  }
+  
+  .settings-action-btn .btn__icon {
+    width: 10px;
+    height: 10px;
+  }
+}
+
+/* ===== ДОСТУПНОСТЬ ===== */
+.switcher-option:focus-visible,
+.settings-action-btn:focus-visible {
+  outline: 2px solid var(--color-accent-blue);
+  outline-offset: 2px;
+}

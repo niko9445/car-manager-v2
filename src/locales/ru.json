@@ -34,7 +34,7 @@
     "closeMenu": "Закрыть меню"
   },
   "cars": {
-    "addCar": "Добавить автомобиль",
+    "addCar": "Добавить",
     "editCar": "Редактировать автомобиль",
     "deleteCar": "Удалить автомобиль",
     "brand": "Марка",
@@ -46,7 +46,7 @@
     "selectBrand": "Выберите марку",
     "selectModel": "Выберите модель",
     "noCars": "Нет добавленных автомобилей",
-    "selectCar": "Выберите автомобиль из списка слева",
+    "selectCar": "Выберите автомобиль",
     "carInfo": "Информация об авто",
     "carDetails": "Данные автомобиля"
   },
@@ -227,7 +227,7 @@
   "languages": {
     "ru": "Русский",
     "en": "English",
-    "by": "Belarusian"
+    "by": "Белорусский"
   },
   "confirmations": {
     "deleteTitle": "Подтверждение удаления",
@@ -252,8 +252,8 @@
     "per100km": "л/100км"
   },
   "app": {
-    "name": "RuNiko",
-    "tagline": "Управляйте автомобилями и отслеживайте расходы",
+    "name": "Car Manager",
+    "tagline": "Управляйте автомобилями и расходами",
     "copyright": "© 2025 RuNiko"
   },
 
@@ -326,5 +326,18 @@
   "dataManager": {
     "export": "Экспорт",
     "import": "Импорт"
+  },
+
+    "backup": {
+    "exportSuccessTitle": "Экспорт завершен",
+    "exportSuccessMessage": "Данные успешно экспортированы в файл",
+    "exportErrorTitle": "Ошибка экспорта",
+    "exportErrorMessage": "Не удалось экспортировать данные",
+    "importSuccessTitle": "Импорт завершен",
+    "importSuccessMessage": "Данные успешно импортированы",
+    "importErrorTitle": "Ошибка импорта", 
+    "importErrorMessage": "Не удалось импортировать данные. Проверьте файл",
+    "readErrorTitle": "Ошибка чтения",
+    "readErrorMessage": "Не удалось прочитать файл"
   }
 }

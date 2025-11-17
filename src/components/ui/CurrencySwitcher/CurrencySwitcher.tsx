@@ -1,5 +1,6 @@
 import React from 'react';
 import { useCurrency, Currency } from '../../../contexts/CurrencyContext';
+import '../../../styles/components-v2/switcher-components.css';
 
 const CurrencySwitcher: React.FC = () => {
   const { currency, setCurrency } = useCurrency();
@@ -16,34 +17,22 @@ const CurrencySwitcher: React.FC = () => {
   };
 
   return (
-    <div style={{ 
-      display: 'grid', 
-      gridTemplateColumns: 'repeat(4, 1fr)', 
-      gap: '8px',
-      width: '100%'
-    }}>
-      {currencies.map((curr) => (
-        <button
-          key={curr.value}
-          type="button"
-          style={{ 
-            padding: '12px 8px', 
-            border: `1px solid ${currency === curr.value ? 'var(--color-border-accent)' : 'var(--color-border-secondary)'}`,
-            borderRadius: 'var(--radius-md)',
-            background: currency === curr.value ? 'var(--color-accent-primary)' : 'var(--color-bg-card)',
-            color: currency === curr.value ? 'white' : 'var(--color-text-secondary)',
-            cursor: 'pointer',
-            transition: 'all var(--transition-fast)',
-            fontSize: '16px',
-            fontWeight: '600',
-            minHeight: '44px'
-          }}
-          onClick={() => handleCurrencySelect(curr.value)}
-          title={curr.title}
-        >
-          {curr.symbol}
-        </button>
-      ))}
+    <div className="switcher-component currency-switcher">
+      <div className="switcher-options">
+        {currencies.map((curr) => (
+          <button
+            key={curr.value}
+            type="button"
+            className={`switcher-option ${
+              currency === curr.value ? 'switcher-option--active' : ''
+            }`}
+            onClick={() => handleCurrencySelect(curr.value)}
+            title={curr.title}
+          >
+            {curr.symbol}
+          </button>
+        ))}
+      </div>
     </div>
   );
 };

@@ -69,8 +69,10 @@ const AddCarDataModal: React.FC<AddCarDataModalProps> = ({ onClose, onSave }) =>
     { key: 'tax', name: t('carDataFields.tax'), unit: `${getCurrencySymbol()}/${t('units.year')}` }
   ], [getCurrencySymbol, t]);
 
-  const selectedCategoryKey = predefinedFields.find(f => f.name === fields[0].name)?.key || '';
-  const selectedCategoryName = fields[0].name;
+  // Получаем выбранную категорию по ключу из fields[0].name
+  const selectedCategory = predefinedFields.find(f => f.key === fields[0].name);
+  const selectedCategoryKey = selectedCategory?.key || '';
+  const selectedCategoryName = selectedCategory?.name || '';
   
   const isSpecialCategory = selectedCategoryKey === 'insurance' || selectedCategoryKey === 'inspection' || selectedCategoryKey === 'dimensions' || selectedCategoryKey === 'consumption';
   const showValueField = !isSpecialCategory && selectedCategoryKey !== 'purchaseDate';
@@ -129,7 +131,7 @@ const AddCarDataModal: React.FC<AddCarDataModalProps> = ({ onClose, onSave }) =>
     }
     else {
       // Для стандартных полей сохраняем ключ
-      const selectedField = predefinedFields.find(f => f.name === fields[0].name);
+      const selectedField = predefinedFields.find(f => f.key === fields[0].name);
       if (selectedField && fields.every(f => f.name.trim() && f.value.trim())) {
         const standardField = { 
           name: selectedField.key, // ← Сохраняем КЛЮЧ
@@ -146,19 +148,26 @@ const AddCarDataModal: React.FC<AddCarDataModalProps> = ({ onClose, onSave }) =>
     setFields(updated);
   };
 
-  const handleParameterChange = (index: number, selectedName: string) => {
-    const selectedField = predefinedFields.find(f => f.name === selectedName);
+  const handleParameterChange = (index: number, selectedKey: string) => {
+    const selectedField = predefinedFields.find(f => f.key === selectedKey);
     
     if (selectedField) {
       const updated = [...fields];
       updated[index] = { 
         ...updated[index], 
-        name: selectedField.name, // Отображаем переведенное имя
-        unit: selectedField.unit
+        name: selectedField.key, // Сохраняем КЛЮЧ, а не переведенное имя
+        unit: selectedField.unit,
+        value: '' // Сбрасываем значение при смене категории
       };
       setFields(updated);
+
+      // Сбрасываем данные специальных категорий
+      setInsuranceData({ series: '', number: '', startDate: '', endDate: '' });
+      setInspectionData({ series: '', number: '', validUntil: '' });
+      setDimensionsData({ length: '', width: '', height: '', clearance: '', wheelSize: '', boltPattern: '', wheelDimensions: '' });
+      setConsumptionData({ mixed: '', city: '', highway: '' });
     } else {
-      updateField(index, 'name', selectedName);
+      updateField(index, 'name', selectedKey);
       updateField(index, 'unit', '');
     }
   };
@@ -211,13 +220,13 @@ const AddCarDataModal: React.FC<AddCarDataModalProps> = ({ onClose, onSave }) =>
             <label className="modal__label">{t('carData.parameterName')}</label>
             <select
               className="modal__input"
-              value={fields[0].name}
+              value={fields[0].name} // Здесь хранится ключ
               onChange={(e) => handleParameterChange(0, e.target.value)}
               required
             >
               <option value="">{t('carData.selectParameter')}</option>
               {predefinedFields.map(item => (
-                <option key={item.key} value={item.name}>
+                <option key={item.key} value={item.key}> {/* Используем ключ как value */}
                   {item.name} {item.unit && `(${item.unit})`}
                 </option>
               ))}

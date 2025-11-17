@@ -46,7 +46,7 @@
     "selectBrand": "Выберыце марку",
     "selectModel": "Выберыце мадэль",
     "noCars": "Няма дададзеных аўтамабіляў",
-    "selectCar": "Выберыце аўтамабіль са спісу злева",
+    "selectCar": "Выберыце аўтамабіль",
     "carInfo": "Інфармацыя пра аўто",
     "carDetails": "Дадзеныя аўтамабіля"
   },
@@ -227,7 +227,7 @@
   "languages": {
     "ru": "Русский",
     "en": "English",
-    "by": "Беларуская"
+    "by": "Беларускій"
   },
   "confirmations": {
     "deleteTitle": "Пацверджанне выдалення",
@@ -253,7 +253,7 @@
   },
   "app": {
     "name": "RuNiko",
-    "tagline": "Кіруйце аўтамабілямі і адсочвайце выдаткі",
+    "tagline": "Кіруйце аўтамабілямі і выдаткамі",
     "copyright": "© 2025 RuNiko"
   },
   "maintenanceCategories": {
@@ -321,24 +321,22 @@
     "link": "Спасылка",
     "side": "Бок"
   },
-  "backup": {
-    "download": "Спампаваць",
-    "upload": "Загрузіць",
-    "exportSuccessTitle": "Экспарт скончаны",
-    "exportSuccessMessage": "Усе дадзеныя паспяхова экспартаваны ў файл",
-    "exportErrorTitle": "Памылка экспарту",
-    "exportErrorMessage": "Адбылася памылка пры экспарце дадзеных",
-    "importSuccessTitle": "Імпарт скончаны",
-    "importSuccessMessage": "Дадзеныя паспяхова імпартаваны. Старонка будзе перазагружана праз 2 секунды.",
-    "importErrorTitle": "Памылка імпарту",
-    "importErrorMessage": "Праверце файл. Магчыма, ён пашкоджаны або мае няправільны фармат.",
-    "readErrorTitle": "Памылка чытання",
-    "readErrorMessage": "Не атрымалася прачытаць файл",
-    "backupRestore": "Резервное копирование и восстановление данных",
-    "backupDownload": "Резервное копирование и восстановление данных"
-  },
+
   "dataManager": {
     "export": "Экспарт",
     "import": "Імпарт"
+  },
+
+  "backup": {
+    "exportSuccessTitle": "Экспарт завершаны",
+    "exportSuccessMessage": "Даныя паспяхова экспартаваны ў файл",
+    "exportErrorTitle": "Памылка экспарту",
+    "exportErrorMessage": "Не атрымалася экспартаваць даныя",
+    "importSuccessTitle": "Імпарт завершаны",
+    "importSuccessMessage": "Даныя паспяхова імпартаваны",
+    "importErrorTitle": "Памылка імпарту",
+    "importErrorMessage": "Не атрымалася імпартаваць даныя. Праверце файл",
+    "readErrorTitle": "Памылка чытання",
+    "readErrorMessage": "Не атрымалася прачытаць файл"
   }
 }

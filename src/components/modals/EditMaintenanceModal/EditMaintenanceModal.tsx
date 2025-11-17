@@ -71,27 +71,6 @@ const EditMaintenanceModal: React.FC<EditMaintenanceModalProps> = ({
   return (
     <Modal isOpen={true} onClose={onClose} title={t('maintenance.edit')} size="lg">
       <form className="modal__form" onSubmit={handleSubmit}>
-        
-        {/* Информация о категории (только для отображения) */}
-        <div className="card card--compact">
-          <div className="card__header">
-            <h3 className="card__title card__title--sm">{t('maintenance.category')}</h3>
-          </div>
-          <div className="card__content">
-            <div className="modal__info-row">
-              <div className="modal__info-label">{t('maintenance.category')}:</div>
-              <div className="modal__info-value">
-                {categoryData?.icon} {t(`maintenanceCategories.${maintenance.categoryId}`)} {/* <-- ИСПРАВЛЕНО */}
-              </div>
-            </div>
-            <div className="modal__info-row">
-              <div className="modal__info-label">{t('maintenance.subcategory')}:</div>
-              <div className="modal__info-value">
-                {t(`maintenanceCategories.subcategories.${maintenance.subcategoryId}`)} {/* <-- ИСПРАВЛЕНО */}
-              </div>
-            </div>
-          </div>
-        </div>
 
         {/* Основные параметры */}
         <div className="card card--compact">

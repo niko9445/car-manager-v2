@@ -2,7 +2,8 @@ import React, { useRef, useState } from 'react';
 import { exportData, importData } from '../../utils/database';
 import Notification from '../ui/Notification/Notification';
 import { DataManagerProps, NotificationState, NotificationType } from '../../types';
-import { useTranslation } from '../../contexts/LanguageContext'; // <-- ДОБАВИТЬ
+import { useTranslation } from '../../contexts/LanguageContext';
+import '../../styles/components-v2/switcher-components.css';
 
 const DataManager: React.FC<DataManagerProps> = ({ hideTitle = false }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -12,7 +13,7 @@ const DataManager: React.FC<DataManagerProps> = ({ hideTitle = false }) => {
     title: '',
     message: ''
   });
-  const { t } = useTranslation(); // <-- ДОБАВИТЬ
+  const { t } = useTranslation();
 
   const showNotification = (type: NotificationType, title: string, message: string): void => {
     setNotification({
@@ -42,15 +43,15 @@ const DataManager: React.FC<DataManagerProps> = ({ hideTitle = false }) => {
 
       showNotification(
         'export',
-        t('backup.exportSuccessTitle'), // <-- ПЕРЕВОД
-        t('backup.exportSuccessMessage') // <-- ПЕРЕВОД
+        t('backup.exportSuccessTitle'),
+        t('backup.exportSuccessMessage')
       );
     } catch (error) {
       console.error('Export error:', error);
       showNotification(
         'error',
-        t('backup.exportErrorTitle'), // <-- ПЕРЕВОД
-        t('backup.exportErrorMessage') // <-- ПЕРЕВОД
+        t('backup.exportErrorTitle'),
+        t('backup.exportErrorMessage')
       );
     }
   };
@@ -68,8 +69,8 @@ const DataManager: React.FC<DataManagerProps> = ({ hideTitle = false }) => {
         
         showNotification(
           'import',
-          t('backup.importSuccessTitle'), // <-- ПЕРЕВОД
-          t('backup.importSuccessMessage') // <-- ПЕРЕВОД
+          t('backup.importSuccessTitle'),
+          t('backup.importSuccessMessage')
         );
 
         setTimeout(() => {
@@ -79,8 +80,8 @@ const DataManager: React.FC<DataManagerProps> = ({ hideTitle = false }) => {
         console.error('Import error:', error);
         showNotification(
           'error',
-          t('backup.importErrorTitle'), // <-- ПЕРЕВОД
-          t('backup.importErrorMessage') // <-- ПЕРЕВОД
+          t('backup.importErrorTitle'),
+          t('backup.importErrorMessage')
         );
       }
     };
@@ -88,8 +89,8 @@ const DataManager: React.FC<DataManagerProps> = ({ hideTitle = false }) => {
     reader.onerror = () => {
       showNotification(
         'error',
-        t('backup.readErrorTitle'), // <-- ПЕРЕВОД
-        t('backup.readErrorMessage') // <-- ПЕРЕВОД
+        t('backup.readErrorTitle'),
+        t('backup.readErrorMessage')
       );
     };
     
@@ -103,31 +104,33 @@ const DataManager: React.FC<DataManagerProps> = ({ hideTitle = false }) => {
 
   return (
     <>
-      <button 
-        className="btn btn--success btn--full"
-        onClick={handleExport}
-        type="button"
-      >
-        <svg className="btn__icon" viewBox="0 0 24 24" fill="none" width="16" height="16">
-          <path d="M12 16L12 8" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-          <path d="M9 13L12 16L15 13" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-          <path d="M8 12H6a2 2 0 00-2 2v4a2 2 0 002 2h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2" stroke="currentColor" strokeWidth="2"/>
-        </svg>
-        {t('dataManager.export')} {/* ← ИМПОРТ */}
-      </button>
+      <div className="data-manager-actions">
+        <button 
+          className="settings-action-btn settings-action-btn--success"
+          onClick={handleExport}
+          type="button"
+        >
+          <svg className="btn__icon" viewBox="0 0 24 24" fill="none" width="16" height="16">
+            <path d="M12 16L12 8" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+            <path d="M9 13L12 16L15 13" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            <path d="M8 12H6a2 2 0 00-2 2v4a2 2 0 002 2h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2" stroke="currentColor" strokeWidth="2"/>
+          </svg>
+          {t('dataManager.export')}
+        </button>
 
-      <button 
-        className="btn btn--primary btn--full"
-        onClick={handleImportClick}
-        type="button"
-      >
-        <svg className="btn__icon" viewBox="0 0 24 24" fill="none" width="16" height="16">
-          <path d="M12 8L12 16" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-          <path d="M9 11L12 8L15 11" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-          <path d="M8 12H6a2 2 0 00-2 2v4a2 2 0 002 2h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2" stroke="currentColor" strokeWidth="2"/>
-        </svg>
-        {t('dataManager.import')} {/* ← ЭКСПОРТ */}
-      </button>
+        <button 
+          className="settings-action-btn settings-action-btn--primary"
+          onClick={handleImportClick}
+          type="button"
+        >
+          <svg className="btn__icon" viewBox="0 0 24 24" fill="none" width="16" height="16">
+            <path d="M12 8L12 16" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+            <path d="M9 11L12 8L15 11" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            <path d="M8 12H6a2 2 0 00-2 2v4a2 2 0 002 2h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2" stroke="currentColor" strokeWidth="2"/>
+          </svg>
+          {t('dataManager.import')}
+        </button>
+      </div>
       
       <input
         ref={fileInputRef}
