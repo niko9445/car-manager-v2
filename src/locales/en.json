@@ -322,6 +322,10 @@
     "article": "Article",
     "link": "Link",
     "side": "Side"
+  },
+  "dataManager": {
+    "export": "Export",
+    "import": "Import"
   }
 }
 

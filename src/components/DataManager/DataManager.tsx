@@ -113,9 +113,9 @@ const DataManager: React.FC<DataManagerProps> = ({ hideTitle = false }) => {
           <path d="M9 13L12 16L15 13" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
           <path d="M8 12H6a2 2 0 00-2 2v4a2 2 0 002 2h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2" stroke="currentColor" strokeWidth="2"/>
         </svg>
-        {t('backup.download')} {/* <-- ПЕРЕВОД */}
+        {t('dataManager.export')} {/* ← ИМПОРТ */}
       </button>
-      
+
       <button 
         className="btn btn--primary btn--full"
         onClick={handleImportClick}
@@ -126,7 +126,7 @@ const DataManager: React.FC<DataManagerProps> = ({ hideTitle = false }) => {
           <path d="M9 11L12 8L15 11" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
           <path d="M8 12H6a2 2 0 00-2 2v4a2 2 0 002 2h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2" stroke="currentColor" strokeWidth="2"/>
         </svg>
-        {t('backup.upload')} {/* <-- ПЕРЕВОД */}
+        {t('dataManager.import')} {/* ← ЭКСПОРТ */}
       </button>
       
       <input
