@@ -4,10 +4,12 @@ import { Expense, ExpenseFilters as ExpenseFiltersType, ExpenseStats } from '../
 import { ExpenseService } from '../../../services/expenseService';
 import ExpenseList from '../ExpenseList/ExpenseList';
 import ExpenseFilters from '../ExpenseFilters/ExpenseFilters';
+import { useTranslation } from '../../../contexts/LanguageContext'; // <-- ДОБАВИТЬ
 
 const ExpenseTracker: React.FC = () => {
   const { state, dispatch } = useApp();
   const { selectedCar, modals } = state;
+  const { t } = useTranslation(); // <-- ДОБАВИТЬ
   
   const [expenses, setExpenses] = useState<Expense[]>([]);
   const [loading, setLoading] = useState(true);
@@ -130,9 +132,9 @@ const ExpenseTracker: React.FC = () => {
       <div className="expense-tracker">
         <div className="section__empty">
           <div className="section__empty-icon">🚗</div>
-          <h3 className="section__empty-text">Выберите автомобиль</h3>
+          <h3 className="section__empty-text">{t('expenses.selectCarFirst')}</h3> {/* <-- ПЕРЕВОД */}
           <p className="section__empty-subtext">
-            Чтобы начать учет расходов, выберите автомобиль из списка
+            {t('expenses.selectCarDescription')} {/* <-- ПЕРЕВОД */}
           </p>
         </div>
       </div>
@@ -144,13 +146,13 @@ const ExpenseTracker: React.FC = () => {
       <div className="section-header">
         <div className="section-title">
           <h2 className="section-title__text">
-            Учет расходов
+            {t('expenses.title')} {/* <-- ПЕРЕВОД */}
           </h2>
           <div className="section-title__actions">
             <button 
               className="btn btn--primary btn--compact"
               onClick={handleAddExpense}
-              title="Добавить расход"
+              title={t('expenses.add')} 
               type="button"
             >
               <svg className="btn__icon" viewBox="0 0 24 24" fill="none">
@@ -165,7 +167,7 @@ const ExpenseTracker: React.FC = () => {
         {loading ? (
           <div className="expense-tracker__loading">
             <div className="expense-tracker__spinner"></div>
-            <p>Загрузка расходов...</p>
+            <p>{t('expenses.loading')}</p> {/* <-- ПЕРЕВОД */}
           </div>
         ) : (
           /* ВСЕГДА показываем ExpenseList, даже если расходов нет */

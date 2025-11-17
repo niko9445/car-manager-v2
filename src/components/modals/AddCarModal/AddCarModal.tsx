@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import Modal from '../../ui/Modal/Modal';
 import { CarFormData } from '../../../types';
 import { carBrands, engineTypes, transmissionTypes } from '../../../data/carBrands';
+import { useTranslation } from '../../../contexts/LanguageContext'; // <-- ДОБАВИТЬ
 
 interface AddCarModalProps {
   onClose: () => void;
@@ -18,7 +19,7 @@ const AddCarModal: React.FC<AddCarModalProps> = ({ onClose, onSave }) => {
     vin: ''
   });
 
-
+  const { t } = useTranslation(); // <-- ДОБАВИТЬ
 
   const handleSubmit = (e: React.FormEvent): void => {
     e.preventDefault();
@@ -27,22 +28,21 @@ const AddCarModal: React.FC<AddCarModalProps> = ({ onClose, onSave }) => {
     }
   };
 
-
   return (
-    <Modal isOpen={true} onClose={onClose} title="Добавить автомобиль" size="md">
+    <Modal isOpen={true} onClose={onClose} title={t('cars.addCar')} size="md"> {/* <-- ПЕРЕВОД */}
       <form className="modal__form" onSubmit={handleSubmit}>
         <div className="modal__form-grid">
           
           {/* Поле марки с автодополнением */}
           <div className="modal__form-group">
-            <label className="modal__label modal__label--required">Марка</label>
+            <label className="modal__label modal__label--required">{t('cars.brand')}</label> {/* <-- ПЕРЕВОД */}
             <select
               className="modal__input"
               value={formData.brand}
               onChange={(e) => setFormData({...formData, brand: e.target.value, model: ''})}
               required
             >
-              <option value="">Выберите марку</option>
+              <option value="">{t('cars.selectBrand')}</option> {/* <-- ПЕРЕВОД */}
               {Object.keys(carBrands).map(brand => (
                 <option key={brand} value={brand}>
                   {brand}
@@ -53,7 +53,7 @@ const AddCarModal: React.FC<AddCarModalProps> = ({ onClose, onSave }) => {
 
           {/* Поле модели с автодополнением */}
           <div className="modal__form-group">
-            <label className="modal__label modal__label--required">Модель</label>
+            <label className="modal__label modal__label--required">{t('cars.model')}</label> {/* <-- ПЕРЕВОД */}
             <select
               className="modal__input"
               value={formData.model}
@@ -61,7 +61,7 @@ const AddCarModal: React.FC<AddCarModalProps> = ({ onClose, onSave }) => {
               required
               disabled={!formData.brand}
             >
-              <option value="">Выберите модель</option>
+              <option value="">{t('cars.selectModel')}</option> {/* <-- ПЕРЕВОД */}
               {formData.brand && carBrands[formData.brand as keyof typeof carBrands]?.map(model => (
                 <option key={model} value={model}>
                   {model}
@@ -72,7 +72,7 @@ const AddCarModal: React.FC<AddCarModalProps> = ({ onClose, onSave }) => {
 
           {/* Год выпуска */}
           <div className="modal__form-group">
-            <label className="modal__label modal__label--required">Год выпуска</label>
+            <label className="modal__label modal__label--required">{t('cars.year')}</label> {/* <-- ПЕРЕВОД */}
             <input
               className="modal__input"
               type="number"
@@ -86,7 +86,7 @@ const AddCarModal: React.FC<AddCarModalProps> = ({ onClose, onSave }) => {
 
           {/* Тип двигателя */}
           <div className="modal__form-group">
-            <label className="modal__label">Двигатель</label>
+            <label className="modal__label">{t('cars.engineType')}</label> {/* <-- ПЕРЕВОД */}
             <select
               className="modal__input"
               value={formData.engineType}
@@ -94,7 +94,7 @@ const AddCarModal: React.FC<AddCarModalProps> = ({ onClose, onSave }) => {
             >
               {engineTypes.map(type => (
                 <option key={type.value} value={type.value}>
-                  {type.label}
+                  {t(`engineTypes.${type.value}`)} {/* <-- ПЕРЕВОД */}
                 </option>
               ))}
             </select>
@@ -102,7 +102,7 @@ const AddCarModal: React.FC<AddCarModalProps> = ({ onClose, onSave }) => {
 
           {/* Коробка передач */}
           <div className="modal__form-group">
-            <label className="modal__label">Коробка передач</label>
+            <label className="modal__label">{t('cars.transmission')}</label> {/* <-- ПЕРЕВОД */}
             <select
               className="modal__input"
               value={formData.transmission}
@@ -110,7 +110,7 @@ const AddCarModal: React.FC<AddCarModalProps> = ({ onClose, onSave }) => {
             >
               {transmissionTypes.map(type => (
                 <option key={type.value} value={type.value}>
-                  {type.label}
+                  {t(`transmissionTypes.${type.value}`)} {/* <-- ПЕРЕВОД */}
                 </option>
               ))}
             </select>
@@ -118,13 +118,13 @@ const AddCarModal: React.FC<AddCarModalProps> = ({ onClose, onSave }) => {
 
           {/* VIN-код */}
           <div className="modal__form-group">
-            <label className="modal__label">VIN-код</label>
+            <label className="modal__label">{t('cars.vin')}</label> {/* <-- ПЕРЕВОД */}
             <input
               className="modal__input"
               type="text"
               value={formData.vin}
               onChange={(e) => setFormData({...formData, vin: e.target.value})}
-              placeholder="Необязательно"
+              placeholder={t('common.optional')} 
             />
           </div>
         </div>
@@ -136,20 +136,20 @@ const AddCarModal: React.FC<AddCarModalProps> = ({ onClose, onSave }) => {
               className="btn btn--cancel" 
               onClick={onClose}
             >
-              Отмена
+              {t('common.cancel')} {/* <-- ПЕРЕВОД */}
             </button>
             <button 
               type="submit" 
               className="btn btn--action"
               disabled={!formData.brand || !formData.model}
             >
-              Добавить
+              {t('common.add')} {/* <-- ПЕРЕВОД */}
             </button>
           </div>
           
           {/* ДОБАВИТЬ подпись в футер модального окна */}
           <div className="modal__footer-signature">
-            © 2025 <span className="modal__footer-app-name">RuNiko</span>
+            {t('app.copyright')} {/* <-- ПЕРЕВОД */}
           </div>
         </div>
       </form>

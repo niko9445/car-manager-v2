@@ -1,18 +1,32 @@
 import React, { useEffect, useRef } from 'react';
-import { ConfirmModalProps} from '../../../types';
+import { ConfirmModalProps } from '../../../types';
+import { useTranslation } from '../../../contexts/LanguageContext';
 
 const ConfirmModal: React.FC<ConfirmModalProps> = ({ 
   isOpen, 
   onClose, 
   onConfirm, 
-  title = "Подтверждение удаления",
-  message = "Вы уверены, что хотите удалить этот элемент?",
-  confirmText = "Удалить",
-  cancelText = "Отмена",
+  title, // Убираем значения по умолчанию здесь
+  message,
+  confirmText,
+  cancelText,
   type = "delete" 
 }) => {
   const modalRef = useRef<HTMLDivElement>(null);
   const confirmButtonRef = useRef<HTMLButtonElement>(null);
+  const { t } = useTranslation();
+
+  // Используем переводы по умолчанию, если не переданы пропсы
+  const defaultTitle = t('confirmations.deleteTitle');
+  const defaultMessage = t('confirmations.deleteMessage');
+  const defaultConfirmText = t('common.delete');
+  const defaultCancelText = t('common.cancel');
+
+  // Фактические значения для отображения
+  const displayTitle = title || defaultTitle;
+  const displayMessage = message || defaultMessage;
+  const displayConfirmText = confirmText || defaultConfirmText;
+  const displayCancelText = cancelText || defaultCancelText;
 
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent): void => {
@@ -132,7 +146,7 @@ const ConfirmModal: React.FC<ConfirmModalProps> = ({
               id="confirm-modal-title"
               className="modal__title"
             >
-              {title}
+              {displayTitle} {/* <-- Используем вычисленное значение */}
             </h3>
           </div>
           
@@ -140,7 +154,7 @@ const ConfirmModal: React.FC<ConfirmModalProps> = ({
             id="confirm-modal-description"
             className="modal__message"
           >
-            {message}
+            {displayMessage} {/* <-- Используем вычисленное значение */}
           </p>
           
           <div className="modal__actions modal__actions--center">
@@ -149,7 +163,7 @@ const ConfirmModal: React.FC<ConfirmModalProps> = ({
               onClick={onClose}
               type="button"
             >
-              {cancelText}
+              {displayCancelText} {/* <-- Используем вычисленное значение */}
             </button>
             <button 
               ref={confirmButtonRef}
@@ -158,7 +172,7 @@ const ConfirmModal: React.FC<ConfirmModalProps> = ({
               type="button"
               autoFocus
             >
-              {confirmText}
+              {displayConfirmText} {/* <-- Используем вычисленное значение */}
             </button>
           </div>
         </div>

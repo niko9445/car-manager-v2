@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { ExpenseCategory } from '../../../types';
+import { useTranslation } from '../../../contexts/LanguageContext'; // <-- ДОБАВИТЬ
 
 interface ExpenseFiltersType {
   carId?: string;
@@ -15,6 +16,7 @@ interface ExpenseFiltersProps {
 const ExpenseFilters: React.FC<ExpenseFiltersProps> = ({ onFilterChange }) => {
   const [filters, setFilters] = useState<ExpenseFiltersType>({});
   const [isExpanded, setIsExpanded] = useState(false);
+  const { t } = useTranslation(); // <-- ДОБАВИТЬ
 
   useEffect(() => {
     onFilterChange(filters);
@@ -42,18 +44,18 @@ const ExpenseFilters: React.FC<ExpenseFiltersProps> = ({ onFilterChange }) => {
   const hasActiveFilters = Object.keys(filters).length > 0;
 
   const categoryOptions: { value: ExpenseCategory | 'all'; label: string }[] = [
-    { value: 'all', label: 'Все' },
-    { value: 'fuel', label: 'Заправка' },
-    { value: 'maintenance', label: 'ТО' },
-    { value: 'repairs', label: 'Ремонт' },
-    { value: 'parts', label: 'Запчасти' },
-    { value: 'insurance', label: 'Страховка' },
-    { value: 'taxes', label: 'Налоги' },
-    { value: 'parking', label: 'Парковка' },
-    { value: 'washing', label: 'Мойка' },
-    { value: 'fines', label: 'Штрафы' },
-    { value: 'inspection', label: 'Техосмотр'},
-    { value: 'other', label: 'Прочее' }
+    { value: 'all', label: t('common.all') }, // <-- ПЕРЕВОД
+    { value: 'fuel', label: t('expenseCategories.fuel') }, // <-- ПЕРЕВОД
+    { value: 'maintenance', label: t('expenseCategories.maintenance') }, // <-- ПЕРЕВОД
+    { value: 'repairs', label: t('expenseCategories.repairs') }, // <-- ПЕРЕВОД
+    { value: 'parts', label: t('expenseCategories.parts') }, // <-- ПЕРЕВОД
+    { value: 'insurance', label: t('expenseCategories.insurance') }, // <-- ПЕРЕВОД
+    { value: 'taxes', label: t('expenseCategories.taxes') }, // <-- ПЕРЕВОД
+    { value: 'parking', label: t('expenseCategories.parking') }, // <-- ПЕРЕВОД
+    { value: 'washing', label: t('expenseCategories.washing') }, // <-- ПЕРЕВОД
+    { value: 'fines', label: t('expenseCategories.fines') }, // <-- ПЕРЕВОД
+    { value: 'inspection', label: t('expenseCategories.inspection') }, // <-- ПЕРЕВОД
+    { value: 'other', label: t('expenseCategories.other') } // <-- ПЕРЕВОД
   ];
 
   return (
@@ -67,7 +69,7 @@ const ExpenseFilters: React.FC<ExpenseFiltersProps> = ({ onFilterChange }) => {
           <span className="expense-filters__expand-icon">
             {isExpanded ? '▲' : '▼'}
           </span>
-          Дополнительные фильтры
+          {t('expenses.additionalFilters')} {/* <-- ПЕРЕВОД */}
         </button>
 
         {isExpanded && (
@@ -75,33 +77,39 @@ const ExpenseFilters: React.FC<ExpenseFiltersProps> = ({ onFilterChange }) => {
             {/* 👇 ФИЛЬТРЫ ПО ДАТЕ */}
             <div className="expense-filters__date-grid">
               <div className="expense-filters__date-group">
-                <label className="expense-filters__date-label">Дата с</label>
+                <label className="expense-filters__date-label">
+                  {t('expenses.dateFrom')} {/* <-- ПЕРЕВОД */}
+                </label>
                 <input
                   type="date"
                   value={filters.dateFrom || ''}
                   onChange={(e) => handleDateChange('dateFrom', e.target.value)}
                   className="expense-filters__date-input"
-                  placeholder="Дата с"
-                  title="Фильтр по дате начала периода"
+                  placeholder={t('expenses.dateFrom')} 
+                  title={t('expenses.dateFrom')} 
                 />
               </div>
               
               <div className="expense-filters__date-group">
-                <label className="expense-filters__date-label">Дата по</label>
+                <label className="expense-filters__date-label">
+                  {t('expenses.dateTo')} {/* <-- ПЕРЕВОД */}
+                </label>
                 <input
                   type="date"
                   value={filters.dateTo || ''}
                   onChange={(e) => handleDateChange('dateTo', e.target.value)}
                   className="expense-filters__date-input"
-                  placeholder="Дата по"
-                  title="Фильтр по дате окончания периода"
+                  placeholder={t('expenses.dateTo')} 
+                  title={t('expenses.dateTo')} 
                 />
               </div>
             </div>
 
             {/* 👇 ФИЛЬТРЫ ПО КАТЕГОРИЯМ - ПЕРЕНЕСЕНЫ СЮДА */}
             <div className="expense-filters__categories-section">
-              <label className="expense-filters__categories-label">Категории</label>
+              <label className="expense-filters__categories-label">
+                {t('expenses.categories')} {/* <-- ПЕРЕВОД */}
+              </label>
               <div className="expense-filters__categories">
                 {categoryOptions.map(option => (
                   <button
@@ -120,22 +128,19 @@ const ExpenseFilters: React.FC<ExpenseFiltersProps> = ({ onFilterChange }) => {
             </div>
 
             {/* Кнопка сброса */}
-                  {hasActiveFilters && (
-                    <div className="expense-filters__reset">
-                      <button
-                        className="btn btn--secondary btn--sm expense-filters__reset-btn"
-                        onClick={clearFilters}
-                      >
-                        Сбросить фильтры
-                      </button>
-                    </div>
-                  )}
-
+            {hasActiveFilters && (
+              <div className="expense-filters__reset">
+                <button
+                  className="btn btn--secondary btn--sm expense-filters__reset-btn"
+                  onClick={clearFilters}
+                >
+                  {t('expenses.resetFilters')} {/* <-- ПЕРЕВОД */}
+                </button>
+              </div>
+            )}
           </div>
         )}
       </div>
-
-      
     </div>
   );
 };

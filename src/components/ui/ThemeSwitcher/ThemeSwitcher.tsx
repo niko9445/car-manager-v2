@@ -1,9 +1,11 @@
 import React from 'react';
 import { useTheme } from '../../../contexts/ThemeContext';
+import { useTranslation } from '../../../contexts/LanguageContext'; // <-- ДОБАВИТЬ
 import './ThemeSwitcher.css';
 
 export const ThemeSwitcher: React.FC = () => {
   const { theme, setTheme } = useTheme();
+  const { t } = useTranslation(); // <-- ДОБАВИТЬ
 
   return (
     <div className="theme-switcher">
@@ -13,7 +15,7 @@ export const ThemeSwitcher: React.FC = () => {
           onClick={() => setTheme('light')}
           type="button"
         >
-          Светлая
+          {t('themes.light')} {/* <-- ПЕРЕВОД */}
         </button>
         
         <button
@@ -21,7 +23,7 @@ export const ThemeSwitcher: React.FC = () => {
           onClick={() => setTheme('dark')}
           type="button"
         >
-          Тёмная
+          {t('themes.dark')} {/* <-- ПЕРЕВОД */}
         </button>
         
         <button
@@ -29,7 +31,7 @@ export const ThemeSwitcher: React.FC = () => {
           onClick={() => setTheme('auto')}
           type="button"
         >
-          Авто
+          {t('themes.auto')} {/* <-- ПЕРЕВОД */}
         </button>
       </div>
     </div>

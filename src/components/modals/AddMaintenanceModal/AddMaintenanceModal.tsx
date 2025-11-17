@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Modal from '../../ui/Modal/Modal';
 import { useCurrency } from '../../../contexts/CurrencyContext';
+import { useTranslation } from '../../../contexts/LanguageContext';
 import { MAINTENANCE_CATEGORIES } from '../../../data/maintenanceCategories';
 
 interface AddMaintenanceModalProps {
@@ -11,6 +12,7 @@ interface AddMaintenanceModalProps {
 
 const AddMaintenanceModal: React.FC<AddMaintenanceModalProps> = ({ onClose, onSave, selectedCar }) => {
   const { getCurrencySymbol } = useCurrency();
+  const { t } = useTranslation();
   
   const [selectedCategory, setSelectedCategory] = useState('');
   const [selectedSubcategory, setSelectedSubcategory] = useState('');
@@ -48,10 +50,10 @@ const AddMaintenanceModal: React.FC<AddMaintenanceModalProps> = ({ onClose, onSa
 
   const handleSubmit = (e: React.FormEvent): void => {
     e.preventDefault();
-    if (formData.date && selectedCategory && selectedSubcategory) { // ← УБРАЛ проверку mileage
+    if (formData.date && selectedCategory && selectedSubcategory) {
       onSave({
         date: formData.date,
-        mileage: formData.mileage ? parseInt(formData.mileage) : 0, // ← Может быть 0
+        mileage: formData.mileage ? parseInt(formData.mileage) : 0,
         cost: formData.cost ? parseInt(formData.cost) : null,
         categoryId: selectedCategory,
         subcategoryId: selectedSubcategory,
@@ -72,7 +74,10 @@ const AddMaintenanceModal: React.FC<AddMaintenanceModalProps> = ({ onClose, onSa
 
     if (lastSimilarMaintenance) {
       const recommendedMileage = lastSimilarMaintenance.mileage + 10000; // Пример: +10к км
-      return `Рекомендуемый пробег: ${recommendedMileage.toLocaleString('ru-RU')} км (последнее ТО было на ${lastSimilarMaintenance.mileage.toLocaleString('ru-RU')} км)`;
+      return t('maintenance.mileageRecommendation', {
+        recommendedMileage: recommendedMileage.toLocaleString('ru-RU'),
+        lastMileage: lastSimilarMaintenance.mileage.toLocaleString('ru-RU')
+      });
     }
 
     return null;
@@ -81,13 +86,13 @@ const AddMaintenanceModal: React.FC<AddMaintenanceModalProps> = ({ onClose, onSa
   const mileageRecommendation = getMileageRecommendation();
 
   return (
-    <Modal isOpen={true} onClose={onClose} title="Добавить ТО" size="lg">
+    <Modal isOpen={true} onClose={onClose} title={t('maintenance.add')} size="lg">
       <form className="modal__form" onSubmit={handleSubmit}>
         
         {/* Шаг 1: Выбор категории */}
         <div className="modal__form-section">
           <div className="modal__form-group">
-            <label className="modal__label modal__label--required">Выберите категорию</label>
+            <label className="modal__label modal__label--required">{t('maintenance.selectCategory')}</label>
             <select
               className="modal__input"
               value={selectedCategory}
@@ -98,10 +103,10 @@ const AddMaintenanceModal: React.FC<AddMaintenanceModalProps> = ({ onClose, onSa
               }}
               required
             >
-              <option value="">-- Выберите категорию --</option>
+              <option value="">-- {t('maintenance.selectCategory')} --</option>
               {MAINTENANCE_CATEGORIES.map(category => (
                 <option key={category.id} value={category.id}>
-                  {category.icon} {category.name}
+                  {category.icon} {t(`maintenanceCategories.${category.id}`)} {/* <-- ИСПРАВЛЕНО */}
                 </option>
               ))}
             </select>
@@ -112,7 +117,7 @@ const AddMaintenanceModal: React.FC<AddMaintenanceModalProps> = ({ onClose, onSa
         {selectedCategoryData && (
           <div className="modal__form-section">
             <div className="modal__form-group">
-              <label className="modal__label modal__label--required">Выберите тип работ</label>
+              <label className="modal__label modal__label--required">{t('maintenance.selectSubcategory')}</label>
               <select
                 className="modal__input"
                 value={selectedSubcategory}
@@ -122,10 +127,10 @@ const AddMaintenanceModal: React.FC<AddMaintenanceModalProps> = ({ onClose, onSa
                 }}
                 required
               >
-                <option value="">-- Выберите тип работ --</option>
+                <option value="">-- {t('maintenance.selectSubcategory')} --</option>
                 {selectedCategoryData.subcategories.map(subcategory => (
                   <option key={subcategory.id} value={subcategory.id}>
-                    {subcategory.name}
+                    {t(`maintenanceCategories.subcategories.${subcategory.id}`)} {/* <-- ИСПРАВЛЕНО */}
                   </option>
                 ))}
               </select>
@@ -148,7 +153,7 @@ const AddMaintenanceModal: React.FC<AddMaintenanceModalProps> = ({ onClose, onSa
             <div className="modal__form-section">
               <div className="modal__form-grid">
                 <div className="modal__form-group">
-                  <label className="modal__label modal__label--required">Дата</label>
+                  <label className="modal__label modal__label--required">{t('maintenance.date')}</label>
                   <input
                     type="date"
                     className="modal__input"
@@ -159,7 +164,7 @@ const AddMaintenanceModal: React.FC<AddMaintenanceModalProps> = ({ onClose, onSa
                 </div>
 
                 <div className="modal__form-group">
-                  <label className="modal__label modal__label--required">Пробег (км)</label>
+                  <label className="modal__label modal__label--required">{t('maintenance.mileage')} ({t('units.km')})</label>
                   <input
                     type="number"
                     className="modal__input"
@@ -167,19 +172,19 @@ const AddMaintenanceModal: React.FC<AddMaintenanceModalProps> = ({ onClose, onSa
                     onChange={(e) => setFormData({...formData, mileage: e.target.value})}
                     required
                     min="0"
-                    placeholder="Текущий пробег"
+                    placeholder={t('maintenance.currentMileage')}
                   />
                 </div>
 
                 <div className="modal__form-group">
-                  <label className="modal__label">Затраты ({getCurrencySymbol()})</label>
+                  <label className="modal__label">{t('maintenance.cost')} ({getCurrencySymbol()})</label>
                   <input
                     type="number"
                     className="modal__input"
                     value={formData.cost}
                     onChange={(e) => setFormData({...formData, cost: e.target.value})}
                     min="0"
-                    placeholder="Необязательно"
+                    placeholder={t('common.optional')} 
                   />
                 </div>
               </div>
@@ -190,11 +195,11 @@ const AddMaintenanceModal: React.FC<AddMaintenanceModalProps> = ({ onClose, onSa
               <div className="modal__form-section">
                 <div className="modal__form-grid">
                   {selectedSubcategoryData.fields
-                    .filter(field => field.name !== 'cost') // ← ФИЛЬТРУЕМ поле cost
+                    .filter(field => field.name !== 'cost')
                     .map(field => (
                       <div key={field.name} className="modal__form-group">
                         <label className={`modal__label ${field.required ? 'modal__label--required' : ''}`}>
-                          {field.label}
+                          {field.label} {/* <-- ЗДЕСЬ ОСТАВЛЯЕМ КАК ЕСТЬ, т.к. это лейблы полей форм */}
                         </label>
                         
                         {field.type === 'text' && (
@@ -228,7 +233,7 @@ const AddMaintenanceModal: React.FC<AddMaintenanceModalProps> = ({ onClose, onSa
                             onChange={(e) => handleCustomFieldChange(field.name, e.target.value)}
                             required={field.required}
                           >
-                            <option value="">Выберите...</option>
+                            <option value="">{t('common.choose')}</option>
                             {field.options.map(option => (
                               <option key={option} value={option}>{option}</option>
                             ))}
@@ -242,7 +247,7 @@ const AddMaintenanceModal: React.FC<AddMaintenanceModalProps> = ({ onClose, onSa
                               checked={customFields[field.name] || false}
                               onChange={(e) => handleCustomFieldChange(field.name, e.target.checked)}
                             />
-                            <span className="modal__checkbox-label">{field.label}</span>
+                            <span className="modal__checkbox-label">{field.label}</span> {/* <-- ЗДЕСЬ ОСТАВЛЯЕМ КАК ЕСТЬ */}
                           </label>
                         )}
                       </div>
@@ -257,19 +262,19 @@ const AddMaintenanceModal: React.FC<AddMaintenanceModalProps> = ({ onClose, onSa
         <div className="modal__actions-container">
           <div className="modal__actions modal__actions--centered">
             <button type="button" className="btn btn--cancel" onClick={onClose}>
-              Отмена
+              {t('common.cancel')}
             </button>
             <button 
               type="submit" 
               className="btn btn--action"
               disabled={!isFormValid}
             >
-              Добавить ТО
+              {t('maintenance.add')}
             </button>
           </div>
           
           <div className="modal__footer-signature">
-            © 2025 <span className="modal__footer-app-name">RuNiko</span>
+            {t('app.copyright')}
           </div>
         </div>
       </form>

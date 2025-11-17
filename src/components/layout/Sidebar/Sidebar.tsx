@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { SidebarProps } from '../../../types';
 import CarCard from '../../ui/CarCard/CarCard';
 import SettingsModal from '../../modals/SettingsModal/SettingsModal';
+import { useTranslation } from '../../../contexts/LanguageContext'; // <-- ДОБАВИТЬ
 
 const Sidebar: React.FC<SidebarProps> = ({
   cars,
@@ -14,6 +15,7 @@ const Sidebar: React.FC<SidebarProps> = ({
   className = ''
 }) => {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const { t } = useTranslation(); // <-- ДОБАВИТЬ
 
   const handleCarSelect = (car: any) => {
     setSelectedCar(car);
@@ -35,7 +37,9 @@ const Sidebar: React.FC<SidebarProps> = ({
         {/* Хедер сайдбара */}
         <div className="sidebar__header">
           <div className="sidebar__header-top">
-            <h2 className="sidebar__title">Мои автомобили</h2>
+            <h2 className="sidebar__title">
+              {t('navigation.myCars')} {/* <-- ИСПОЛЬЗУЕМ ПЕРЕВОД */}
+            </h2>
           </div>
           
           {/* Кнопки действий */}
@@ -49,7 +53,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                 <svg className="btn__icon" viewBox="0 0 24 24" fill="none" width="16" height="16">
                   <path d="M12 5v14m-7-7h14" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
                 </svg>
-                Добавить
+                {t('cars.addCar')} {/* <-- ИСПОЛЬЗУЕМ ПЕРЕВОД */}
               </button>
               
               {/* Кнопка настроек справа от кнопки добавления */}
@@ -57,7 +61,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                 className="sidebar__settings-btn"
                 onClick={handleSettingsClick}
                 type="button"
-                title="Настройки"
+                title={t('navigation.settings')} 
               >
                 <svg viewBox="0 0 24 24" fill="none" width="18" height="18">
                   <path d="M12 15a3 3 0 100-6 3 3 0 000 6z" stroke="currentColor" strokeWidth="2"/>
@@ -72,7 +76,9 @@ const Sidebar: React.FC<SidebarProps> = ({
         <div className="sidebar__content">
           {cars.length === 0 ? (
             <div className="sidebar__empty">
-              <p className="sidebar__empty-text">Нет добавленных автомобилей</p>
+              <p className="sidebar__empty-text">
+                {t('cars.noCars')} {/* <-- ИСПОЛЬЗУЕМ ПЕРЕВОД */}
+              </p>
             </div>
           ) : (
             <div className="sidebar__cars">
@@ -94,7 +100,7 @@ const Sidebar: React.FC<SidebarProps> = ({
         {/* Футер с подписью */}
         <div className="sidebar__footer">
           <div className="sidebar-footer__credits">
-            © 2025 <span className="sidebar-footer__app-name">RuNiko</span>
+            {t('app.copyright')} {/* <-- ИСПОЛЬЗУЕМ ПЕРЕВОД */}
           </div>
         </div>
       </div>

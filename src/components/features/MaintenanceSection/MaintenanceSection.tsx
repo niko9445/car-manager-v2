@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { MaintenanceSectionProps } from '../../../types';
 import MaintenanceCard from './MaintenanceCard';
+import { useTranslation } from '../../../contexts/LanguageContext';
 
 const MaintenanceSection: React.FC<MaintenanceSectionProps> = ({ 
   car, 
@@ -11,6 +12,7 @@ const MaintenanceSection: React.FC<MaintenanceSectionProps> = ({
 }) => {
   const currentCar = cars.find(c => c.id === car.id) || car;
   const [expandedCardId, setExpandedCardId] = useState<string | null>(null);
+  const { t } = useTranslation();
 
   // 🔥 СОРТИРОВКА по дате (новые сверху)
   const sortedMaintenance = useMemo(() => {
@@ -30,13 +32,13 @@ const MaintenanceSection: React.FC<MaintenanceSectionProps> = ({
       <div className="section-header">
         <div className="section-title">
           <h2 className="section-title__text">
-            Техническое обслуживание
+            {t('maintenance.title')}
           </h2>
           <div className="section-title__actions">
             <button 
               className="btn btn--primary btn--compact"
               onClick={onAddMaintenance}
-              title="Добавить ТО"
+              title={t('maintenance.add')} 
               type="button"
             >
               <svg className="btn__icon" viewBox="0 0 24 24" fill="none">
@@ -77,16 +79,16 @@ const MaintenanceSection: React.FC<MaintenanceSectionProps> = ({
                 <div className="maintenance-welcome__gear">⚙️</div>
               </div>
               <div className="maintenance-welcome__text">
-                <h3 className="maintenance-welcome__title">Начните вести историю ТО</h3>
+                <h3 className="maintenance-welcome__title">{t('maintenance.startTracking')}</h3>
                 <p className="maintenance-welcome__subtitle">
-                  Добавьте первую запись для отслеживания технического обслуживания
+                  {t('maintenance.firstRecord')}
                 </p>
               </div>
               <button
                 className="btn btn--primary maintenance-welcome__button"
                 onClick={onAddMaintenance}
               >
-                <span>Добавить ТО</span>
+                <span>{t('maintenance.add')}</span>
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
                   <path d="M12 5v14m-7-7h14" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
                 </svg>

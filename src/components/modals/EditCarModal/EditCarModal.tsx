@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Modal from '../../ui/Modal/Modal';
 import { CarFormData, CarDataEntry, CarDataField } from '../../../types';
 import { engineTypes, transmissionTypes } from '../../../data/carBrands';
+import { useTranslation } from '../../../contexts/LanguageContext'; // <-- ДОБАВИТЬ
 
 interface EditCarModalProps {
   car: any;
@@ -31,6 +32,7 @@ const EditCarModal: React.FC<EditCarModalProps> = ({
 
   const [editingDataId, setEditingDataId] = useState<string | null>(null);
   const [editingDataField, setEditingDataField] = useState<CarDataField>({ name: '', value: '', unit: '' });
+  const { t } = useTranslation(); // <-- ДОБАВИТЬ
 
   useEffect(() => {
     if (car) {
@@ -76,18 +78,18 @@ const EditCarModal: React.FC<EditCarModalProps> = ({
   };
 
   return (
-    <Modal isOpen={true} onClose={onClose} title="Редактировать автомобиль" size="lg">
+    <Modal isOpen={true} onClose={onClose} title={t('cars.editCar')} size="lg"> {/* <-- ПЕРЕВОД */}
       <form className="modal__form" onSubmit={handleSubmit}>
         
         {/* Основные данные автомобиля */}
         <div className="card card--compact">
           <div className="card__header">
-            <h3 className="card__title card__title--sm">Основные данные</h3>
+            <h3 className="card__title card__title--sm">{t('carData.mainData')}</h3> {/* <-- ПЕРЕВОД */}
           </div>
           <div className="card__content">
             <div className="modal__form-grid">
               <div className="modal__form-group">
-                <label className="modal__label modal__label--required">Марка</label>
+                <label className="modal__label modal__label--required">{t('cars.brand')}</label> {/* <-- ПЕРЕВОД */}
                 <input
                   type="text"
                   value={formData.brand}
@@ -98,7 +100,7 @@ const EditCarModal: React.FC<EditCarModalProps> = ({
               </div>
 
               <div className="modal__form-group">
-                <label className="modal__label modal__label--required">Модель</label>
+                <label className="modal__label modal__label--required">{t('cars.model')}</label> {/* <-- ПЕРЕВОД */}
                 <input
                   type="text"
                   value={formData.model}
@@ -109,7 +111,7 @@ const EditCarModal: React.FC<EditCarModalProps> = ({
               </div>
 
               <div className="modal__form-group">
-                <label className="modal__label modal__label--required">Год выпуска</label>
+                <label className="modal__label modal__label--required">{t('cars.year')}</label> {/* <-- ПЕРЕВОД */}
                 <input
                   type="number"
                   value={formData.year}
@@ -122,7 +124,7 @@ const EditCarModal: React.FC<EditCarModalProps> = ({
               </div>
 
               <div className="modal__form-group">
-                <label className="modal__label">Двигатель</label>
+                <label className="modal__label">{t('cars.engineType')}</label> {/* <-- ПЕРЕВОД */}
                 <select
                   value={formData.engineType}
                   onChange={(e) => setFormData({...formData, engineType: e.target.value as any})}
@@ -130,14 +132,14 @@ const EditCarModal: React.FC<EditCarModalProps> = ({
                 >
                   {engineTypes.map(type => (
                     <option key={type.value} value={type.value}>
-                      {type.label}
+                      {t(`engineTypes.${type.value}`)} {/* <-- ПЕРЕВОД */}
                     </option>
                   ))}
                 </select>
               </div>
 
               <div className="modal__form-group">
-                <label className="modal__label">Коробка передач</label>
+                <label className="modal__label">{t('cars.transmission')}</label> {/* <-- ПЕРЕВОД */}
                 <select
                   value={formData.transmission}
                   onChange={(e) => setFormData({...formData, transmission: e.target.value as any})}
@@ -145,19 +147,19 @@ const EditCarModal: React.FC<EditCarModalProps> = ({
                 >
                   {transmissionTypes.map(type => (
                     <option key={type.value} value={type.value}>
-                      {type.label}
+                      {t(`transmissionTypes.${type.value}`)} {/* <-- ПЕРЕВОД */}
                     </option>
                   ))}
                 </select>
               </div>
 
               <div className="modal__form-group">
-                <label className="modal__label">VIN-код</label>
+                <label className="modal__label">{t('cars.vin')}</label> {/* <-- ПЕРЕВОД */}
                 <input
                   type="text"
                   value={formData.vin}
                   onChange={(e) => setFormData({...formData, vin: e.target.value})}
-                  placeholder="Необязательно"
+                  placeholder={t('common.optional')} 
                   className="modal__input"
                 />
               </div>
@@ -170,7 +172,7 @@ const EditCarModal: React.FC<EditCarModalProps> = ({
           <div className="card card--compact">
             <div className="card__header">
               <div className="card__main-info">
-                <h3 className="card__title card__title--sm">Дополнительные данные</h3>
+                <h3 className="card__title card__title--sm">{t('carData.additionalData')}</h3> {/* <-- ПЕРЕВОД */}
               </div>
             </div>
             <div className="card__content">
@@ -188,21 +190,21 @@ const EditCarModal: React.FC<EditCarModalProps> = ({
                             className="modal__input modal__input--sm"
                             value={editingDataField.name}
                             onChange={(e) => updateEditingField({ name: e.target.value })}
-                            placeholder="Название параметра"
+                            placeholder={t('carData.parameterName')} 
                           />
                           <input
                             type="text"
                             className="modal__input modal__input--sm"
                             value={editingDataField.value}
                             onChange={(e) => updateEditingField({ value: e.target.value })}
-                            placeholder="Значение"
+                            placeholder={t('carData.value')} 
                           />
                           <input
                             type="text"
                             className="modal__input modal__input--sm"
                             value={editingDataField.unit}
                             onChange={(e) => updateEditingField({ unit: e.target.value })}
-                            placeholder="Ед. измерения"
+                            placeholder={t('carData.unit')} 
                           />
                           <div className="modal__edit-actions">
                             <button 
@@ -211,14 +213,14 @@ const EditCarModal: React.FC<EditCarModalProps> = ({
                               onClick={() => handleSaveEditedData(dataEntry.id)}
                               disabled={!editingDataField.name.trim() || !editingDataField.value.trim()}
                             >
-                              Сохранить
+                              {t('common.save')} {/* <-- ПЕРЕВОД */}
                             </button>
                             <button 
                               type="button"
                               className="btn btn--secondary btn--sm"
                               onClick={cancelEditingData}
                             >
-                              Отмена
+                              {t('common.cancel')} {/* <-- ПЕРЕВОД */}
                             </button>
                           </div>
                         </div>
@@ -244,14 +246,14 @@ const EditCarModal: React.FC<EditCarModalProps> = ({
                             className="btn btn--secondary btn--sm"
                             onClick={() => startEditingData(dataEntry)}
                           >
-                            Редактировать
+                            {t('common.edit')} {/* <-- ПЕРЕВОД */}
                           </button>
                           <button 
                             type="button"
                             className="btn btn--danger btn--sm"
                             onClick={() => onDeleteCarData(car.id, dataEntry.id)}
                           >
-                            Удалить
+                            {t('common.delete')} {/* <-- ПЕРЕВОД */}
                           </button>
                         </div>
                       </div>
@@ -271,19 +273,19 @@ const EditCarModal: React.FC<EditCarModalProps> = ({
               onClick={onClose}
               className="btn btn--cancel"
             >
-              Отмена
+              {t('common.cancel')} {/* <-- ПЕРЕВОД */}
             </button>
             <button 
               type="submit" 
               className="btn btn--action"
               disabled={!formData.brand || !formData.model}
             >
-              Сохранить
+              {t('common.save')} {/* <-- ПЕРЕВОД */}
             </button>
           </div>
           
           <div className="modal__footer-signature">
-            © 2025 <span className="modal__footer-app-name">RuNiko</span>
+            {t('app.copyright')} {/* <-- ПЕРЕВОД */}
           </div>
         </div>
       </form>

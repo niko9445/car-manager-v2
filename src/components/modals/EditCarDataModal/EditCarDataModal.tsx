@@ -2,6 +2,7 @@ import React, { useState, useMemo } from 'react';
 import Modal from '../../ui/Modal/Modal';
 import { CarDataEntry, CarDataField } from '../../../types';
 import { useCurrency } from '../../../contexts/CurrencyContext';
+import { useTranslation } from '../../../contexts/LanguageContext';
 
 interface EditCarDataModalProps {
   data: CarDataEntry;
@@ -12,34 +13,73 @@ interface EditCarDataModalProps {
 const EditCarDataModal: React.FC<EditCarDataModalProps> = ({ data, onClose, onSave }) => {
   const [field, setField] = useState<CarDataField>(data.fields[0]);
   const { getCurrencySymbol } = useCurrency();
+  const { t } = useTranslation();
+
+  // Функция для получения отображаемого имени из ключа
+  const getDisplayName = (fieldKey: string): string => {
+    const translationMap: Record<string, string> = {
+      'insurance': t('carDataFields.insurance'),
+      'inspection': t('carDataFields.inspection'),
+      'dimensions': t('carDataFields.dimensions'),
+      'engineCode': t('carDataFields.engineCode'),
+      'fuelType': t('carDataFields.fuelType'),
+      'consumption': t('carDataFields.consumption'),
+      'power': t('carDataFields.power'),
+      'engineVolume': t('carDataFields.engineVolume'),
+      'cost': t('carDataFields.cost'),
+      'purchaseDate': t('carDataFields.purchaseDate'),
+      'color': t('carDataFields.color'),
+      'bodyType': t('carDataFields.bodyType'),
+      'drive': t('carDataFields.drive'),
+      'acceleration': t('carDataFields.acceleration'),
+      'maxSpeed': t('carDataFields.maxSpeed'),
+      'torque': t('carDataFields.torque'),
+      'weight': t('carDataFields.weight'),
+      'trunkVolume': t('carDataFields.trunkVolume'),
+      'country': t('carDataFields.country'),
+      'warranty': t('carDataFields.warranty'),
+      'tax': t('carDataFields.tax')
+    };
+    return translationMap[fieldKey] || fieldKey;
+  };
 
   const predefinedFields = useMemo(() => [
-    { name: 'Страховка', unit: '' },
-    { name: 'Техосмотр', unit: '' },
-    { name: 'Размеры', unit: '' },
-    { name: 'Код двигателя', unit: '' },
-    { name: 'Марка топлива', unit: '' },
-    { name: 'Расход', unit: '' },
-    { name: 'Мощность', unit: 'л.с.' },
-    { name: 'Объем двигателя', unit: 'л' },
-    { name: 'Стоимость', unit: getCurrencySymbol() },
-    { name: 'Дата покупки', unit: '' },
-    { name: 'Цвет', unit: '' },
-    { name: 'Тип кузова', unit: '' },
-    { name: 'Привод', unit: '' },
-    { name: 'Разгон до 100', unit: 'сек' },
-    { name: 'Макс. скорость', unit: 'км/ч' },
-    { name: 'Крутящий момент', unit: 'Н⋅м' },
-    { name: 'Вес', unit: 'кг' },
-    { name: 'Объем багажника', unit: 'л' },
-    { name: 'Страна производства', unit: '' },
-    { name: 'Гарантия', unit: 'мес' },
-    { name: 'Налог', unit: `${getCurrencySymbol()}/год` }
-  ], [getCurrencySymbol]);
+    { key: 'insurance', name: t('carDataFields.insurance'), unit: '' },
+    { key: 'inspection', name: t('carDataFields.inspection'), unit: '' },
+    { key: 'dimensions', name: t('carDataFields.dimensions'), unit: '' },
+    { key: 'engineCode', name: t('carDataFields.engineCode'), unit: '' },
+    { key: 'fuelType', name: t('carDataFields.fuelType'), unit: '' },
+    { key: 'consumption', name: t('carDataFields.consumption'), unit: '' },
+    { key: 'power', name: t('carDataFields.power'), unit: t('units.hp') },
+    { key: 'engineVolume', name: t('carDataFields.engineVolume'), unit: t('units.liters') },
+    { key: 'cost', name: t('carDataFields.cost'), unit: getCurrencySymbol() },
+    { key: 'purchaseDate', name: t('carDataFields.purchaseDate'), unit: '' },
+    { key: 'color', name: t('carDataFields.color'), unit: '' },
+    { key: 'bodyType', name: t('carDataFields.bodyType'), unit: '' },
+    { key: 'drive', name: t('carDataFields.drive'), unit: '' },
+    { key: 'acceleration', name: t('carDataFields.acceleration'), unit: t('units.seconds') },
+    { key: 'maxSpeed', name: t('carDataFields.maxSpeed'), unit: t('units.kmh') },
+    { key: 'torque', name: t('carDataFields.torque'), unit: t('units.nm') },
+    { key: 'weight', name: t('carDataFields.weight'), unit: t('units.kg') },
+    { key: 'trunkVolume', name: t('carDataFields.trunkVolume'), unit: t('units.liters') },
+    { key: 'country', name: t('carDataFields.country'), unit: '' },
+    { key: 'warranty', name: t('carDataFields.warranty'), unit: t('units.months') },
+    { key: 'tax', name: t('carDataFields.tax'), unit: `${getCurrencySymbol()}/${t('units.year')}` }
+  ], [getCurrencySymbol, t]);
 
   const handleSubmit = (e: React.FormEvent): void => {
     e.preventDefault();
-    onSave(data.id, { fields: [field] });
+    
+    // Находим ключ для текущего поля
+    const selectedField = predefinedFields.find(f => f.name === field.name);
+    const fieldKey = selectedField?.key || field.name;
+    
+    const updatedField = {
+      ...field,
+      name: fieldKey // Сохраняем ключ
+    };
+    
+    onSave(data.id, { fields: [updatedField] });
   };
 
   const handleParameterChange = (selectedName: string) => {
@@ -48,7 +88,7 @@ const EditCarDataModal: React.FC<EditCarDataModalProps> = ({ data, onClose, onSa
     if (selectedField) {
       setField(prev => ({ 
         ...prev, 
-        name: selectedField.name,
+        name: selectedField.name, // Отображаем переведенное имя
         unit: selectedField.unit
       }));
     } else {
@@ -60,24 +100,26 @@ const EditCarDataModal: React.FC<EditCarDataModalProps> = ({ data, onClose, onSa
     setField(prev => ({ ...prev, [key]: value }));
   };
 
-  const isDateField = field.name === 'Дата покупки';
+  // Определяем является ли поле датой (по ключу, а не по тексту)
+  const selectedFieldKey = predefinedFields.find(f => f.name === field.name)?.key || '';
+  const isDateField = selectedFieldKey === 'purchaseDate';
 
   return (
-    <Modal isOpen={true} onClose={onClose} title="Редактировать данные" size="md">
+    <Modal isOpen={true} onClose={onClose} title={t('carData.edit')} size="md">
       <form className="modal__form" onSubmit={handleSubmit}>
         
         <div className="modal__form-grid">
           <div className="modal__form-group">
-            <label className="modal__label">Название параметра</label>
+            <label className="modal__label">{t('carData.parameterName')}</label>
             <select
               className="modal__input"
               value={field.name}
               onChange={(e) => handleParameterChange(e.target.value)}
               required
             >
-              <option value="">Выберите параметр</option>
+              <option value="">{t('carData.selectParameter')}</option>
               {predefinedFields.map(item => (
-                <option key={item.name} value={item.name}>
+                <option key={item.key} value={item.name}>
                   {item.name} {item.unit && `(${item.unit})`}
                 </option>
               ))}
@@ -86,7 +128,7 @@ const EditCarDataModal: React.FC<EditCarDataModalProps> = ({ data, onClose, onSa
 
           <div className="modal__form-group">
             <label className="modal__label">
-              {isDateField ? 'Дата' : 'Значение'} {field.unit && `(${field.unit})`}
+              {isDateField ? t('common.date') : t('carData.value')} {field.unit && `(${field.unit})`}
             </label>
             {isDateField ? (
               <input
@@ -100,10 +142,10 @@ const EditCarDataModal: React.FC<EditCarDataModalProps> = ({ data, onClose, onSa
               <input
                 type="text"
                 className="modal__input"
-                placeholder={`Введите ${isDateField ? 'дату' : 'значение'} ${field.unit ? `в ${field.unit}` : ''}`}
+                placeholder={t('carData.enterValue')}
                 value={field.value}
                 onChange={(e) => updateField('value', e.target.value)}
-                required={field.name !== 'Стоимость'}
+                required={selectedFieldKey !== 'cost'}
               />
             )}
           </div>
@@ -112,19 +154,19 @@ const EditCarDataModal: React.FC<EditCarDataModalProps> = ({ data, onClose, onSa
         <div className="modal__actions-container">
           <div className="modal__actions modal__actions--centered">
             <button type="button" className="btn btn--cancel" onClick={onClose}>
-              Отмена
+              {t('common.cancel')}
             </button>
             <button 
               type="submit" 
               className="btn btn--action"
-              disabled={!field.name.trim() || (field.name !== 'Стоимость' && !field.value.trim())}
+              disabled={!field.name.trim() || (selectedFieldKey !== 'cost' && !field.value.trim())}
             >
-              Сохранить
+              {t('common.save')}
             </button>
           </div>
           
           <div className="modal__footer-signature">
-            © 2025 <span className="modal__footer-app-name">RuNiko</span>
+            {t('app.copyright')}
           </div>
         </div>
       </form>

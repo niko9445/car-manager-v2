@@ -2,6 +2,7 @@ import React, { useRef, useState } from 'react';
 import { exportData, importData } from '../../utils/database';
 import Notification from '../ui/Notification/Notification';
 import { DataManagerProps, NotificationState, NotificationType } from '../../types';
+import { useTranslation } from '../../contexts/LanguageContext'; // <-- ДОБАВИТЬ
 
 const DataManager: React.FC<DataManagerProps> = ({ hideTitle = false }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -11,6 +12,7 @@ const DataManager: React.FC<DataManagerProps> = ({ hideTitle = false }) => {
     title: '',
     message: ''
   });
+  const { t } = useTranslation(); // <-- ДОБАВИТЬ
 
   const showNotification = (type: NotificationType, title: string, message: string): void => {
     setNotification({
@@ -40,15 +42,15 @@ const DataManager: React.FC<DataManagerProps> = ({ hideTitle = false }) => {
 
       showNotification(
         'export',
-        'Экспорт завершен',
-        'Все данные успешно экспортированы в файл'
+        t('backup.exportSuccessTitle'), // <-- ПЕРЕВОД
+        t('backup.exportSuccessMessage') // <-- ПЕРЕВОД
       );
     } catch (error) {
       console.error('Export error:', error);
       showNotification(
         'error',
-        'Ошибка экспорта',
-        'Произошла ошибка при экспорте данных'
+        t('backup.exportErrorTitle'), // <-- ПЕРЕВОД
+        t('backup.exportErrorMessage') // <-- ПЕРЕВОД
       );
     }
   };
@@ -66,8 +68,8 @@ const DataManager: React.FC<DataManagerProps> = ({ hideTitle = false }) => {
         
         showNotification(
           'import',
-          'Импорт завершен',
-          'Данные успешно импортированы. Страница будет перезагружена через 2 секунды.'
+          t('backup.importSuccessTitle'), // <-- ПЕРЕВОД
+          t('backup.importSuccessMessage') // <-- ПЕРЕВОД
         );
 
         setTimeout(() => {
@@ -77,8 +79,8 @@ const DataManager: React.FC<DataManagerProps> = ({ hideTitle = false }) => {
         console.error('Import error:', error);
         showNotification(
           'error',
-          'Ошибка импорта',
-          'Проверьте файл. Возможно, он поврежден или имеет неверный формат.'
+          t('backup.importErrorTitle'), // <-- ПЕРЕВОД
+          t('backup.importErrorMessage') // <-- ПЕРЕВОД
         );
       }
     };
@@ -86,8 +88,8 @@ const DataManager: React.FC<DataManagerProps> = ({ hideTitle = false }) => {
     reader.onerror = () => {
       showNotification(
         'error',
-        'Ошибка чтения',
-        'Не удалось прочитать файл'
+        t('backup.readErrorTitle'), // <-- ПЕРЕВОД
+        t('backup.readErrorMessage') // <-- ПЕРЕВОД
       );
     };
     
@@ -111,7 +113,7 @@ const DataManager: React.FC<DataManagerProps> = ({ hideTitle = false }) => {
           <path d="M9 13L12 16L15 13" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
           <path d="M8 12H6a2 2 0 00-2 2v4a2 2 0 002 2h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2" stroke="currentColor" strokeWidth="2"/>
         </svg>
-        Скачать
+        {t('backup.download')} {/* <-- ПЕРЕВОД */}
       </button>
       
       <button 
@@ -124,7 +126,7 @@ const DataManager: React.FC<DataManagerProps> = ({ hideTitle = false }) => {
           <path d="M9 11L12 8L15 11" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
           <path d="M8 12H6a2 2 0 00-2 2v4a2 2 0 002 2h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2" stroke="currentColor" strokeWidth="2"/>
         </svg>
-        Загрузить
+        {t('backup.upload')} {/* <-- ПЕРЕВОД */}
       </button>
       
       <input
@@ -134,8 +136,6 @@ const DataManager: React.FC<DataManagerProps> = ({ hideTitle = false }) => {
         onChange={handleImport}
         style={{ display: 'none' }}
       />
-    
-  
 
       <Notification
         isOpen={notification.isOpen}

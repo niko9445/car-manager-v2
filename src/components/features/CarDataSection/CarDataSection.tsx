@@ -1,6 +1,7 @@
 import React from 'react';
 import { CarDataSectionProps } from '../../../types';
 import DataCard from './DataCard';
+import { useTranslation } from '../../../contexts/LanguageContext';
 
 const CarDataSection: React.FC<CarDataSectionProps> = ({ 
   car, 
@@ -11,38 +12,62 @@ const CarDataSection: React.FC<CarDataSectionProps> = ({
   onEditCar
 }) => {
   const currentCar = cars.find(c => c.id === car.id) || car;
+  const { t } = useTranslation();
+
+  // Функция для перевода типа двигателя
+  const getTranslatedEngineType = (engineType: string): string => {
+    switch (engineType) {
+      case 'petrol':
+        return t('engineTypes.petrol');
+      case 'diesel':
+        return t('engineTypes.diesel');
+      case 'electric':
+        return t('engineTypes.electric');
+      case 'hybrid':
+        return t('engineTypes.hybrid');
+      default:
+        return t('engineTypes.other');
+    }
+  };
+
+  // Функция для перевода типа коробки передач
+  const getTranslatedTransmission = (transmission: string): string => {
+    switch (transmission) {
+      case 'manual':
+        return t('transmissionTypes.manual');
+      case 'automatic':
+        return t('transmissionTypes.automatic');
+      case 'cvt':
+        return t('transmissionTypes.cvt');
+      default:
+        return t('transmissionTypes.other');
+    }
+  };
 
   // Объединяем основные данные и дополнительные данные в один массив для отображения
   const allDataItems = [
     // Основные данные как статические поля
-    { id: 'brand', name: 'Марка', value: currentCar.brand, isStatic: true },
-    { id: 'model', name: 'Модель', value: currentCar.model, isStatic: true },
-    { id: 'year', name: 'Год выпуска', value: currentCar.year.toString(), isStatic: true },
+    { id: 'brand', name: t('cars.brand'), value: currentCar.brand, isStatic: true },
+    { id: 'model', name: t('cars.model'), value: currentCar.model, isStatic: true },
+    { id: 'year', name: t('cars.year'), value: currentCar.year.toString(), isStatic: true },
     ...(currentCar.engineType ? [
       { 
         id: 'engineType', 
-        name: 'Двигатель', 
-        value: 
-          currentCar.engineType === 'petrol' ? 'Бензин' :
-          currentCar.engineType === 'diesel' ? 'Дизель' :
-          currentCar.engineType === 'electric' ? 'Электро' :
-          currentCar.engineType === 'hybrid' ? 'Гибрид' : 'Другой',
+        name: t('cars.engineType'),
+        value: getTranslatedEngineType(currentCar.engineType),
         isStatic: true 
       }
     ] : []),
     ...(currentCar.transmission ? [
       { 
         id: 'transmission', 
-        name: 'Коробка передач', 
-        value: 
-          currentCar.transmission === 'manual' ? 'МКПП' :
-          currentCar.transmission === 'automatic' ? 'АКПП' :
-          currentCar.transmission === 'cvt' ? 'Вариатор' : 'Другая',
+        name: t('cars.transmission'),
+        value: getTranslatedTransmission(currentCar.transmission),
         isStatic: true 
       }
     ] : []),
     ...(currentCar.vin ? [
-      { id: 'vin', name: 'VIN-код', value: currentCar.vin, isStatic: true }
+      { id: 'vin', name: t('cars.vin'), value: currentCar.vin, isStatic: true }
     ] : [])
   ];
 
@@ -52,14 +77,14 @@ const CarDataSection: React.FC<CarDataSectionProps> = ({
       <div className="section-header">
         <div className="section-title">
           <h2 className="section-title__text">
-            Информация об авто
+            {t('cars.carInfo')}
           </h2>
           <div className="section-title__actions">
             <button 
               className="btn btn--primary btn--compact"
               onClick={() => onEditCar(currentCar)}
               type="button"
-              title="Редактировать автомобиль"
+              title={t('cars.editCar')} 
             >
               <svg className="btn__icon" viewBox="0 0 24 24" fill="none">
                 <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" stroke="currentColor" strokeWidth="2"/>
@@ -70,7 +95,7 @@ const CarDataSection: React.FC<CarDataSectionProps> = ({
               className="btn btn--primary btn--compact"
               onClick={onAddCarData}
               type="button"
-              title="Добавить данные"
+              title={t('carData.add')} 
             >
               <svg className="btn__icon" viewBox="0 0 24 24" fill="none">
                 <path d="M12 5v14m-7-7h14" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
@@ -96,6 +121,7 @@ const CarDataSection: React.FC<CarDataSectionProps> = ({
                     createdAt: ''
                   }}
                   position={0}
+                  isStatic={true} 
                 />
               ))}
             </div>
@@ -119,16 +145,16 @@ const CarDataSection: React.FC<CarDataSectionProps> = ({
         {allDataItems.length === 0 && (!currentCar.carData || currentCar.carData.length === 0) && (
           <div className="section__empty">
             <div className="section__empty-icon">🚗</div>
-            <h3 className="section__empty-text">Нет данных об автомобиле</h3>
+            <h3 className="section__empty-text">{t('carData.noData')}</h3>
             <p className="section__empty-subtext">
-              Добавьте основную информацию и характеристики автомобиля
+              {t('carData.addFirstData')}
             </p>
             <div className="section__empty-actions">
               <button 
                 className="btn btn--primary"
                 onClick={() => onEditCar(currentCar)}
               >
-                Добавить данные
+                {t('carData.add')}
               </button>
             </div>
           </div>

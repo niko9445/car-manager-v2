@@ -3,6 +3,7 @@ import { useApp } from '../../../contexts/AppContext';
 import { Expense, ExpenseCategory, FuelData, PartsData, InsuranceData, InspectionData } from '../../../types';
 import { ExpenseService } from '../../../services/expenseService';
 import { useCurrency } from '../../../contexts/CurrencyContext';
+import { useTranslation } from '../../../contexts/LanguageContext'; // <-- ДОБАВИТЬ
 
 interface ExpenseFormData {
   date: string;
@@ -46,6 +47,7 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({
   const { state } = useApp();
   const { selectedCar } = state;
   const { getCurrencySymbol } = useCurrency();
+  const { t } = useTranslation(); // <-- ДОБАВИТЬ
   
   const [formData, setFormData] = useState<ExpenseFormData>({
     date: new Date().toISOString().split('T')[0],
@@ -129,8 +131,6 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({
           [partsField]: value
         }
       }));
-    // ЗАМЕНИТЕ эти проблемные функции в handleInputChange:
-
     } else if (name.startsWith('insuranceData.')) {
       const insuranceField = name.replace('insuranceData.', '') as keyof InsuranceData;
       setFormData(prev => ({
@@ -249,54 +249,54 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({
     const newErrors: ExpenseFormErrors = {};
 
     if (!formData.date) {
-      newErrors.date = 'Укажите дату расхода';
+      newErrors.date = t('expenseForm.dateRequired'); // <-- ПЕРЕВОД
     }
 
     if (!formData.amount || formData.amount <= 0) {
-      newErrors.amount = 'Укажите корректную сумму';
+      newErrors.amount = t('expenseForm.amountRequired'); // <-- ПЕРЕВОД
     }
 
     if (!formData.description.trim()) {
-      newErrors.description = 'Введите описание расхода';
+      newErrors.description = t('expenseForm.descriptionRequired'); // <-- ПЕРЕВОД
     }
 
     if (formData.odometer !== undefined && formData.odometer < 0) {
-      newErrors.odometer = 'Пробег не может быть отрицательным';
+      newErrors.odometer = t('expenseForm.odometerInvalid'); // <-- ПЕРЕВОД
     }
 
     // Валидация полей заправки
     if (formData.category === 'fuel') {
       if (formData.fuelData?.liters !== undefined && formData.fuelData.liters <= 0) {
-        newErrors.liters = 'Укажите корректное количество литров';
+        newErrors.liters = t('expenseForm.litersRequired'); // <-- ПЕРЕВОД
       }
     }
 
     // Валидация полей страховки
     if (formData.category === 'insurance') {
       if (formData.insuranceData?.series && formData.insuranceData.series.length !== 2) {
-        newErrors.series = 'Серия должна содержать 2 буквы';
+        newErrors.series = t('expenseForm.seriesRequired'); // <-- ПЕРЕВОД
       }
       if (formData.insuranceData?.number && formData.insuranceData.number.length === 0) {
-        newErrors.number = 'Введите номер';
+        newErrors.number = t('expenseForm.numberRequired'); // <-- ПЕРЕВОД
       }
       if (!formData.insuranceData?.startDate) {
-        newErrors.startDate = 'Укажите начало страхования';
+        newErrors.startDate = t('expenseForm.startDateRequired'); // <-- ПЕРЕВОД
       }
       if (!formData.insuranceData?.endDate) {
-        newErrors.endDate = 'Укажите конец страхования';
+        newErrors.endDate = t('expenseForm.endDateRequired'); // <-- ПЕРЕВОД
       }
     }
 
     // Валидация полей техосмотра
     if (formData.category === 'inspection') {
       if (formData.inspectionData?.series && formData.inspectionData.series.length !== 2) {
-        newErrors.series = 'Серия должна содержать 2 буквы';
+        newErrors.series = t('expenseForm.seriesRequired'); // <-- ПЕРЕВОД
       }
       if (formData.inspectionData?.number && formData.inspectionData.number.length === 0) {
-        newErrors.number = 'Введите номер';
+        newErrors.number = t('expenseForm.numberRequired'); // <-- ПЕРЕВОД
       }
       if (!formData.inspectionData?.validUntil) {
-        newErrors.validUntil = 'Укажите дату окончания';
+        newErrors.validUntil = t('expenseForm.validUntilRequired'); // <-- ПЕРЕВОД
       }
     }
 
@@ -337,32 +337,32 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({
       
     } catch (error) {
       console.error('Error saving expense:', error);
-      alert('Ошибка при сохранении расхода');
+      alert(t('expenseForm.saveError')); // <-- ПЕРЕВОД
     } finally {
       setLoading(false);
     }
   };
 
   const categoryOptions: { value: ExpenseCategory; label: string; icon: string }[] = [
-    { value: 'fuel', label: '⛽ Заправка', icon: '⛽' },
-    { value: 'maintenance', label: '🔧 Техобслуживание', icon: '🔧' },
-    { value: 'repairs', label: '🛠️ Ремонт', icon: '🛠️' },
-    { value: 'parts', label: '⚙️ Запчасти', icon: '⚙️' },
-    { value: 'insurance', label: '🛡️ Страховка', icon: '🛡️' },
-    { value: 'taxes', label: '📄 Налоги', icon: '📄' },
-    { value: 'parking', label: '🅿️ Парковка', icon: '🅿️' },
-    { value: 'washing', label: '🧼 Мойка', icon: '🧼' },
-    { value: 'fines', label: '🚨 Штрафы', icon: '🚨' },
-    { value: 'inspection', label: '📋 Техосмотр', icon: '📋' },
-    { value: 'other', label: '💰 Прочее', icon: '💰' }
+    { value: 'fuel', label: `⛽ ${t('expenseCategories.fuel')}`, icon: '⛽' }, // <-- ПЕРЕВОД
+    { value: 'maintenance', label: `🔧 ${t('expenseCategories.maintenance')}`, icon: '🔧' }, // <-- ПЕРЕВОД
+    { value: 'repairs', label: `🛠️ ${t('expenseCategories.repairs')}`, icon: '🛠️' }, // <-- ПЕРЕВОД
+    { value: 'parts', label: `⚙️ ${t('expenseCategories.parts')}`, icon: '⚙️' }, // <-- ПЕРЕВОД
+    { value: 'insurance', label: `🛡️ ${t('expenseCategories.insurance')}`, icon: '🛡️' }, // <-- ПЕРЕВОД
+    { value: 'taxes', label: `📄 ${t('expenseCategories.taxes')}`, icon: '📄' }, // <-- ПЕРЕВОД
+    { value: 'parking', label: `🅿️ ${t('expenseCategories.parking')}`, icon: '🅿️' }, // <-- ПЕРЕВОД
+    { value: 'washing', label: `🧼 ${t('expenseCategories.washing')}`, icon: '🧼' }, // <-- ПЕРЕВОД
+    { value: 'fines', label: `🚨 ${t('expenseCategories.fines')}`, icon: '🚨' }, // <-- ПЕРЕВОД
+    { value: 'inspection', label: `📋 ${t('expenseCategories.inspection')}`, icon: '📋' }, // <-- ПЕРЕВОД
+    { value: 'other', label: `💰 ${t('expenseCategories.other')}`, icon: '💰' } // <-- ПЕРЕВОД
   ];
 
   const quickTagsByCategory: Record<ExpenseCategory, string[]> = {
     fuel: ['АИ-92', 'АИ-95', 'АИ-98', 'Дизель', 'Газ', 'Премиум'],
     maintenance: ['Масло', 'Фильтр', 'Тормоза', 'Шины', 'АКБ', 'Жидкости'],
-    repairs: ['Двигатель', 'Трансмиссия', 'Электрика', 'Кузов', 'Подвеска', 'Выхлопная'], // ← ЗАКОММЕНТИРОВАНО
+    repairs: ['Двигатель', 'Трансмиссия', 'Электрика', 'Кузов', 'Подвеска', 'Выхлопная'],
     parts: ['Свечи', 'Тормозные колодки', 'Амортизаторы', 'Ремень ГРМ', 'Диски', 'Щетки'],
-    insurance: ['ОСАГО', 'КАСКО', 'Расширенная', 'Базовая', 'Годовая', 'Полгода'], // ← ЗАКОММЕНТИРОВАНО
+    insurance: ['ОСАГО', 'КАСКО', 'Расширенная', 'Базовая', 'Годовая', 'Полгода'],
     taxes: ['Транспортный', 'Имущественный', 'Земельный', 'Госпошлина'],
     parking: ['ТЦ', 'Улица', 'Подземная', 'Аэропорт', 'Вокзал', 'Отель'],
     washing: ['Автомат', 'Ручная', 'Самообслуживание', 'Полная', 'Бесконтактная', 'Полировка'],
@@ -381,7 +381,7 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({
       <div className="modal__form-grid">
         <div className="modal__form-group">
           <label htmlFor="date" className="modal__label modal__label--required">
-            Дата
+            {t('expenses.date')} {/* <-- ПЕРЕВОД */}
           </label>
           <input
             id="date"
@@ -397,7 +397,7 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({
 
         <div className="modal__form-group">
           <label htmlFor="category" className="modal__label modal__label--required">
-            Категория
+            {t('expenses.category')} {/* <-- ПЕРЕВОД */}
           </label>
           <select
             id="category"
@@ -416,7 +416,7 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({
 
         <div className="modal__form-group">
           <label htmlFor="amount" className="modal__label modal__label--required">
-            Сумма ({getCurrencySymbol()})
+            {t('expenses.amount')} ({getCurrencySymbol()}) {/* <-- ПЕРЕВОД */}
           </label>
           <input
             id="amount"
@@ -438,7 +438,7 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({
           <>
             <div className="modal__form-group">
               <label htmlFor="fuelData.liters" className="modal__label">
-                Заправлено (л)
+                {t('expenseForm.fuelLiters')} {/* <-- ПЕРЕВОД */}
               </label>
               <input
                 id="fuelData.liters"
@@ -453,7 +453,6 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({
               />
               {errors.liters && <span className="modal__error">{errors.liters}</span>}
             </div>
-
           </>
         )}
 
@@ -462,7 +461,7 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({
           <>
             <div className="modal__form-group">
               <label htmlFor="partsData.article" className="modal__label">
-                Артикул
+                {t('expenseForm.partArticle')} {/* <-- ПЕРЕВОД */}
               </label>
               <input
                 id="partsData.article"
@@ -471,13 +470,13 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({
                 value={formData.partsData?.article || ''}
                 onChange={handleInputChange}
                 className="modal__input"
-                placeholder="Номер артикула"
+                placeholder={t('expenseForm.articlePlaceholder')} 
               />
             </div>
 
             <div className="modal__form-group">
               <label htmlFor="partsData.link" className="modal__label">
-                Ссылка
+                {t('expenseForm.link')} {/* <-- ПЕРЕВОД */}
               </label>
               <input
                 id="partsData.link"
@@ -496,14 +495,14 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({
         {isInsuranceCategory && (
           <>
             <div className="modal__form-group modal__form-group--full">
-              <label className="modal__label">Серия и номер</label>
+              <label className="modal__label">{t('expenseForm.seriesNumber')}</label> {/* <-- ПЕРЕВОД */}
               <div style={{ display: 'grid', gridTemplateColumns: '80px 1fr', gap: '8px' }}>
                 <input
                   type="text"
                   value={formData.insuranceData?.series || ''}
                   onChange={(e) => handleSeriesChange(e, 'insurance')}
                   className={`modal__input ${errors.series ? 'modal__input--error' : ''}`}
-                  placeholder="АА"
+                  placeholder={t('expenseForm.series')} 
                   maxLength={2}
                   style={{ textTransform: 'uppercase', textAlign: 'center' }}
                 />
@@ -512,7 +511,7 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({
                   value={formData.insuranceData?.number || ''}
                   onChange={(e) => handleNumberChange(e, 'insurance')}
                   className={`modal__input ${errors.number ? 'modal__input--error' : ''}`}
-                  placeholder="Номер"
+                  placeholder={t('expenseForm.number')} 
                 />
               </div>
               {(errors.series || errors.number) && (
@@ -521,7 +520,7 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({
             </div>
 
             <div className="modal__form-group modal__form-group--full">
-              <label className="modal__label">Срок страхования</label>
+              <label className="modal__label">{t('expenseForm.insurancePeriod')}</label> {/* <-- ПЕРЕВОД */}
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
                 <input
                   type="date"
@@ -549,14 +548,14 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({
         {isInspectionCategory && (
           <>
             <div className="modal__form-group modal__form-group--full">
-              <label className="modal__label">Серия и номер</label>
+              <label className="modal__label">{t('expenseForm.seriesNumber')}</label> {/* <-- ПЕРЕВОД */}
               <div style={{ display: 'grid', gridTemplateColumns: '80px 1fr', gap: '8px' }}>
                 <input
                   type="text"
                   value={formData.inspectionData?.series || ''}
                   onChange={(e) => handleSeriesChange(e, 'inspection')}
                   className={`modal__input ${errors.series ? 'modal__input--error' : ''}`}
-                  placeholder="АА"
+                  placeholder={t('expenseForm.series')} 
                   maxLength={2}
                   style={{ textTransform: 'uppercase', textAlign: 'center' }}
                 />
@@ -565,7 +564,7 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({
                   value={formData.inspectionData?.number || ''}
                   onChange={(e) => handleNumberChange(e, 'inspection')}
                   className={`modal__input ${errors.number ? 'modal__input--error' : ''}`}
-                  placeholder="Номер"
+                  placeholder={t('expenseForm.number')} 
                 />
               </div>
               {(errors.series || errors.number) && (
@@ -575,7 +574,7 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({
 
             <div className="modal__form-group">
               <label htmlFor="inspectionData.validUntil" className="modal__label">
-                Действителен до
+                {t('expenseForm.validUntil')} {/* <-- ПЕРЕВОД */}
               </label>
               <input
                 id="inspectionData.validUntil"
@@ -592,7 +591,7 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({
 
         <div className="modal__form-group modal__form-group--full">
           <label htmlFor="description" className="modal__label modal__label--required">
-            Описание
+            {t('expenses.description')} {/* <-- ПЕРЕВОД */}
           </label>
           <textarea
             id="description"
@@ -600,7 +599,7 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({
             value={formData.description}
             onChange={handleInputChange}
             className={`modal__input modal__input--textarea ${errors.description ? 'modal__input--error' : ''}`}
-            placeholder="Краткое описание расхода..."
+            placeholder={t('expenseForm.descriptionPlaceholder')} 
             rows={3}
             required
           />
@@ -641,19 +640,19 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({
             onClick={onCancel}
             disabled={loading}
           >
-            Отмена
+            {t('common.cancel')} {/* <-- ПЕРЕВОД */}
           </button>
           <button
             type="submit"
             className={`btn btn--action ${loading ? 'btn--action-loading' : ''}`}
             disabled={loading}
           >
-            {loading ? 'Сохранение...' : expense ? 'Сохранить' : 'Сохранить'}
+            {loading ? t('expenseForm.saving') : t('common.save')} {/* <-- ПЕРЕВОД */}
           </button>
         </div>
         
         <div className="modal__footer-signature">
-          © 2025 <span className="modal__footer-app-name">RuNiko</span>
+          {t('app.copyright')} {/* <-- ПЕРЕВОД */}
         </div>
       </div>
     </form>

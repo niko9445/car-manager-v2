@@ -446,3 +446,21 @@ export interface ThemeContextType {
 export interface ThemeSwitcherProps {
   className?: string;
 }
+
+// ===== ТИПЫ ДЛЯ СИСТЕМЫ ЯЗЫКА =====
+
+export type Language = 'ru' | 'en';
+
+export interface LanguageContextType {
+  language: Language;
+  setLanguage: (language: Language) => void;
+}
+
+export interface TranslationFunction {
+  (path: string, params?: Record<string, any>): string;
+}
+
+export interface UseTranslationReturn {
+  t: TranslationFunction;
+  language: Language;
+}

@@ -4,6 +4,7 @@ import CarDataSection from '../../features/CarDataSection/CarDataSection';
 import ExpenseTracker from '../../expenses/ExpenseTracker/ExpenseTracker';
 import EditMaintenanceModal from '../../modals/EditMaintenanceModal/EditMaintenanceModal';
 import { MainContentProps, Maintenance } from '../../../types';
+import { useTranslation } from '../../../contexts/LanguageContext';
 
 const MainContent: React.FC<MainContentProps> = ({ 
   selectedCar, 
@@ -22,6 +23,7 @@ const MainContent: React.FC<MainContentProps> = ({
 }) => {
   const [editingMaintenance, setEditingMaintenance] = useState<Maintenance | null>(null);
   const [isEditMaintenanceModalOpen, setIsEditMaintenanceModalOpen] = useState(false);
+  const { t } = useTranslation();
 
   const handleEditMaintenance = (maintenance: Maintenance): void => {
     setIsEditMaintenanceModalOpen(false);
@@ -50,8 +52,6 @@ const MainContent: React.FC<MainContentProps> = ({
     setEditingMaintenance(null);
   };
 
-
-
   if (!selectedCar) {
     return (
       <div className="main-welcome">
@@ -70,11 +70,11 @@ const MainContent: React.FC<MainContentProps> = ({
           
           <div className="main-welcome__text">
             <h1 className="main-welcome__title">
-              Car Manager
+              {t('app.name')} {/* <-- ПЕРЕВОД (вместо "Car Manager") */}
             </h1>
             
             <p className="main-welcome__subtitle">
-              Управляйте автомобилями и отслеживайте расходы
+              {t('app.tagline')}
             </p>
           </div>
 
@@ -88,14 +88,14 @@ const MainContent: React.FC<MainContentProps> = ({
                 <svg className="btn__icon" viewBox="0 0 24 24" fill="none" width="18" height="18">
                   <path d="M3 12h18M3 6h18M3 18h18" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
                 </svg>
-                Выбрать автомобиль
+                {t('cars.selectCar')}
               </button>
             ) : (
               <div className="main-welcome__hint">
                 <svg viewBox="0 0 24 24" fill="none" width="20" height="20">
                   <path d="M14 5l7 7m0 0l-7 7m7-7H3" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
                 </svg>
-                <span>Выберите автомобиль из списка слева</span>
+                <span>{t('cars.selectCar')}</span>
               </div>
             )}
           </div>
@@ -148,7 +148,7 @@ const MainContent: React.FC<MainContentProps> = ({
               className="menu-toggle-compact"
               onClick={onOpenSidebar}
               type="button"
-              aria-label="Открыть меню"
+              aria-label={t('navigation.openMenu')}
             >
               <span className="menu-toggle-compact__line"></span>
               <span className="menu-toggle-compact__line"></span>
@@ -173,7 +173,7 @@ const MainContent: React.FC<MainContentProps> = ({
               <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" stroke="currentColor" strokeWidth="2"/>
               <path d="M14 2v6h6M16 13H8M16 17H8M10 9H8" stroke="currentColor" strokeWidth="2"/>
             </svg>
-            ТО
+            {t('navigation.maintenance')}
           </button>
           
           <button
@@ -185,7 +185,7 @@ const MainContent: React.FC<MainContentProps> = ({
               <path d="M12 11a5 5 0 0 1 5 5v6H7v-6a5 5 0 0 1 5-5z" stroke="currentColor" strokeWidth="2"/>
               <path d="M16 7a4 4 0 1 1-8 0 4 4 0 0 1 8 0z" stroke="currentColor" strokeWidth="2"/>
             </svg>
-            Данные
+            {t('navigation.carData')}
           </button>
 
           <button
@@ -197,7 +197,7 @@ const MainContent: React.FC<MainContentProps> = ({
               <path d="M12 1v22M5 6h14a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2z" stroke="currentColor" strokeWidth="2"/>
               <path d="M17 10h.01M7 10h.01" stroke="currentColor" strokeWidth="2"/>
             </svg>
-            Расходы
+            {t('navigation.expenses')}
           </button>
         </div>
       </div>

@@ -1,5 +1,6 @@
 import React from 'react';
 import { CarCardProps } from '../../../types';
+import { useTranslation } from '../../../contexts/LanguageContext'; // <-- ДОБАВИТЬ
 
 const CarCard: React.FC<CarCardProps> = ({
   car,
@@ -9,6 +10,24 @@ const CarCard: React.FC<CarCardProps> = ({
   isMobile = false,
   onDelete
 }) => {
+  const { t } = useTranslation(); // <-- ДОБАВИТЬ
+
+  // Функция для перевода типа двигателя
+  const getTranslatedEngineType = (engineType: string): string => {
+    switch (engineType) {
+      case 'petrol':
+        return t('engineTypes.petrol');
+      case 'diesel':
+        return t('engineTypes.diesel');
+      case 'electric':
+        return t('engineTypes.electric');
+      case 'hybrid':
+        return t('engineTypes.hybrid');
+      default:
+        return t('engineTypes.other');
+    }
+  };
+
   return (
     <div 
       className={`car-card ${isSelected ? 'car-card--selected' : ''} ${isMobile ? 'car-card--mobile' : ''}`}
@@ -28,7 +47,7 @@ const CarCard: React.FC<CarCardProps> = ({
               onDelete(car);
             }}
             type="button"
-            title="Удалить автомобиль"
+            title={t('cars.deleteCar')} 
           >
             <svg viewBox="0 0 24 24" fill="none" width="16" height="16">
               <path 
@@ -45,10 +64,7 @@ const CarCard: React.FC<CarCardProps> = ({
             {car.brand} {car.model}
           </h3>
           <p className="car-card__description">
-            {car.year} • {car.engineType === 'petrol' ? 'Бензин' : 
-                         car.engineType === 'diesel' ? 'Дизель' : 
-                         car.engineType === 'electric' ? 'Электро' : 
-                         car.engineType === 'hybrid' ? 'Гибрид' : 'Другой'}
+            {car.year} • {getTranslatedEngineType(car.engineType)} {/* <-- ПЕРЕВОД */}
           </p>
         </div>
       </div>

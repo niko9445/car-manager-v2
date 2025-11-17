@@ -2,10 +2,12 @@ import React from 'react';
 import { useApp } from '../../../contexts/AppContext';
 import Modal from '../../ui/Modal/Modal';
 import ExpenseForm from '../../expenses/ExpenseForm/ExpenseForm';
+import { useTranslation } from '../../../contexts/LanguageContext'; // <-- ДОБАВИТЬ
 
 const AddExpenseModal: React.FC = () => {
   const { state, dispatch } = useApp();
   const { modals, modalData } = state;
+  const { t } = useTranslation(); // <-- ДОБАВИТЬ
 
   const isOpen = modals.addExpense || modals.editExpense;
   const isEditMode = modals.editExpense;
@@ -40,7 +42,7 @@ const AddExpenseModal: React.FC = () => {
     <Modal
       isOpen={isOpen}
       onClose={handleClose}
-      title={isEditMode ? 'Редактировать расход' : 'Добавить расход'}
+      title={isEditMode ? t('expenses.edit') : t('expenses.add')}
       size="md"
     >
       <ExpenseForm

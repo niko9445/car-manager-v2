@@ -1,6 +1,6 @@
 import React, { useEffect, useCallback } from 'react';
 import { AppProvider, useApp } from './contexts/AppContext';
-import { ThemeProvider } from './contexts/ThemeContext'; // <-- ДОБАВЛЯЕМ
+import { ThemeProvider } from './contexts/ThemeContext';
 import Sidebar from './components/layout/Sidebar/Sidebar';
 import MainContent from './components/layout/MainContent/MainContent';
 import AddCarModal from './components/modals/AddCarModal/AddCarModal';
@@ -10,6 +10,7 @@ import AddCarDataModal from './components/modals/AddCarDataModal/AddCarDataModal
 import AddExpenseModal from './components/modals/AddExpenseModal/AddExpenseModal';
 import ConfirmModal from './components/ui/ConfirmModal/ConfirmModal';
 import EditCarDataModal from './components/modals/EditCarDataModal/EditCarDataModal';
+import { LanguageProvider, useTranslation } from './contexts/LanguageContext'; // <-- ДОБАВИТЬ useTranslation
 import { CurrencyProvider } from './contexts/CurrencyContext';
 import { useLocalStorage } from './hooks/useLocalStorage';
 import { 
@@ -29,6 +30,7 @@ import './styles/globals.css';
 const AppContent = () => {
   const [cars, setCars] = useLocalStorage<Car[]>('cars', []);
   const { state, dispatch } = useApp();
+  const { t } = useTranslation(); // <-- ДОБАВИТЬ
   const { selectedCar, activeSection, isMobile, sidebarOpen, modals, modalData } = state;
 
   // Синхронизируем cars с контекстом
@@ -118,8 +120,11 @@ const AppContent = () => {
   const handleDeleteCar = (car: Car) => {
     openModal('confirmDelete', { 
       type: 'delete' as ConfirmType, 
-      title: 'Удалить автомобиль',
-      message: `Вы уверены, что хотите удалить автомобиль "${car.brand} ${car.model}"?`,
+      title: t('confirmations.deleteCar'), // <-- ПЕРЕВОД
+      message: t('confirmations.deleteCarMessage', { // <-- ПЕРЕВОД
+        brand: car.brand,
+        model: car.model
+      }),
       onConfirm: () => {
         const updatedCars = cars.filter(c => c.id !== car.id);
         setCars(updatedCars);
@@ -138,12 +143,11 @@ const AppContent = () => {
       if (car.id === selectedCar.id) {
         const newMaintenance: Maintenance = {
           id: Date.now().toString(),
-          carId: selectedCar.id, // ← ДОБАВЬ ЭТУ СТРОКУ
+          carId: selectedCar.id,
           date: maintenanceData.date,
           mileage: maintenanceData.mileage,
           cost: maintenanceData.cost ?? null,
           createdAt: new Date().toISOString(),
-          // Добавляем новые поля из системы категорий
           categoryId: maintenanceData.categoryId,
           subcategoryId: maintenanceData.subcategoryId,
           customFields: maintenanceData.customFields
@@ -218,8 +222,10 @@ const AppContent = () => {
     
     openModal('confirmDelete', { 
       type: 'delete' as ConfirmType, 
-      title: 'Удалить запись ТО',
-      message: `Вы уверены, что хотите удалить запись ТО от ${new Date(maintenance.createdAt).toLocaleDateString('ru-RU')}?`,
+      title: t('confirmations.deleteMaintenance'), // <-- ПЕРЕВОД
+      message: t('confirmations.deleteMaintenanceMessage', { // <-- ПЕРЕВОД
+        date: new Date(maintenance.createdAt).toLocaleDateString('ru-RU')
+      }),
       onConfirm: () => {
         const updatedCars = cars.map(car => {
           if (car.id === selectedCar.id) {
@@ -241,8 +247,8 @@ const AppContent = () => {
     
     openModal('confirmDelete', { 
       type: 'delete' as ConfirmType, 
-      title: 'Удалить данные',
-      message: `Вы уверены, что хотите удалить эти данные?`,
+      title: t('confirmations.deleteTitle'), // <-- ПЕРЕВОД
+      message: t('confirmations.deleteMessage'), // <-- ПЕРЕВОД
       onConfirm: () => {
         const updatedCars = cars.map(car => {
           if (car.id === selectedCar.id) {
@@ -402,12 +408,14 @@ const AppContent = () => {
 
 const App = () => {
   return (
-    <ThemeProvider> {/* <-- ОБЕРТЫВАЕМ ВСЕ ПРИЛОЖЕНИЕ */}
-      <AppProvider>
-        <CurrencyProvider>
-          <AppContent />
-        </CurrencyProvider>
-      </AppProvider>
+    <ThemeProvider>
+      <LanguageProvider>
+        <AppProvider>
+          <CurrencyProvider>
+            <AppContent />
+          </CurrencyProvider>
+        </AppProvider>
+      </LanguageProvider>
     </ThemeProvider>
   );
 };

@@ -2,6 +2,7 @@ import React, { useState, useMemo } from 'react';
 import Modal from '../../ui/Modal/Modal';
 import { CarDataField } from '../../../types';
 import { useCurrency } from '../../../contexts/CurrencyContext';
+import { useTranslation } from '../../../contexts/LanguageContext';
 
 interface AddCarDataModalProps {
   onClose: () => void;
@@ -11,6 +12,7 @@ interface AddCarDataModalProps {
 const AddCarDataModal: React.FC<AddCarDataModalProps> = ({ onClose, onSave }) => {
   const [fields, setFields] = useState<CarDataField[]>([{ name: '', value: '', unit: '' }]);
   const { getCurrencySymbol } = useCurrency();
+  const { t } = useTranslation();
 
   // Дополнительные поля для специальных категорий
   const [insuranceData, setInsuranceData] = useState({
@@ -42,89 +44,99 @@ const AddCarDataModal: React.FC<AddCarDataModalProps> = ({ onClose, onSave }) =>
     highway: ''
   });
 
+  // Ключи для predefined fields (сохраняем ключи, а не переведенные тексты)
   const predefinedFields = useMemo(() => [
-    { name: 'Страховка', unit: '' },
-    { name: 'Техосмотр', unit: '' },
-    { name: 'Размеры', unit: '' },
-    { name: 'Код двигателя', unit: '' },
-    { name: 'Марка топлива', unit: '' },
-    { name: 'Расход', unit: '' },
-    { name: 'Мощность', unit: 'л.с.' },
-    { name: 'Объем двигателя', unit: 'л' },
-    { name: 'Стоимость', unit: getCurrencySymbol() },
-    { name: 'Дата покупки', unit: '' },
-    { name: 'Цвет', unit: '' },
-    { name: 'Тип кузова', unit: '' },
-    { name: 'Привод', unit: '' },
-    { name: 'Разгон до 100', unit: 'сек' },
-    { name: 'Макс. скорость', unit: 'км/ч' },
-    { name: 'Крутящий момент', unit: 'Н⋅м' },
-    { name: 'Вес', unit: 'кг' },
-    { name: 'Объем багажника', unit: 'л' },
-    { name: 'Страна производства', unit: '' },
-    { name: 'Гарантия', unit: 'мес' },
-    { name: 'Налог', unit: `${getCurrencySymbol()}/год` }
-  ], [getCurrencySymbol]);
+    { key: 'insurance', name: t('carDataFields.insurance'), unit: '' },
+    { key: 'inspection', name: t('carDataFields.inspection'), unit: '' },
+    { key: 'dimensions', name: t('carDataFields.dimensions'), unit: '' },
+    { key: 'engineCode', name: t('carDataFields.engineCode'), unit: '' },
+    { key: 'fuelType', name: t('carDataFields.fuelType'), unit: '' },
+    { key: 'consumption', name: t('carDataFields.consumption'), unit: '' },
+    { key: 'power', name: t('carDataFields.power'), unit: t('units.hp') },
+    { key: 'engineVolume', name: t('carDataFields.engineVolume'), unit: t('units.liters') },
+    { key: 'cost', name: t('carDataFields.cost'), unit: getCurrencySymbol() },
+    { key: 'purchaseDate', name: t('carDataFields.purchaseDate'), unit: '' },
+    { key: 'color', name: t('carDataFields.color'), unit: '' },
+    { key: 'bodyType', name: t('carDataFields.bodyType'), unit: '' },
+    { key: 'drive', name: t('carDataFields.drive'), unit: '' },
+    { key: 'acceleration', name: t('carDataFields.acceleration'), unit: t('units.seconds') },
+    { key: 'maxSpeed', name: t('carDataFields.maxSpeed'), unit: t('units.kmh') },
+    { key: 'torque', name: t('carDataFields.torque'), unit: t('units.nm') },
+    { key: 'weight', name: t('carDataFields.weight'), unit: t('units.kg') },
+    { key: 'trunkVolume', name: t('carDataFields.trunkVolume'), unit: t('units.liters') },
+    { key: 'country', name: t('carDataFields.country'), unit: '' },
+    { key: 'warranty', name: t('carDataFields.warranty'), unit: t('units.months') },
+    { key: 'tax', name: t('carDataFields.tax'), unit: `${getCurrencySymbol()}/${t('units.year')}` }
+  ], [getCurrencySymbol, t]);
 
-  const selectedCategory = fields[0].name;
-  const isSpecialCategory = selectedCategory === 'Страховка' || selectedCategory === 'Техосмотр' || selectedCategory === 'Размеры' || selectedCategory === 'Расход';
-  const showValueField = !isSpecialCategory && selectedCategory !== 'Дата покупки';
+  const selectedCategoryKey = predefinedFields.find(f => f.name === fields[0].name)?.key || '';
+  const selectedCategoryName = fields[0].name;
+  
+  const isSpecialCategory = selectedCategoryKey === 'insurance' || selectedCategoryKey === 'inspection' || selectedCategoryKey === 'dimensions' || selectedCategoryKey === 'consumption';
+  const showValueField = !isSpecialCategory && selectedCategoryKey !== 'purchaseDate';
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (selectedCategory === 'Страховка') {
+    if (selectedCategoryKey === 'insurance') {
       const formattedStartDate = new Date(insuranceData.startDate).toLocaleDateString('ru-RU');
       const formattedEndDate = new Date(insuranceData.endDate).toLocaleDateString('ru-RU');
       const insuranceValue = `${insuranceData.series}${insuranceData.number} с ${formattedStartDate} до ${formattedEndDate}`;
       
       const insuranceField = { 
-        name: 'Страховка', 
+        name: 'insurance', // ← Сохраняем КЛЮЧ
         value: insuranceValue, 
         unit: ''
       };
       onSave({ fields: [insuranceField] });
     } 
-    else if (selectedCategory === 'Техосмотр') {
+    else if (selectedCategoryKey === 'inspection') {
       const formattedDate = new Date(inspectionData.validUntil).toLocaleDateString('ru-RU');
       const inspectionValue = `${inspectionData.series}${inspectionData.number} до ${formattedDate}`;
       
       const inspectionField = { 
-        name: 'Техосмотр', 
+        name: 'inspection', // ← Сохраняем КЛЮЧ
         value: inspectionValue, 
         unit: ''
       };
       onSave({ fields: [inspectionField] });
     }
-    else if (selectedCategory === 'Размеры') {
-      const dimensionsValue = `Д:${dimensionsData.length} Ш:${dimensionsData.width} В:${dimensionsData.height} Клиренс:${dimensionsData.clearance} Колёса:${dimensionsData.wheelSize} Сверловка:${dimensionsData.boltPattern} Диски:${dimensionsData.wheelDimensions}`;
+    else if (selectedCategoryKey === 'dimensions') {
+      const dimensionsValue = `${t('dimensions.length')}:${dimensionsData.length} ${t('dimensions.width')}:${dimensionsData.width} ${t('dimensions.height')}:${dimensionsData.height} ${t('dimensions.clearance')}:${dimensionsData.clearance} ${t('dimensions.wheelSize')}:${dimensionsData.wheelSize} ${t('dimensions.boltPattern')}:${dimensionsData.boltPattern} ${t('dimensions.wheelDimensions')}:${dimensionsData.wheelDimensions}`;
       const dimensionsField = { 
-        name: 'Размеры', 
+        name: 'dimensions', // ← Сохраняем КЛЮЧ
         value: dimensionsValue, 
         unit: ''
       };
       onSave({ fields: [dimensionsField] });
     }
-    else if (selectedCategory === 'Расход') {
-      const consumptionValue = `Смешанный:${consumptionData.mixed} Город:${consumptionData.city} Трасса:${consumptionData.highway}`;
+    else if (selectedCategoryKey === 'consumption') {
+      const consumptionValue = `${t('consumption.mixed')}:${consumptionData.mixed} ${t('consumption.city')}:${consumptionData.city} ${t('consumption.highway')}:${consumptionData.highway}`;
       const consumptionField = { 
-        name: 'Расход', 
+        name: 'consumption', // ← Сохраняем КЛЮЧ
         value: consumptionValue, 
         unit: ''
       };
       onSave({ fields: [consumptionField] });
     }
-    else if (selectedCategory === 'Дата покупки') {
+    else if (selectedCategoryKey === 'purchaseDate') {
       const dateField = { 
-        name: 'Дата покупки', 
+        name: 'purchaseDate', // ← Сохраняем КЛЮЧ
         value: fields[0].value, 
         unit: ''
       };
       onSave({ fields: [dateField] });
     }
     else {
-      if (fields.every(f => f.name.trim() && f.value.trim())) {
-        onSave({ fields });
+      // Для стандартных полей сохраняем ключ
+      const selectedField = predefinedFields.find(f => f.name === fields[0].name);
+      if (selectedField && fields.every(f => f.name.trim() && f.value.trim())) {
+        const standardField = { 
+          name: selectedField.key, // ← Сохраняем КЛЮЧ
+          value: fields[0].value, 
+          unit: fields[0].unit
+        };
+        onSave({ fields: [standardField] });
       }
     }
   };
@@ -141,7 +153,7 @@ const AddCarDataModal: React.FC<AddCarDataModalProps> = ({ onClose, onSave }) =>
       const updated = [...fields];
       updated[index] = { 
         ...updated[index], 
-        name: selectedField.name,
+        name: selectedField.name, // Отображаем переведенное имя
         unit: selectedField.unit
       };
       setFields(updated);
@@ -168,44 +180,44 @@ const AddCarDataModal: React.FC<AddCarDataModalProps> = ({ onClose, onSave }) =>
   };
 
   const isFormValid = () => {
-    if (selectedCategory === 'Страховка') {
+    if (selectedCategoryKey === 'insurance') {
       return insuranceData.series && insuranceData.number && insuranceData.startDate && insuranceData.endDate;
     }
-    if (selectedCategory === 'Техосмотр') {
+    if (selectedCategoryKey === 'inspection') {
       return inspectionData.series && inspectionData.number && inspectionData.validUntil;
     }
-    if (selectedCategory === 'Размеры') {
+    if (selectedCategoryKey === 'dimensions') {
       return dimensionsData.length || dimensionsData.width || dimensionsData.height || dimensionsData.clearance || dimensionsData.wheelSize || dimensionsData.boltPattern || dimensionsData.wheelDimensions;
     }
-    if (selectedCategory === 'Расход') {
+    if (selectedCategoryKey === 'consumption') {
       return consumptionData.mixed || consumptionData.city || consumptionData.highway;
     }
-    if (selectedCategory === 'Стоимость') {
+    if (selectedCategoryKey === 'cost') {
       return fields[0].name.trim();
     }
-    if (selectedCategory === 'Дата покупки') {
+    if (selectedCategoryKey === 'purchaseDate') {
       return fields[0].value.trim();
     }
     return fields[0].name.trim() && fields[0].value.trim();
   };
 
   return (
-    <Modal isOpen={true} onClose={onClose} title="Добавить данные об авто" size="lg">
+    <Modal isOpen={true} onClose={onClose} title={t('carData.addCarData')} size="lg">
       <form className="modal__form" onSubmit={handleSubmit}>
         
         {/* Выбор категории */}
         <div className="modal__form-grid">
           <div className="modal__form-group">
-            <label className="modal__label">Название параметра</label>
+            <label className="modal__label">{t('carData.parameterName')}</label>
             <select
               className="modal__input"
               value={fields[0].name}
               onChange={(e) => handleParameterChange(0, e.target.value)}
               required
             >
-              <option value="">Выберите параметр</option>
+              <option value="">{t('carData.selectParameter')}</option>
               {predefinedFields.map(item => (
-                <option key={item.name} value={item.name}>
+                <option key={item.key} value={item.name}>
                   {item.name} {item.unit && `(${item.unit})`}
                 </option>
               ))}
@@ -216,23 +228,23 @@ const AddCarDataModal: React.FC<AddCarDataModalProps> = ({ onClose, onSave }) =>
           {showValueField && (
             <div className="modal__form-group">
               <label className="modal__label">
-                Значение {fields[0].unit && `(${fields[0].unit})`}
+                {t('carData.value')} {fields[0].unit && `(${fields[0].unit})`}
               </label>
               <input
                 className="modal__input"
                 type="text"
-                placeholder={`Введите значение ${fields[0].unit ? `в ${fields[0].unit}` : ''}`}
+                placeholder={t('carData.enterValue')}
                 value={fields[0].value}
                 onChange={(e) => updateField(0, 'value', e.target.value)}
-                required={selectedCategory !== 'Стоимость'}
+                required={selectedCategoryKey !== 'cost'}
               />
             </div>
           )}
 
           {/* Поле даты для категории "Дата покупки" */}
-          {selectedCategory === 'Дата покупки' && (
+          {selectedCategoryKey === 'purchaseDate' && (
             <div className="modal__form-group">
-              <label className="modal__label">Дата покупки</label>
+              <label className="modal__label">{t('carDataFields.purchaseDate')}</label>
               <input
                 type="date"
                 className="modal__input"
@@ -245,13 +257,13 @@ const AddCarDataModal: React.FC<AddCarDataModalProps> = ({ onClose, onSave }) =>
         </div>
 
         {/* Дополнительные поля для Страховки */}
-        {selectedCategory === 'Страховка' && (
+        {selectedCategoryKey === 'insurance' && (
           <div className="modal__form-section">
             <div className="modal__form-grid">
               <div className="modal__form-group" style={{ gridColumn: '1 / -1' }}>
                 <div style={{ display: 'flex', gap: '12px', alignItems: 'flex-end' }}>
                   <div style={{ flex: '0 0 80px' }}>
-                    <label className="modal__label">Серия</label>
+                    <label className="modal__label">{t('expenseForm.series')}</label>
                     <input
                       type="text"
                       className="modal__input"
@@ -263,7 +275,7 @@ const AddCarDataModal: React.FC<AddCarDataModalProps> = ({ onClose, onSave }) =>
                     />
                   </div>
                   <div style={{ flex: 1 }}>
-                    <label className="modal__label">Номер</label>
+                    <label className="modal__label">{t('expenseForm.number')}</label>
                     <input
                       type="text"
                       className="modal__input"
@@ -279,7 +291,7 @@ const AddCarDataModal: React.FC<AddCarDataModalProps> = ({ onClose, onSave }) =>
               <div className="modal__form-group" style={{ gridColumn: '1 / -1' }}>
                 <div style={{ display: 'flex', gap: '12px', alignItems: 'flex-end' }}>
                   <div style={{ flex: 1 }}>
-                    <label className="modal__label">С</label>
+                    <label className="modal__label">{t('expenseForm.from')}</label>
                     <input
                       type="date"
                       className="modal__input"
@@ -289,7 +301,7 @@ const AddCarDataModal: React.FC<AddCarDataModalProps> = ({ onClose, onSave }) =>
                     />
                   </div>
                   <div style={{ flex: 1 }}>
-                    <label className="modal__label">До</label>
+                    <label className="modal__label">{t('expenseForm.to')}</label>
                     <input
                       type="date"
                       className="modal__input"
@@ -305,13 +317,13 @@ const AddCarDataModal: React.FC<AddCarDataModalProps> = ({ onClose, onSave }) =>
         )}
 
         {/* Дополнительные поля для Техосмотра */}
-        {selectedCategory === 'Техосмотр' && (
+        {selectedCategoryKey === 'inspection' && (
           <div className="modal__form-section">
             <div className="modal__form-grid">
               <div className="modal__form-group" style={{ gridColumn: '1 / -1' }}>
                 <div style={{ display: 'flex', gap: '12px', alignItems: 'flex-end' }}>
                   <div style={{ flex: '0 0 80px' }}>
-                    <label className="modal__label">Серия</label>
+                    <label className="modal__label">{t('expenseForm.series')}</label>
                     <input
                       type="text"
                       className="modal__input"
@@ -323,7 +335,7 @@ const AddCarDataModal: React.FC<AddCarDataModalProps> = ({ onClose, onSave }) =>
                     />
                   </div>
                   <div style={{ flex: 1 }}>
-                    <label className="modal__label">Номер</label>
+                    <label className="modal__label">{t('expenseForm.number')}</label>
                     <input
                       type="text"
                       className="modal__input"
@@ -337,7 +349,7 @@ const AddCarDataModal: React.FC<AddCarDataModalProps> = ({ onClose, onSave }) =>
               </div>
               
               <div className="modal__form-group">
-                <label className="modal__label">Действителен до</label>
+                <label className="modal__label">{t('expenseForm.validUntil')}</label>
                 <input
                   type="date"
                   className="modal__input"
@@ -351,11 +363,11 @@ const AddCarDataModal: React.FC<AddCarDataModalProps> = ({ onClose, onSave }) =>
         )}
 
         {/* Дополнительные поля для Размеров */}
-        {selectedCategory === 'Размеры' && (
+        {selectedCategoryKey === 'dimensions' && (
           <div className="modal__form-section">
             <div className="modal__form-grid">
               <div className="modal__form-group">
-                <label className="modal__label">Длина (мм)</label>
+                <label className="modal__label">{t('dimensions.length')}</label>
                 <input
                   type="text"
                   className="modal__input"
@@ -365,7 +377,7 @@ const AddCarDataModal: React.FC<AddCarDataModalProps> = ({ onClose, onSave }) =>
                 />
               </div>
               <div className="modal__form-group">
-                <label className="modal__label">Ширина (мм)</label>
+                <label className="modal__label">{t('dimensions.width')}</label>
                 <input
                   type="text"
                   className="modal__input"
@@ -375,7 +387,7 @@ const AddCarDataModal: React.FC<AddCarDataModalProps> = ({ onClose, onSave }) =>
                 />
               </div>
               <div className="modal__form-group">
-                <label className="modal__label">Высота (мм)</label>
+                <label className="modal__label">{t('dimensions.height')}</label>
                 <input
                   type="text"
                   className="modal__input"
@@ -385,7 +397,7 @@ const AddCarDataModal: React.FC<AddCarDataModalProps> = ({ onClose, onSave }) =>
                 />
               </div>
               <div className="modal__form-group">
-                <label className="modal__label">Клиренс (мм)</label>
+                <label className="modal__label">{t('dimensions.clearance')}</label>
                 <input
                   type="text"
                   className="modal__input"
@@ -395,7 +407,7 @@ const AddCarDataModal: React.FC<AddCarDataModalProps> = ({ onClose, onSave }) =>
                 />
               </div>
               <div className="modal__form-group">
-                <label className="modal__label">Размер колес</label>
+                <label className="modal__label">{t('dimensions.wheelSize')}</label>
                 <input
                   type="text"
                   className="modal__input"
@@ -405,7 +417,7 @@ const AddCarDataModal: React.FC<AddCarDataModalProps> = ({ onClose, onSave }) =>
                 />
               </div>
               <div className="modal__form-group">
-                <label className="modal__label">Сверловка (PCD)</label>
+                <label className="modal__label">{t('dimensions.boltPattern')}</label>
                 <input
                   type="text"
                   className="modal__input"
@@ -415,7 +427,7 @@ const AddCarDataModal: React.FC<AddCarDataModalProps> = ({ onClose, onSave }) =>
                 />
               </div>
               <div className="modal__form-group">
-                <label className="modal__label">Размеры дисков</label>
+                <label className="modal__label">{t('dimensions.wheelDimensions')}</label>
                 <input
                   type="text"
                   className="modal__input"
@@ -429,11 +441,11 @@ const AddCarDataModal: React.FC<AddCarDataModalProps> = ({ onClose, onSave }) =>
         )}
 
         {/* Дополнительные поля для Расхода */}
-        {selectedCategory === 'Расход' && (
+        {selectedCategoryKey === 'consumption' && (
           <div className="modal__form-section">
             <div className="modal__form-grid">
               <div className="modal__form-group">
-                <label className="modal__label">Смешанный (л/100км)</label>
+                <label className="modal__label">{t('consumption.mixed')}</label>
                 <input
                   type="text"
                   className="modal__input"
@@ -443,7 +455,7 @@ const AddCarDataModal: React.FC<AddCarDataModalProps> = ({ onClose, onSave }) =>
                 />
               </div>
               <div className="modal__form-group">
-                <label className="modal__label">По городу (л/100км)</label>
+                <label className="modal__label">{t('consumption.city')}</label>
                 <input
                   type="text"
                   className="modal__input"
@@ -453,7 +465,7 @@ const AddCarDataModal: React.FC<AddCarDataModalProps> = ({ onClose, onSave }) =>
                 />
               </div>
               <div className="modal__form-group">
-                <label className="modal__label">По трассе (л/100км)</label>
+                <label className="modal__label">{t('consumption.highway')}</label>
                 <input
                   type="text"
                   className="modal__input"
@@ -470,19 +482,19 @@ const AddCarDataModal: React.FC<AddCarDataModalProps> = ({ onClose, onSave }) =>
         <div className="modal__actions-container">
           <div className="modal__actions modal__actions--centered">
             <button type="button" className="btn btn--cancel" onClick={onClose}>
-              Отмена
+              {t('common.cancel')}
             </button>
             <button 
               type="submit" 
               className="btn btn--action"
               disabled={!isFormValid()}
             >
-              Добавить
+              {t('common.add')}
             </button>
           </div>
           
           <div className="modal__footer-signature">
-            © 2025 <span className="modal__footer-app-name">RuNiko</span>
+            {t('app.copyright')}
           </div>
         </div>
       </form>

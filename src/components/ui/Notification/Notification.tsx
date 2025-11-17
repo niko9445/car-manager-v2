@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { NotificationProps } from '../../../types';
+import { useTranslation } from '../../../contexts/LanguageContext'; // <-- ДОБАВИТЬ
 
 const Notification: React.FC<NotificationProps> = ({ 
   isOpen, 
@@ -9,6 +10,8 @@ const Notification: React.FC<NotificationProps> = ({
   message, 
   duration = 3000 
 }) => {
+  const { t } = useTranslation(); // <-- ДОБАВИТЬ
+
   useEffect(() => {
     if (isOpen && duration > 0) {
       const timer = setTimeout(() => {
@@ -94,7 +97,7 @@ const Notification: React.FC<NotificationProps> = ({
           className="notification__close"
           onClick={onClose}
           type="button"
-          aria-label="Закрыть уведомление"
+          aria-label={t('common.close')} 
         >
           <svg viewBox="0 0 24 24" fill="none" width="16" height="16">
             <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>

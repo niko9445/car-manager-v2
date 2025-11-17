@@ -1,6 +1,7 @@
 import React from 'react';
 import { Maintenance, Car } from '../../../types';
 import { useCurrency } from '../../../contexts/CurrencyContext';
+import { useTranslation } from '../../../contexts/LanguageContext';
 import { MAINTENANCE_CATEGORIES } from '../../../data/maintenanceCategories';
 
 interface MaintenanceCardProps {
@@ -23,6 +24,7 @@ const MaintenanceCard: React.FC<MaintenanceCardProps> = ({
   onToggle
 }) => {
   const { formatCurrency } = useCurrency();
+  const { t } = useTranslation();
 
   // Получаем данные о категории и подкатегории
   const categoryData = MAINTENANCE_CATEGORIES.find(cat => cat.id === maintenance.categoryId);
@@ -55,11 +57,13 @@ const MaintenanceCard: React.FC<MaintenanceCardProps> = ({
         value !== null && 
         value !== undefined && 
         value !== false &&
-        key !== 'cost' // Исключаем стоимость
+        key !== 'cost'
       )
       .map(([key, value]) => {
         const fieldConfig = subcategoryData?.fields.find(field => field.name === key);
-        const label = fieldConfig?.label || key;
+        
+        // ИСПРАВЛЕНИЕ: Используем перевод для лейбла
+        const label = fieldConfig ? t(`maintenanceFields.${fieldConfig.name}`) : key;
         
         let displayValue = value;
         if (typeof value === 'boolean') {
@@ -88,14 +92,17 @@ const MaintenanceCard: React.FC<MaintenanceCardProps> = ({
           
           {/* Тип работ как заголовок */}
           <div className="maintenance-type">
-            {subcategoryData?.name || 'Техническое обслуживание'}
+            {maintenance.subcategoryId 
+              ? t(`maintenanceCategories.subcategories.${maintenance.subcategoryId}`) // <-- ИСПРАВЛЕНО
+              : t('maintenance.technicalService')
+            }
           </div>
           
           {/* В нераскрытой карточке ТОЛЬКО затраты */}
           <div className="card__preview">
             {maintenance.cost && (
               <div className="card__preview-item">
-                <span className="card__preview-label">Затраты:</span>
+                <span className="card__preview-label">{t('maintenance.costs')}:</span>
                 <span className="card__preview-value">
                   {formatCurrency(maintenance.cost)}
                 </span>
@@ -109,7 +116,7 @@ const MaintenanceCard: React.FC<MaintenanceCardProps> = ({
             <button 
               className="card__corner-action"
               onClick={(e) => handleActionClick(e, onEdit)}
-              title="Редактировать"
+              title={t('common.edit')}
               type="button"
             >
               <svg viewBox="0 0 24 24" fill="none" width="14" height="14">
@@ -120,7 +127,7 @@ const MaintenanceCard: React.FC<MaintenanceCardProps> = ({
             <button 
               className="card__corner-action card__corner-action--danger"
               onClick={(e) => handleActionClick(e, onDelete)}
-              title="Удалить"
+              title={t('common.delete')} 
               type="button"
             >
               <svg viewBox="0 0 24 24" fill="none" width="14" height="14">
@@ -137,16 +144,19 @@ const MaintenanceCard: React.FC<MaintenanceCardProps> = ({
           {/* Основная информация */}
           <div className="card__info-grid">
             <div className="card__info-item">
-              <div className="card__info-label">Категория</div>
+              <div className="card__info-label">{t('maintenance.category')}</div>
               <div className="card__info-value">
-                {categoryData?.icon} {categoryData?.name}
+                {categoryData?.icon} {maintenance.categoryId 
+                  ? t(`maintenanceCategories.${maintenance.categoryId}`) // <-- ИСПРАВЛЕНО
+                  : t('maintenance.technicalService')
+                }
               </div>
             </div>
             
             {maintenance.mileage > 0 && (
               <div className="card__info-item">
-                <div className="card__info-label">Пробег</div>
-                <div className="card__info-value">{formatNumber(maintenance.mileage)} км</div>
+                <div className="card__info-label">{t('maintenance.mileage')}</div>
+                <div className="card__info-value">{formatNumber(maintenance.mileage)} {t('units.km')}</div>
               </div>
             )}
             

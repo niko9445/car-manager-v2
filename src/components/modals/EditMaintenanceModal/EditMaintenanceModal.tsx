@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Modal from '../../ui/Modal/Modal';
 import { EditMaintenanceModalProps } from '../../../types';
 import { useCurrency } from '../../../contexts/CurrencyContext';
+import { useTranslation } from '../../../contexts/LanguageContext';
 import { MAINTENANCE_CATEGORIES } from '../../../data/maintenanceCategories';
 
 const EditMaintenanceModal: React.FC<EditMaintenanceModalProps> = ({ 
@@ -10,6 +11,7 @@ const EditMaintenanceModal: React.FC<EditMaintenanceModalProps> = ({
   onSave 
 }) => {
   const { getCurrencySymbol } = useCurrency();
+  const { t } = useTranslation();
 
   const [formData, setFormData] = useState({
     date: maintenance.date,
@@ -67,19 +69,39 @@ const EditMaintenanceModal: React.FC<EditMaintenanceModalProps> = ({
   const isFormValid = formData.date;
 
   return (
-    <Modal isOpen={true} onClose={onClose} title="Редактировать ТО" size="lg">
+    <Modal isOpen={true} onClose={onClose} title={t('maintenance.edit')} size="lg">
       <form className="modal__form" onSubmit={handleSubmit}>
         
+        {/* Информация о категории (только для отображения) */}
+        <div className="card card--compact">
+          <div className="card__header">
+            <h3 className="card__title card__title--sm">{t('maintenance.category')}</h3>
+          </div>
+          <div className="card__content">
+            <div className="modal__info-row">
+              <div className="modal__info-label">{t('maintenance.category')}:</div>
+              <div className="modal__info-value">
+                {categoryData?.icon} {t(`maintenanceCategories.${maintenance.categoryId}`)} {/* <-- ИСПРАВЛЕНО */}
+              </div>
+            </div>
+            <div className="modal__info-row">
+              <div className="modal__info-label">{t('maintenance.subcategory')}:</div>
+              <div className="modal__info-value">
+                {t(`maintenanceCategories.subcategories.${maintenance.subcategoryId}`)} {/* <-- ИСПРАВЛЕНО */}
+              </div>
+            </div>
+          </div>
+        </div>
 
         {/* Основные параметры */}
         <div className="card card--compact">
           <div className="card__header">
-            <h3 className="card__title card__title--sm">Основные параметры</h3>
+            <h3 className="card__title card__title--sm">{t('maintenance.mainParameters')}</h3>
           </div>
           <div className="card__content">
             <div className="modal__form-grid">
               <div className="modal__form-group">
-                <label className="modal__label modal__label--required">Дата</label>
+                <label className="modal__label modal__label--required">{t('maintenance.date')}</label>
                 <input
                   type="date"
                   className="modal__input"
@@ -90,26 +112,26 @@ const EditMaintenanceModal: React.FC<EditMaintenanceModalProps> = ({
               </div>
 
               <div className="modal__form-group">
-                <label className="modal__label">Пробег (км)</label>
+                <label className="modal__label">{t('maintenance.mileage')} ({t('units.km')})</label>
                 <input
                   type="number"
                   className="modal__input"
                   value={formData.mileage}
                   onChange={(e) => handleInputChange('mileage', e.target.value)}
                   min="0"
-                  placeholder="Текущий пробег"
+                  placeholder={t('maintenance.currentMileage')} 
                 />
               </div>
 
               <div className="modal__form-group">
-                <label className="modal__label">Затраты ({getCurrencySymbol()})</label>
+                <label className="modal__label">{t('maintenance.cost')} ({getCurrencySymbol()})</label>
                 <input
                   type="number"
                   className="modal__input"
                   value={formData.cost}
                   onChange={(e) => handleInputChange('cost', e.target.value)}
                   min="0"
-                  placeholder="Необязательно"
+                  placeholder={t('common.optional')} 
                 />
               </div>
             </div>
@@ -119,11 +141,13 @@ const EditMaintenanceModal: React.FC<EditMaintenanceModalProps> = ({
         {/* Детали работ (если есть кастомные поля) */}
         {subcategoryData && subcategoryData.fields.length > 0 && (
           <div className="card card--compact">
-            <div className="card__header"></div>
+            <div className="card__header">
+              <h3 className="card__title card__title--sm">{t('maintenance.workDetails')}</h3> {/* <-- ДОБАВИТЬ */}
+            </div>
             <div className="card__content">
               <div className="modal__form-grid">
                 {subcategoryData.fields
-                  .filter(field => field.name !== 'cost') // Исключаем поле стоимости
+                  .filter(field => field.name !== 'cost')
                   .map(field => (
                     <div key={field.name} className="modal__form-group">
                       <label className={`modal__label ${field.required ? 'modal__label--required' : ''}`}>
@@ -161,7 +185,7 @@ const EditMaintenanceModal: React.FC<EditMaintenanceModalProps> = ({
                           onChange={(e) => handleCustomFieldChange(field.name, e.target.value)}
                           required={field.required}
                         >
-                          <option value="">Выберите...</option>
+                          <option value="">{t('common.choose')}</option>
                           {field.options.map(option => (
                             <option key={option} value={option}>{option}</option>
                           ))}
@@ -189,19 +213,19 @@ const EditMaintenanceModal: React.FC<EditMaintenanceModalProps> = ({
         <div className="modal__actions-container">
           <div className="modal__actions modal__actions--centered">
             <button type="button" className="btn btn--cancel" onClick={onClose}>
-              Отмена
+              {t('common.cancel')}
             </button>
             <button 
               type="submit" 
               className="btn btn--action"
               disabled={!isFormValid}
             >
-              Сохранить
+              {t('common.save')}
             </button>
           </div>
           
           <div className="modal__footer-signature">
-            © 2025 <span className="modal__footer-app-name">RuNiko</span>
+            {t('app.copyright')}
           </div>
         </div>
       </form>
