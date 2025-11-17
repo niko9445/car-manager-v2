@@ -1,5 +1,6 @@
 import React, { useEffect, useCallback } from 'react';
 import { AppProvider, useApp } from './contexts/AppContext';
+import { ThemeProvider } from './contexts/ThemeContext'; // <-- ДОБАВЛЯЕМ
 import Sidebar from './components/layout/Sidebar/Sidebar';
 import MainContent from './components/layout/MainContent/MainContent';
 import AddCarModal from './components/modals/AddCarModal/AddCarModal';
@@ -401,11 +402,13 @@ const AppContent = () => {
 
 const App = () => {
   return (
-    <AppProvider>
-      <CurrencyProvider>
-        <AppContent />
-      </CurrencyProvider>
-    </AppProvider>
+    <ThemeProvider> {/* <-- ОБЕРТЫВАЕМ ВСЕ ПРИЛОЖЕНИЕ */}
+      <AppProvider>
+        <CurrencyProvider>
+          <AppContent />
+        </CurrencyProvider>
+      </AppProvider>
+    </ThemeProvider>
   );
 };
 

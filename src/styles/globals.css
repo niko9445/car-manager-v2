@@ -15,7 +15,18 @@
 @import '../components/layout/Sidebar/Sidebar.css'; 
 @import '../components/modals/AddMaintenanceModal/newStyle.css';
 @import '../components/expenses/ExpenseForm/ExpenceForm.css';
-/* ===== ОСНОВНЫЕ СТИЛИ ПРИЛОЖЕНИЯ ===== */
+
+html {
+  background-color: var(--color-bg-primary);
+  color: var(--color-text-primary);
+}
+
+body {
+  background-color: var(--color-bg-primary);
+  color: var(--color-text-primary);
+  transition: background-color var(--transition-normal), 
+              color var(--transition-normal);
+}
 
 /* Типография */
 h1, h2, h3, h4, h5, h6 {

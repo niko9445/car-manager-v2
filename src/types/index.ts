@@ -47,7 +47,6 @@ export interface Maintenance {
   customFields?: Record<string, any>;
 }
 
-
 export interface CarDataEntry {
   id: string;
   fields: CarDataField[];
@@ -73,7 +72,6 @@ export interface CarFormData {
   transmission: 'manual' | 'automatic' | 'cvt' | 'other';
   vin: string;
 }
-
 
 export interface EditCarModalProps {
   car: Car;
@@ -395,7 +393,6 @@ export interface InspectionData {
   cost?: number;
 }
 
-
 /////////////////////////////////////
 
 // ===== ТИПЫ ДЛЯ СИСТЕМЫ КАТЕГОРИЙ ТЕХОБСЛУЖИВАНИЯ =====
@@ -436,3 +433,16 @@ export interface MaintenanceFormData {
   description?: string;
 }
 
+// ===== ТИПЫ ДЛЯ СИСТЕМЫ ТЕМ =====
+
+export type Theme = 'light' | 'dark' | 'auto';
+
+export interface ThemeContextType {
+  theme: Theme;
+  setTheme: (theme: Theme) => void;
+  resolvedTheme: 'light' | 'dark';
+}
+
+export interface ThemeSwitcherProps {
+  className?: string;
+}
