@@ -47,7 +47,7 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({
   const { state } = useApp();
   const { selectedCar } = state;
   const { getCurrencySymbol } = useCurrency();
-  const { t } = useTranslation(); // <-- ДОБАВИТЬ
+  const { t } = useTranslation();
   
   const [formData, setFormData] = useState<ExpenseFormData>({
     date: new Date().toISOString().split('T')[0],
@@ -357,18 +357,44 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({
     { value: 'other', label: `💰 ${t('expenseCategories.other')}`, icon: '💰' } // <-- ПЕРЕВОД
   ];
 
+  const getQuickTags = (key: string): string[] => {
+    const tags = t(key, { returnObjects: true });
+    
+    // Проверяем, что это массив строк
+    if (Array.isArray(tags) && tags.every(item => typeof item === 'string')) {
+      return tags as string[];
+    }
+    
+    // Fallback значения на случай проблем с переводами
+    const fallbackTags: Record<string, string[]> = {
+      'expenseForm.quickTags.fuel': ['АИ-92', 'АИ-95', 'АИ-98', 'Дизель', 'Газ'],
+      'expenseForm.quickTags.maintenance': ['Масло', 'Фильтр', 'Тормоза', 'Шины', 'АКБ', 'Жидкости'],
+      'expenseForm.quickTags.repairs': ['Двигатель', 'Трансмиссия', 'Электрика', 'Кузов', 'Подвеска', 'Выхлопная'],
+      'expenseForm.quickTags.parts': ['Свечи', 'Тормозные колодки', 'Амортизаторы', 'Ремень ГРМ', 'Диски', 'Щетки'],
+      'expenseForm.quickTags.insurance': ['КАСКО', 'Годовая', 'Полгода'],
+      'expenseForm.quickTags.taxes': ['Транспортный'],
+      'expenseForm.quickTags.parking': ['ТЦ', 'Улица', 'Подземная', 'Аэропорт', 'Вокзал', 'Отель'],
+      'expenseForm.quickTags.washing': ['Автомат', 'Ручная', 'Самообслуживание', 'Полная', 'Бесконтактная', 'Полировка'],
+      'expenseForm.quickTags.fines': ['Скорость', 'Парковка', 'Пересечение', 'Стоянка', 'Ремень', 'Телефон'],
+      'expenseForm.quickTags.inspection': ['Плановый', 'Внеочередной', 'Предпродажный', 'Техосмотр', 'Диагностика'],
+      'expenseForm.quickTags.other': ['Кофе', 'Чай', 'Сигареты', 'Комбо', 'Еда', 'Вода', 'Снеки']
+    };
+    
+    return fallbackTags[key] || [];
+  };
+
   const quickTagsByCategory: Record<ExpenseCategory, string[]> = {
-    fuel: ['АИ-92', 'АИ-95', 'АИ-98', 'Дизель', 'Газ', 'Премиум'],
-    maintenance: ['Масло', 'Фильтр', 'Тормоза', 'Шины', 'АКБ', 'Жидкости'],
-    repairs: ['Двигатель', 'Трансмиссия', 'Электрика', 'Кузов', 'Подвеска', 'Выхлопная'],
-    parts: ['Свечи', 'Тормозные колодки', 'Амортизаторы', 'Ремень ГРМ', 'Диски', 'Щетки'],
-    insurance: ['ОСАГО', 'КАСКО', 'Расширенная', 'Базовая', 'Годовая', 'Полгода'],
-    taxes: ['Транспортный', 'Имущественный', 'Земельный', 'Госпошлина'],
-    parking: ['ТЦ', 'Улица', 'Подземная', 'Аэропорт', 'Вокзал', 'Отель'],
-    washing: ['Автомат', 'Ручная', 'Самообслуживание', 'Полная', 'Бесконтактная', 'Полировка'],
-    fines: ['Скорость', 'Парковка', 'Пересечение', 'Стоянка', 'Ремень', 'Телефон'],
-    inspection: ['Плановый', 'Внеочередной', 'Предпродажный', 'Техосмотр', 'Диагностика'],
-    other: ['Кофе', 'Чай', 'Сигареты', 'Комбо', 'Еда', 'Вода', 'Снеки']
+    fuel: getQuickTags('expenseForm.quickTags.fuel'),
+    maintenance: getQuickTags('expenseForm.quickTags.maintenance'),
+    repairs: getQuickTags('expenseForm.quickTags.repairs'),
+    parts: getQuickTags('expenseForm.quickTags.parts'),
+    insurance: getQuickTags('expenseForm.quickTags.insurance'),
+    taxes: getQuickTags('expenseForm.quickTags.taxes'),
+    parking: getQuickTags('expenseForm.quickTags.parking'),
+    washing: getQuickTags('expenseForm.quickTags.washing'),
+    fines: getQuickTags('expenseForm.quickTags.fines'),
+    inspection: getQuickTags('expenseForm.quickTags.inspection'),
+    other: getQuickTags('expenseForm.quickTags.other')
   };
 
   const isFuelCategory = formData.category === 'fuel';

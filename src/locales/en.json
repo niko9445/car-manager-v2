@@ -54,13 +54,20 @@
     "petrol": "Petrol",
     "diesel": "Diesel",
     "electric": "Electric",
+    "ethanol": "Ethanol", 
     "hybrid": "Hybrid",
+    "hydrogen": "Hydrogen",
+    "natural_gas": "Natural Gas",
+    "plug-in_hybrid": "Plug-in Hybrid",
     "other": "Other"
   },
   "transmissionTypes": {
     "manual": "Manual",
     "automatic": "Automatic",
     "cvt": "CVT",
+    "dual-clutch": "Dual-Clutch",
+    "semi-automatic": "Semi-Automatic",
+    "sequential": "Sequential", 
     "other": "Other"
   },
   "maintenance": {
@@ -160,7 +167,20 @@
     "from": "From",
     "to": "To",
     "validUntil": "Valid until",
-    "descriptionPlaceholder": "Brief expense description..."
+    "descriptionPlaceholder": "Brief expense description...",
+    "quickTags": {
+      "fuel": ["AI-92", "AI-95", "AI-98", "Diesel", "Gas"],
+      "maintenance": ["Oil", "Filter", "Brakes", "Tires", "Battery", "Fluids"],
+      "repairs": ["Engine", "Transmission", "Electrical", "Body", "Suspension", "Exhaust"],
+      "parts": ["Spark Plugs", "Brake Pads", "Shock Absorbers", "Timing Belt", "Wheels", "Wipers"],
+      "insurance": ["CASCO", "Annual", "Half-year"],
+      "taxes": ["Transport"],
+      "parking": ["Mall", "Street", "Underground", "Airport", "Station", "Hotel"],
+      "washing": ["Automatic", "Manual", "Self-service", "Full", "Contactless", "Polishing"],
+      "fines": ["Speed", "Parking", "Crossing", "Standing", "Seat Belt", "Phone"],
+      "inspection": ["Scheduled", "Unscheduled", "Pre-sale", "Technical Inspection", "Diagnostics"],
+      "other": ["Coffee", "Tea", "Cigarettes", "Combo", "Food", "Water", "Snacks"]
+    }
   },
   "carDataFields": {
     "insurance": "Insurance",

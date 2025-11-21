@@ -93,8 +93,8 @@ const AddCarModal: React.FC<AddCarModalProps> = ({ onClose, onSave }) => {
               onChange={(e) => setFormData({...formData, engineType: e.target.value as any})}
             >
               {engineTypes.map(type => (
-                <option key={type.value} value={type.value}>
-                  {t(`engineTypes.${type.value}`)} {/* <-- ПЕРЕВОД */}
+                <option key={type} value={type}>
+                  {t(`engineTypes.${type}`)} {/* <-- ПЕРЕВОД */}
                 </option>
               ))}
             </select>
@@ -109,8 +109,8 @@ const AddCarModal: React.FC<AddCarModalProps> = ({ onClose, onSave }) => {
               onChange={(e) => setFormData({...formData, transmission: e.target.value as any})}
             >
               {transmissionTypes.map(type => (
-                <option key={type.value} value={type.value}>
-                  {t(`transmissionTypes.${type.value}`)} {/* <-- ПЕРЕВОД */}
+                <option key={type} value={type}>
+                  {t(`transmissionTypes.${type}`)} {/* <-- ПЕРЕВОД */}
                 </option>
               ))}
             </select>

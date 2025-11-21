@@ -104,9 +104,28 @@ const AddCarDataModal: React.FC<AddCarDataModalProps> = ({ onClose, onSave }) =>
       onSave({ fields: [inspectionField] });
     }
     else if (selectedCategoryKey === 'dimensions') {
-      const dimensionsValue = `${t('dimensions.length')}:${dimensionsData.length} ${t('dimensions.width')}:${dimensionsData.width} ${t('dimensions.height')}:${dimensionsData.height} ${t('dimensions.clearance')}:${dimensionsData.clearance} ${t('dimensions.wheelSize')}:${dimensionsData.wheelSize} ${t('dimensions.boltPattern')}:${dimensionsData.boltPattern} ${t('dimensions.wheelDimensions')}:${dimensionsData.wheelDimensions}`;
+      // Собираем только заполненные поля
+      const dimensionParts = [];
+      
+      if (dimensionsData.length) dimensionParts.push(`${t('dimensions.length')}:${dimensionsData.length}`);
+      if (dimensionsData.width) dimensionParts.push(`${t('dimensions.width')}:${dimensionsData.width}`);
+      if (dimensionsData.height) dimensionParts.push(`${t('dimensions.height')}:${dimensionsData.height}`);
+      if (dimensionsData.clearance) dimensionParts.push(`${t('dimensions.clearance')}:${dimensionsData.clearance}`);
+      if (dimensionsData.wheelSize) dimensionParts.push(`${t('dimensions.wheelSize')}:${dimensionsData.wheelSize}`);
+      if (dimensionsData.boltPattern) dimensionParts.push(`${t('dimensions.boltPattern')}:${dimensionsData.boltPattern}`);
+      if (dimensionsData.wheelDimensions) dimensionParts.push(`${t('dimensions.wheelDimensions')}:${dimensionsData.wheelDimensions}`);
+      
+      const dimensionsValue = dimensionParts.join(' ');
+      // ⭐⭐⭐ ДОБАВЬ ЭТИ СТРОКИ ⭐⭐⭐
+      console.log('=== DIMENSIONS DEBUG ===');
+      console.log('dimensionsData:', dimensionsData);
+      console.log('dimensionParts:', dimensionParts);
+      console.log('dimensionsValue:', dimensionsValue);
+      console.log('boltPattern filled:', dimensionsData.boltPattern);
+      console.log('wheelDimensions filled:', dimensionsData.wheelDimensions);
+      console.log('========================');
       const dimensionsField = { 
-        name: 'dimensions', // ← Сохраняем КЛЮЧ
+        name: 'dimensions',
         value: dimensionsValue, 
         unit: ''
       };

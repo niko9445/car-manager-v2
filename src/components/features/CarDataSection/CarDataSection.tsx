@@ -54,18 +54,22 @@ const CarDataSection: React.FC<CarDataSectionProps> = ({
     
     const result: any = {};
     
-    // Парсим размеры
-    const lengthMatch = text.match(/Длина\s*\(мм\):?\s*(\d+)/i);
-    const widthMatch = text.match(/Ширина\s*\(мм\):?\s*(\d+)/i);
-    const heightMatch = text.match(/Высота\s*\(мм\):?\s*(\d+)/i);
-    const clearanceMatch = text.match(/Клиренс\s*\(мм\):?\s*(\d+)/i);
-    const wheelSizeMatch = text.match(/Размер колес:?\s*([^:]+?)(?=Сверловка|$)/i);
+    // Парсим размеры - используем более гибкие регулярные выражения
+    const lengthMatch = text.match(/Длина\s*\(?мм\)?:?\s*:?\s*(\d+)/i);
+    const widthMatch = text.match(/Ширина\s*\(?мм\)?:?\s*:?\s*(\d+)/i);
+    const heightMatch = text.match(/Высота\s*\(?мм\)?:?\s*:?\s*(\d+)/i);
+    const clearanceMatch = text.match(/Клиренс\s*\(?мм\)?:?\s*:?\s*(\d+)/i);
+    const wheelSizeMatch = text.match(/Размер колес:?\s*([^:]+?)(?=\s*Сверловка|\s*Размеры дисков|$)/i);
+    const boltPatternMatch = text.match(/Сверловка\s*\(?PCD\)?:?\s*:?\s*([^:]+?)(?=\s*Размеры дисков|$)/i);
+    const wheelDimensionsMatch = text.match(/Размеры дисков:?\s*([^:]+)/i);
     
     if (lengthMatch) result.length = lengthMatch[1];
     if (widthMatch) result.width = widthMatch[1];
     if (heightMatch) result.height = heightMatch[1];
     if (clearanceMatch) result.clearance = clearanceMatch[1];
     if (wheelSizeMatch) result.wheelSize = wheelSizeMatch[1].trim();
+    if (boltPatternMatch) result.boltPattern = boltPatternMatch[1].trim();
+    if (wheelDimensionsMatch) result.wheelDimensions = wheelDimensionsMatch[1].trim();
     
     // Парсим расход
     const mixedMatch = text.match(/Смешанный\s*\(л\/100км\):?\s*([\d.,]+)/i);
@@ -92,6 +96,8 @@ const CarDataSection: React.FC<CarDataSectionProps> = ({
       if (data.height) items.push({ label: 'Высота', value: data.height });
       if (data.clearance) items.push({ label: 'Клиренс', value: data.clearance });
       if (data.wheelSize) items.push({ label: 'Размер колес', value: data.wheelSize });
+      if (data.boltPattern) items.push({ label: 'Сверловка', value: data.boltPattern });
+      if (data.wheelDimensions) items.push({ label: 'Размеры дисков', value: data.wheelDimensions });
       
       console.log('📏 Dimensions items from text:', items);
       

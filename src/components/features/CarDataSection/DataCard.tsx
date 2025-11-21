@@ -25,58 +25,76 @@ const DataCard: React.FC<DataCardProps> = ({
 
   // Функция для получения переведенного названия поля
   const getTranslatedFieldName = (fieldName: string): string => {
-    // Если поле является ключом перевода из carDataFields
-    if (fieldName in translationKeys) {
-      return t(`carDataFields.${fieldName}`);
-    }
-    // Если это пользовательское поле (не из predefined list)
-    return fieldName;
+    return t(`carDataFields.${fieldName}`) || fieldName;
   };
 
-  // Список ключей переводов для carDataFields
-  const translationKeys = {
-    insurance: true,
-    inspection: true,
-    dimensions: true,
-    engineCode: true,
-    fuelType: true,
-    consumption: true,
-    power: true,
-    engineVolume: true,
-    cost: true,
-    purchaseDate: true,
-    color: true,
-    bodyType: true,
-    drive: true,
-    acceleration: true,
-    maxSpeed: true,
-    torque: true,
-    weight: true,
-    trunkVolume: true,
-    country: true,
-    warranty: true,
-    tax: true
-  };
-
-  const formatValue = (field: any) => {
+  // Функция для форматирования значения специальных категорий
+  const formatSpecialValue = (field: any): string => {
     if (!field) return '';
     
-    let value = field.value;
+    const fieldName = field.name;
+    const value = field.value;
+    
+    // Для специальных категорий парсим сохраненную строку
+    if (fieldName === 'dimensions') {
+      // Парсим строку типа "Длина:4500 Ширина:1800 Высота:1500 Клиренс:180 Размер колес:205/55 R16 Сверловка:5x114.3 Размеры дисков:7Jx16 ET45"
+      const parts = value.split(' ');
+      
+      const formattedParts = parts
+        .map((part: string) => {
+          // Игнорируем пустые части
+          if (!part.trim() || part === ':') return null;
+          
+          const [key, val] = part.split(':');
+          
+          // Проверяем, что есть и ключ и значение, и значение не пустое
+          if (key && val && val.trim() !== '') {
+            // Добавляем единицы измерения для размеров
+            if (key === t('dimensions.length') || key === t('dimensions.width') || 
+                key === t('dimensions.height') || key === t('dimensions.clearance')) {
+              return `${key}: ${val} ${t('units.mm')}`;
+            }
+            return `${key}: ${val}`;
+          }
+          return null;
+        })
+        .filter((part: string | null) => part !== null); // Указываем тип явно
+      
+      return formattedParts.length > 0 ? formattedParts.join(', ') : '';
+    }
+    
+    if (fieldName === 'consumption') {
+      // Парсим строку типа "Смешанный:7.5 По городу:9.0 По трассе:6.5"
+      const parts = value.split(' ');
+      
+      const formattedParts = parts
+        .map((part: string) => {
+          if (!part.trim() || part === ':') return null;
+          
+          const [key, val] = part.split(':');
+          if (key && val && val.trim() !== '') {
+            return `${key}: ${val} ${t('units.per100km')}`;
+          }
+          return null;
+        })
+        .filter((part: string | null) => part !== null); // Указываем тип явно
+      
+      return formattedParts.length > 0 ? formattedParts.join(', ') : '';
+    }
+    
+    // Для insurance и inspection оставляем как есть
+    if (fieldName === 'insurance' || fieldName === 'inspection') {
+      return value;
+    }
+    
+    // Для обычных полей
     let unit = field.unit;
     
-    // Обновляем логику для работы с ключами переводов
-    const fieldKey = Object.keys(translationKeys).find(key => 
-      field.name === key || field.name === t(`carDataFields.${key}`)
-    );
-    
-    if (fieldKey === 'cost' || fieldKey === 'insurance' || fieldKey === 'tax') {
+    // Обновляем валюту если нужно
+    if (fieldName === 'cost' || fieldName === 'tax') {
       if (unit.includes('руб') || unit.includes('₽') || unit.includes(t('currencies.RUB'))) {
         unit = unit.replace(/руб|₽/g, getCurrencySymbol());
       }
-    }
-    
-    if (fieldKey === 'insurance' || fieldKey === 'inspection') {
-      return value;
     }
     
     return `${value}${unit ? ` ${unit}` : ''}`;
@@ -99,7 +117,7 @@ const DataCard: React.FC<DataCardProps> = ({
         {getTranslatedFieldName(mainField?.name) || t('cars.carDetails')}
       </span>
       <span className="card__grid-value">
-        {formatValue(mainField)}
+        {formatSpecialValue(mainField)}
       </span>
     </div>
   );

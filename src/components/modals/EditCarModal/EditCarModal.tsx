@@ -201,8 +201,8 @@ const EditCarModal: React.FC<EditCarModalProps> = ({
                   className="modal__input"
                 >
                   {engineTypes.map(type => (
-                    <option key={type.value} value={type.value}>
-                      {t(`engineTypes.${type.value}`)}
+                    <option key={type} value={type}>
+                      {t(`engineTypes.${type}`)}
                     </option>
                   ))}
                 </select>
@@ -216,8 +216,8 @@ const EditCarModal: React.FC<EditCarModalProps> = ({
                   className="modal__input"
                 >
                   {transmissionTypes.map(type => (
-                    <option key={type.value} value={type.value}>
-                      {t(`transmissionTypes.${type.value}`)}
+                    <option key={type} value={type}>
+                      {t(`transmissionTypes.${type}`)}
                     </option>
                   ))}
                 </select>

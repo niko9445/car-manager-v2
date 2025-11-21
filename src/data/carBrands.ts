@@ -92,23 +92,11 @@ export const carBrands = {
 };
 
 export const engineTypes = [
-  { value: 'diesel', label: 'Дизель' },
-  { value: 'electric', label: 'Электро' },
-  { value: 'ethanol', label: 'Этанол' },
-  { value: 'hybrid', label: 'Гибрид' },
-  { value: 'hydrogen', label: 'Водородный' },
-  { value: 'natural_gas', label: 'Природный газ' },
-  { value: 'petrol', label: 'Бензин' },
-  { value: 'plug-in_hybrid', label: 'Plug-in Hybrid' },
-  { value: 'other', label: 'Другой' }
+  'diesel', 'electric', 'ethanol', 'hybrid', 'hydrogen', 
+  'natural_gas', 'petrol', 'plug-in_hybrid', 'other'
 ];
 
 export const transmissionTypes = [
-  { value: 'automatic', label: 'АКПП' },
-  { value: 'cvt', label: 'Вариатор' },
-  { value: 'dual-clutch', label: 'Робот (DSG)' },
-  { value: 'manual', label: 'МКПП' },
-  { value: 'semi-automatic', label: 'Полуавтомат' },
-  { value: 'sequential', label: 'Последовательная' },
-  { value: 'other', label: 'Другая' }
+  'automatic', 'cvt', 'dual-clutch', 'manual', 
+  'semi-automatic', 'sequential', 'other'
 ];
