@@ -5,9 +5,9 @@ import ExpenseTracker from '../../expenses/ExpenseTracker/ExpenseTracker';
 import EditMaintenanceModal from '../../modals/EditMaintenanceModal/EditMaintenanceModal';
 import { MainContentProps, Maintenance } from '../../../types';
 import { useTranslation } from '../../../contexts/LanguageContext';
+import { useApp } from '../../../contexts/AppContext';
 
 const MainContent: React.FC<MainContentProps> = ({ 
-  selectedCar, 
   cars, 
   setCars, 
   activeSection, 
@@ -24,6 +24,8 @@ const MainContent: React.FC<MainContentProps> = ({
   const [editingMaintenance, setEditingMaintenance] = useState<Maintenance | null>(null);
   const [isEditMaintenanceModalOpen, setIsEditMaintenanceModalOpen] = useState(false);
   const { t } = useTranslation();
+   const { state } = useApp();
+   const selectedCar = state.selectedCar;
 
   const handleEditMaintenance = (maintenance: Maintenance): void => {
     setIsEditMaintenanceModalOpen(false);

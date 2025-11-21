@@ -16,6 +16,7 @@
 @import '../components/modals/AddMaintenanceModal/newStyle.css';
 @import '../components/expenses/ExpenseForm/ExpenceForm.css';
 @import './components-v2/switcher-components.css';
+@import '../components/ui/ConfirmModal/ConfirmModal.css';
 
 html {
   background-color: var(--color-bg-primary);

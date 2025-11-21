@@ -3,10 +3,10 @@ import { SidebarProps } from '../../../types';
 import CarCard from '../../ui/CarCard/CarCard';
 import SettingsModal from '../../modals/SettingsModal/SettingsModal';
 import { useTranslation } from '../../../contexts/LanguageContext'; // <-- ДОБАВИТЬ
+import { useApp } from '../../../contexts/AppContext';
 
 const Sidebar: React.FC<SidebarProps> = ({
   cars,
-  selectedCar,
   setSelectedCar,
   isMobile = false,
   onClose,
@@ -16,6 +16,8 @@ const Sidebar: React.FC<SidebarProps> = ({
 }) => {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const { t } = useTranslation(); // <-- ДОБАВИТЬ
+  const { state } = useApp(); // ← ДОБАВЛЯЕМ
+  const selectedCar = state.selectedCar; // ← Берем из контекста
 
   const handleCarSelect = (car: any) => {
     setSelectedCar(car);

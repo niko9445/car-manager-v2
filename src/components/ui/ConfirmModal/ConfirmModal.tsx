@@ -135,7 +135,11 @@ const ConfirmModal: React.FC<ConfirmModalProps> = ({
     >
       <div 
         ref={modalRef}
-        className="modal__container modal--sm"
+        className="modal__container"
+        style={{
+          maxWidth: '300px',
+          width: '90%'
+        }}
         onClick={(e) => e.stopPropagation()}
         onKeyDown={handleKeyDown}
       >

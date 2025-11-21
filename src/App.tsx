@@ -114,6 +114,14 @@ const AppContent = () => {
       car.id === carId ? { ...car, ...carData } : car
     );
     setCars(updatedCars);
+    
+    // ⭐⭐⭐ ДОБАВЬ ЭТОТ БЛОК ⭐⭐⭐
+    // Если редактируемый автомобиль сейчас выбран - обновляем его в контексте
+    if (state.selectedCar && state.selectedCar.id === carId) {
+      const updatedSelectedCar = { ...state.selectedCar, ...carData };
+      dispatch({ type: 'SET_SELECTED_CAR', payload: updatedSelectedCar });
+    }
+    
     closeModal();
   };
 
