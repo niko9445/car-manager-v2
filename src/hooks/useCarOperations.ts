@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { Car, CarFormData, MaintenanceFormData, CarDataField, CarDataEntry } from '../types';
+import { Car, CarFormData, MaintenanceFormData, CarDataField, CarDataEntry, Article } from '../types';
 
 export const useCarOperations = (cars: Car[], setCars: (cars: Car[]) => void) => {
   // Добавление автомобиля
@@ -13,7 +13,8 @@ export const useCarOperations = (cars: Car[], setCars: (cars: Car[]) => void) =>
       transmission: carData.transmission,
       vin: carData.vin,
       maintenance: [],
-      carData: []
+      carData: [],
+      articles: []
     };
     setCars([...cars, newCar]);
   }, [cars, setCars]);
@@ -21,7 +22,10 @@ export const useCarOperations = (cars: Car[], setCars: (cars: Car[]) => void) =>
   // Редактирование автомобиля
   const editCar = useCallback((carId: string, carData: CarFormData) => {
     const updatedCars = cars.map(car => 
-      car.id === carId ? { ...car, ...carData } : car
+      car.id === carId ? { 
+        ...car, 
+        ...carData
+      } : car
     );
     setCars(updatedCars);
   }, [cars, setCars]);
@@ -106,12 +110,65 @@ export const useCarOperations = (cars: Car[], setCars: (cars: Car[]) => void) =>
     setCars(updatedCars);
   }, [cars, setCars]);
 
+  // Добавление артикула
+  const addArticle = (selectedCar: Car, articleData: { category: string; subcategory: string; articleNumber: string }) => {
+    const updatedCars = cars.map(car => {
+      if (car.id === selectedCar.id) {
+        const newArticle: Article = {
+          id: Date.now().toString(),
+          category: articleData.category,
+          subcategory: articleData.subcategory,
+          articleNumber: articleData.articleNumber,
+          createdAt: new Date().toISOString()
+        };
+        
+        return {
+          ...car,
+          articles: [...(car.articles || []), newArticle]
+        };
+      }
+      return car;
+    });
+    setCars(updatedCars);
+  };
+
+  const editArticle = (carId: string, articleId: string, updatedData: { category: string; subcategory: string; articleNumber: string }) => {
+    const updatedCars = cars.map(car => {
+      if (car.id === carId) {
+        const updatedArticles = car.articles?.map(article => 
+          article.id === articleId 
+            ? { ...article, ...updatedData }
+            : article
+        );
+        return { ...car, articles: updatedArticles };
+      }
+      return car;
+    });
+    setCars(updatedCars);
+  };
+
+  const deleteArticle = useCallback((carId: string, articleId: string) => {
+    const updatedCars = cars.map(car => {
+      if (car.id === carId) {
+        return {
+          ...car,
+          articles: car.articles.filter(article => article.id !== articleId)
+        };
+      }
+      return car;
+    });
+    setCars(updatedCars);
+  }, [cars, setCars]);
+
   return {
     addCar,
     editCar,
     addMaintenance,
     addCarData,
     editCarData,
-    deleteCarData
+    deleteCarData,
+    addArticle,
+    editArticle,
+    deleteArticle
   };
 };

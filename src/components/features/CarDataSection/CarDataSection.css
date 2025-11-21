@@ -9,7 +9,7 @@
 
 .car-data-section .section-content {
   background: var(--color-bg-secondary);
-  padding: var(--space-4);
+  padding: var(--space-3);
 }
 
 .car-data-section__all-data {
@@ -18,47 +18,506 @@
   gap: var(--space-2); 
 }
 
-/* ДЕСКТОПНАЯ ВЕРСИЯ - 5 КАРТОЧЕК В РЯД */
-@media (min-width: 1025px) {
-  .card__grid--unified {
-    display: grid;
-    grid-template-columns: repeat(5, 1fr); /* ← 5 карточек в ряд */
-    gap: var(--space-3);
-    width: 100%;
-  }
-  
-  .card__grid-item {
-    width: 100%; /* ← Фиксированная ширина */
-    min-width: 0; /* ← Предотвращает растягивание */
-    flex: 0 0 auto; /* ← Запрещает растягивание */
+/* Стили для табов подразделов как в MainContent */
+.car-data-section .main-content__tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 0;
+  overflow-x: auto;
+  padding-bottom: 0;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* === СТИЛИ ДЛЯ АРТИКУЛОВ === */
+
+.articles-container {
+  width: 100%;
+}
+
+.articles-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+/* ШАХМАТНОЕ ЧЕРЕДОВАНИЕ ФОНОВ */
+.article-card {
+  padding: var(--space-3);
+  border: 1px solid var(--color-border-primary);
+  border-radius: var(--radius-md);
+  transition: all var(--transition-fast);
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  -webkit-tap-highlight-color: transparent;
+  font-family: var(--font-family-base);
+  box-sizing: border-box;
+  line-height: 1.5;
+  display: flex;
+  min-width: 0;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Светлая тема - четные карточки */
+.article-card--even {
+  background: var(--color-bg-secondary);
+  border-color: var(--color-border-primary);
+}
+
+/* Светлая тема - нечетные карточки (темные) */
+.article-card--odd {
+  background: var(--color-bg-tertiary);
+  border-color: var(--color-border-secondary);
+}
+
+/* Темная тема - четные карточки */
+[data-theme="dark"] .article-card--even {
+  background: var(--color-bg-card);
+  border-color: var(--color-border-primary);
+}
+
+/* Темная тема - нечетные карточки (темные) */
+[data-theme="dark"] .article-card--odd {
+  background: var(--color-bg-tertiary);
+  border-color: var(--color-border-secondary);
+}
+
+/* Убираем синюю границу при активной карточке для мобильной версии */
+.article-card:active {
+  transform: scale(0.98);
+  outline: none;
+}
+
+.article-card:focus {
+  outline: none;
+}
+
+/* Ховер только для десктопа */
+@media (hover: hover) and (pointer: fine) {
+  .article-card:hover {
+    border-color: var(--color-accent);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
   }
 }
 
-/* ПЛАНШЕТНАЯ ВЕРСИЯ - 3 КАРТОЧКИ В РЯД */
-@media (max-width: 1024px) and (min-width: 769px) {
-  .card__grid--unified {
+/* Основная информация в одну строку */
+.article-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-3);
+  width: 100%;
+  min-width: 0;
+}
+
+.article-title-block {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.article-category {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+  font-weight: 600;
+  text-transform: capitalize;
+  letter-spacing: 0.3px;
+  flex-shrink: 0;
+  white-space: nowrap;
+  line-height: 1.5;
+}
+
+.article-category::after {
+  content: ":";
+  margin-left: 2px;
+}
+
+.article-number {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-text-primary);
+  word-break: break-all;
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  line-height: 1.5;
+}
+
+/* Темная тема для текста */
+[data-theme="dark"] .article-category {
+  color: var(--color-text-secondary);
+}
+
+[data-theme="dark"] .article-number {
+  color: var(--color-text-primary);
+}
+
+/* Кнопки действий */
+.article-actions {
+  position: absolute;
+  z-index: 2;
+  top: var(--space-2);
+  right: var(--space-2);
+  display: flex;
+  gap: var(--space-1);
+  align-items: center;
+  font-family: var(--font-family-base);
+  box-sizing: border-box;
+}
+
+.article-action {
+  box-sizing: border-box;
+  margin: 0;
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+  padding: var(--space-1);
+  border: 1px solid var(--color-border-secondary);
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+}
+
+/* Убираем outline для кнопок */
+.article-action:focus {
+  outline: none;
+}
+
+.article-action:active {
+  background: var(--color-accent-blue-hover);
+  border-color: var(--color-accent-blue-hover);
+  transform: scale(0.95);
+}
+
+.article-action--danger:active {
+  background: var(--color-accent-red-hover);
+  border-color: var(--color-accent-red-hover);
+}
+
+/* Ховер только для десктопа */
+@media (hover: hover) and (pointer: fine) {
+  .article-action:hover {
+    background: var(--color-accent);
+    border-color: var(--color-accent);
+    color: white;
+  }
+
+  .article-action--danger:hover {
+    background: var(--color-accent-red);
+    border-color: var(--color-accent-red);
+  }
+}
+
+/* Темная тема для кнопок */
+[data-theme="dark"] .article-action {
+  background: transparent;
+  border-color: var(--color-border-secondary);
+  color: var(--color-text-secondary);
+}
+
+/* Ховер для темной темы только на десктопе */
+@media (hover: hover) and (pointer: fine) {
+  [data-theme="dark"] .article-action:hover {
+    background: var(--color-accent);
+    border-color: var(--color-accent);
+    color: white;
+  }
+
+  [data-theme="dark"] .article-action--danger:hover {
+    background: var(--color-accent-red);
+    border-color: var(--color-accent-red);
+  }
+}
+
+/* Пустое состояние */
+.articles-empty {
+  text-align: center;
+  padding: var(--space-8) var(--space-5);
+  background: var(--color-bg-secondary);
+  border-radius: var(--radius-xl);
+  border: 1px dashed var(--color-border-primary);
+  font-family: var(--font-family-base);
+}
+
+.articles-empty-icon {
+  font-size: var(--font-size-3xl);
+  margin-bottom: var(--space-4);
+  opacity: 0.6;
+}
+
+.articles-empty-text {
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-2);
+}
+
+.articles-empty-subtext {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+/* Темная тема для пустого состояния */
+[data-theme="dark"] .articles-empty {
+  background: var(--color-bg-card);
+  border-color: var(--color-border-primary);
+}
+
+[data-theme="dark"] .articles-empty-text {
+  color: var(--color-text-primary);
+}
+
+[data-theme="dark"] .articles-empty-subtext {
+  color: var(--color-text-secondary);
+}
+
+/* === ТЕМНАЯ ТЕМА ДЛЯ КНОПОК ТАБОВ === */
+[data-theme="dark"] .car-data-section .main-content__tabs .btn {
+  border: 1px solid var(--color-border-accent);
+  background: transparent;
+  color: var(--color-text-secondary);
+}
+
+[data-theme="dark"] .car-data-section .main-content__tabs .btn.btn--primary {
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+  color: white;
+}
+
+/* Ховер для табов только на десктопе */
+@media (hover: hover) and (pointer: fine) {
+  [data-theme="dark"] .car-data-section .main-content__tabs .btn:hover {
+    background: var(--color-tag-hover);
+    border-color: var(--color-border-accent);
+  }
+}
+
+/* === АДАПТИВНОСТЬ ДЛЯ ПЛАНШЕТОВ И ДЕСКТОПА === */
+@media (min-width: 768px) {
+  .articles-grid {
     display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0;
+  }
+  
+  .article-card {
+    padding: var(--space-3);
+  }
+}
+
+@media (min-width: 1024px) {
+  .articles-grid {
     grid-template-columns: repeat(3, 1fr);
-    gap: var(--space-3);
-    width: 100%;
+    gap: 0;
+  }
+  
+  .article-card {
+    padding: var(--space-3);
   }
 }
 
-/* МОБИЛЬНАЯ ВЕРСИЯ - 1 КАРТОЧКА В РЯД (как было) */
-@media (max-width: 768px) {
-  .card__grid--unified {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-3);
+/* Фикс для очень маленьких экранов */
+@media (max-width: 360px) {
+  .article-card {
+    padding: var(--space-2);
   }
-  
+}
+
+/* Адаптивность для основного контента */
+@media (max-width: 768px) {
   .car-data-section__all-data {
-    gap: var(--space-3) !important;
+    gap: var(--space-3);
   }
 }
 
 @media (max-width: 480px) {
   .car-data-section__all-data {
-    gap: var(--space-2) !important;
+    gap: var(--space-2);
   }
+}
+
+/* === СТИЛИ ДЛЯ КАРТОЧЕК КАТЕГОРИЙ === */
+
+.articles-categories-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-4);
+}
+
+@media (min-width: 768px) {
+  .articles-categories-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-4);
+  }
+}
+
+@media (min-width: 1024px) {
+  .articles-categories-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-4);
+  }
+}
+
+.articles-category-card {
+  padding: var(--space-4);
+  border: 1px solid var(--color-border-primary);
+  border-radius: var(--radius-xl);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+/* Шахматный порядок фонов */
+.articles-category-card--even {
+  background: var(--color-bg-secondary);
+}
+
+.articles-category-card--odd {
+  background: var(--color-bg-tertiary);
+}
+
+/* Темная тема для карточек */
+[data-theme="dark"] .articles-category-card--even {
+  background: var(--color-bg-card);
+}
+
+[data-theme="dark"] .articles-category-card--odd {
+  background: var(--color-bg-tertiary);
+}
+
+.articles-category-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.articles-category-title {
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin: 0;
+  line-height: 1.2;
+  text-align: left; /* ← ДОБАВИТЬ */
+  width: 100%; /* ← ДОБАВИТЬ */
+}
+
+/* Список подкатегорий */
+.articles-subcategories-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+
+
+.articles-subcategory-name {
+  font-size: var(--font-size-xs);
+  font-weight: 500;
+  color: var(--color-text-primary);
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.articles-subcategory-number {
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  padding: var(--space-1) var(--space-2);
+  border: 1px solid var(--color-border-secondary);
+  border-radius: var(--radius-sm);
+  flex-shrink: 0;
+}
+
+.articles-subcategory-actions {
+  display: flex;
+  gap: var(--space-1);
+  flex-shrink: 0;
+}
+
+
+[data-theme="dark"] .articles-subcategory-number {
+  background: transparent;
+  color: var(--color-text-secondary);
+}
+
+/* Адаптивность */
+@media (max-width: 480px) {
+  .articles-category-card {
+    padding: var(--space-2);
+  }
+  
+  .articles-subcategory-item {
+    padding: 0;
+    gap: var(--space-1);
+  }
+}
+
+.articles-subcategory-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  padding: var(--space-0_25) var(--space-1);
+  border-radius: var(--radius-md);
+  width: 100%;
+  padding-left: 0; /* ← УБРАТЬ ЛЕВЫЙ ОТСТУП */
+}
+
+
+
+.articles-subcategory-info {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex: 1;
+  min-width: 0;
+  justify-content: flex-start; /* ← ВЫРАВНИВАНИЕ ПО ЛЕВОМУ КРАЮ */
+}
+
+.articles-subcategory-name {
+  font-size: var(--font-size-xs);
+  font-weight: 500;
+  color: var(--color-text-primary);
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.articles-subcategory-name::after {
+  content: ":";
+  margin-left: 2px;
+}
+
+.articles-category-card--odd .articles-subcategory-number {
+  border-color: var(--color-border-primary) !important;
+}
+
+[data-theme="dark"] .articles-category-card--odd .articles-subcategory-number {
+  border-color: var(--color-border-accent) !important;
+}
+
+/* Темная тема - светлые границы для кнопок табов */
+[data-theme="dark"] .car-data-section .main-content__tabs .btn {
+  border: 1px solid var(--color-border-accent) !important;
+}
+
+[data-theme="dark"] .car-data-section .main-content__tabs .btn.btn--primary {
+  border: 1px solid var(--color-accent) !important;
 }

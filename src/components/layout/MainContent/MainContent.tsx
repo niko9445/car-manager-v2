@@ -3,9 +3,12 @@ import MaintenanceSection from '../../features/MaintenanceSection/MaintenanceSec
 import CarDataSection from '../../features/CarDataSection/CarDataSection';
 import ExpenseTracker from '../../expenses/ExpenseTracker/ExpenseTracker';
 import EditMaintenanceModal from '../../modals/EditMaintenanceModal/EditMaintenanceModal';
-import { MainContentProps, Maintenance } from '../../../types';
+import AddArticleModal from '../../modals/AddArticleModal/AddArticleModal';
+import EditArticleModal from '../../modals/EditArticleModal/EditArticleModal'; 
+import { MainContentProps, Maintenance, Article } from '../../../types';
 import { useTranslation } from '../../../contexts/LanguageContext';
 import { useApp } from '../../../contexts/AppContext';
+import { useCarOperations } from '../../../hooks/useCarOperations';
 
 const MainContent: React.FC<MainContentProps> = ({ 
   cars, 
@@ -24,8 +27,13 @@ const MainContent: React.FC<MainContentProps> = ({
   const [editingMaintenance, setEditingMaintenance] = useState<Maintenance | null>(null);
   const [isEditMaintenanceModalOpen, setIsEditMaintenanceModalOpen] = useState(false);
   const { t } = useTranslation();
-   const { state } = useApp();
-   const selectedCar = state.selectedCar;
+  const { state } = useApp();
+  const selectedCar = state.selectedCar;
+  const [isAddArticleModalOpen, setIsAddArticleModalOpen] = useState(false);
+  const [editingArticle, setEditingArticle] = useState<Article | null>(null);
+  const [isEditArticleModalOpen, setIsEditArticleModalOpen] = useState(false);
+
+  const { addArticle, editArticle  } = useCarOperations(cars, setCars);
 
   const handleEditMaintenance = (maintenance: Maintenance): void => {
     setIsEditMaintenanceModalOpen(false);
@@ -35,6 +43,24 @@ const MainContent: React.FC<MainContentProps> = ({
       setEditingMaintenance(maintenance);
       setIsEditMaintenanceModalOpen(true);
     }, 10);
+  };
+
+  const handleEditArticle = (article: Article) => {
+    setEditingArticle(article);
+    setIsEditArticleModalOpen(true);
+  };
+
+  const handleOpenAddArticleModal = () => {
+    setIsAddArticleModalOpen(true);
+  };
+
+  const handleAddArticle = (articleData: { category: string; subcategory: string; articleNumber: string }) => {
+    if (!selectedCar) {
+      console.error('No car selected');
+      return;
+    }
+    addArticle(selectedCar, articleData);
+    setIsAddArticleModalOpen(false);
   };
 
   const handleSaveMaintenance = (maintenanceId: string, updatedData: Partial<Maintenance>): void => {
@@ -52,6 +78,29 @@ const MainContent: React.FC<MainContentProps> = ({
     setCars(updatedCars);
     setIsEditMaintenanceModalOpen(false);
     setEditingMaintenance(null);
+  };
+
+  const handleSaveArticle = (articleId: string, updatedData: { category: string; subcategory: string; articleNumber: string }) => {
+    if (!selectedCar) return;
+    editArticle(selectedCar.id, articleId, updatedData);
+    setIsEditArticleModalOpen(false);
+    setEditingArticle(null);
+  };
+
+  const handleDeleteArticle = (article: Article) => {
+    if (!selectedCar) return;
+    
+    // Нужно добавить функцию deleteArticle в useCarOperations
+    const updatedCars = cars.map(car => {
+      if (car.id === selectedCar.id) {
+        return {
+          ...car,
+          articles: car.articles.filter(a => a.id !== article.id)
+        };
+      }
+      return car;
+    });
+    setCars(updatedCars);
   };
 
   if (!selectedCar) {
@@ -72,7 +121,7 @@ const MainContent: React.FC<MainContentProps> = ({
           
           <div className="main-welcome__text">
             <h1 className="main-welcome__title">
-              {t('app.name')} {/* <-- ПЕРЕВОД (вместо "Car Manager") */}
+              {t('app.name')}
             </h1>
             
             <p className="main-welcome__subtitle">
@@ -130,6 +179,9 @@ const MainContent: React.FC<MainContentProps> = ({
             onDeleteCarData={onDeleteCarData}
             onEditCarData={onEditCarData}
             onEditCar={onEditCar}
+            onAddArticle={handleOpenAddArticleModal}
+            onEditArticle={handleEditArticle} 
+            onDeleteArticle={handleDeleteArticle}
           />
         );
       
@@ -208,6 +260,13 @@ const MainContent: React.FC<MainContentProps> = ({
         {renderSection()}
       </div>
 
+      {isAddArticleModalOpen && (
+        <AddArticleModal
+          onClose={() => setIsAddArticleModalOpen(false)}
+          onSave={handleAddArticle}
+        />
+      )}
+
       {isEditMaintenanceModalOpen && editingMaintenance && (
         <EditMaintenanceModal
           maintenance={editingMaintenance}
@@ -216,6 +275,17 @@ const MainContent: React.FC<MainContentProps> = ({
             setEditingMaintenance(null);
           }}
           onSave={handleSaveMaintenance}
+        />
+      )}
+
+      {isEditArticleModalOpen && editingArticle && (
+        <EditArticleModal
+          article={editingArticle}
+          onClose={() => {
+            setIsEditArticleModalOpen(false);
+            setEditingArticle(null);
+          }}
+          onSave={handleSaveArticle}
         />
       )}
     </div>

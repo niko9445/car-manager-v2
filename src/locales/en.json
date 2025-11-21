@@ -360,6 +360,38 @@
     "importErrorMessage": "Failed to import data. Please check the file",
     "readErrorTitle": "Read error",
     "readErrorMessage": "Failed to read file"
+  },
+
+  "articles": {
+    "addArticle": "Add Article",
+    "selectCategory": "Part Category",
+    "chooseCategory": "Choose category",
+    "articleNumber": "Article Number",
+    "enterArticleNumber": "Enter article number",
+    "link": "Link",
+    "editArticle": "Edit articles",
+    "title": "Articles",
+      "noArticles": "No articles added",
+      "addFirstArticle": "Add first part article",
+      "add": "Add article",
+      "viewLink": "View link",
+    "categories": {
+      "engine": "Engine",
+      "transmission": "Transmission",
+      "suspension": "Suspension",
+      "brakes": "Brakes",
+      "electrical": "Electrical",
+      "body": "Body",
+      "interior": "Interior",
+      "exterior": "Exterior",
+      "tires": "Tires",
+      "wheels": "Wheels",
+      "oil": "Oil & Fluids",
+      "filters": "Filters",
+      "lighting": "Lighting",
+      "cooling": "Cooling",
+      "other": "Other"
+    }
   }
 }
 

@@ -9,6 +9,7 @@ export interface Car {
   vin: string;
   maintenance: Maintenance[];
   carData: CarDataEntry[];
+  articles: Article[];
 }
 
 // Добавляем к существующим типам
@@ -250,6 +251,9 @@ export interface CarDataSectionProps {
   onDeleteCarData: (data: CarDataEntry) => void;
   onEditCarData: (data: CarDataEntry) => void;
   onEditCar: (car: Car) => void;
+  onAddArticle?: () => void;
+  onEditArticle?: (article: Article) => void; // ← ДОБАВЬТЕ ЭТО
+  onDeleteArticle?: (article: Article) => void; // ← ДОБАВЬТЕ ЭТО
 }
 
 // ===== ТИПЫ ДЛЯ РАСХОДОВ И ОТЧЕТОВ =====
@@ -463,4 +467,13 @@ export interface TranslationFunction {
 export interface UseTranslationReturn {
   t: TranslationFunction;
   language: Language;
+}
+
+export interface Article {
+  id: string;
+  category: string;
+  articleNumber: string;
+  link?: string;
+  createdAt: string;
+  subcategory: string;
 }

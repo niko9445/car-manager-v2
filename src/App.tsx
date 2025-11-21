@@ -103,7 +103,8 @@ const AppContent = () => {
       transmission: carData.transmission,
       vin: carData.vin,
       maintenance: [],
-      carData: []
+      carData: [],
+      articles: []
     };
     setCars([...cars, newCar]);
     closeModal();

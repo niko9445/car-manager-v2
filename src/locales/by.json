@@ -358,5 +358,37 @@
     "importErrorMessage": "Не атрымалася імпартаваць даныя. Праверце файл",
     "readErrorTitle": "Памылка чытання",
     "readErrorMessage": "Не атрымалася прачытаць файл"
+  },
+
+  "articles": {
+    "addArticle": "Дадаць артыкул",
+    "selectCategory": "Катэгорыя запчастак",
+    "chooseCategory": "Выберыце катэгорыю",
+    "articleNumber": "Нумар артыкула",
+    "enterArticleNumber": "Увядзіце нумар артыкула",
+    "link": "Спасылка",
+    "title": "Артыкулы",
+    "noArticles": "Няма дададзеных артыкулаў",
+    "addFirstArticle": "Дадайце першы артыкул запчасткі",
+    "add": "Дадаць артыкул",
+    "editArticle": "Редактировать артикул",
+    "viewLink": "Перайсці па спасылцы",
+    "categories": {
+      "engine": "Рухавік",
+      "transmission": "Трансмісія",
+      "suspension": "Падвеска",
+      "brakes": "Тармазы",
+      "electrical": "Электрыка",
+      "body": "Кузаў",
+      "interior": "Салон",
+      "exterior": "Экстэр'ер",
+      "tires": "Шыны",
+      "wheels": "Дыскі",
+      "oil": "Алеі і вадкасці",
+      "filters": "Фільтры",
+      "lighting": "Асвятленне",
+      "cooling": "Ахалоджванне",
+      "other": "Іншае"
+    }
   }
 }
