@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback } from 'react';
+import React, { useEffect, useCallback, useState } from 'react';
 import { AppProvider, useApp } from './contexts/AppContext';
 import { ThemeProvider } from './contexts/ThemeContext';
 import Sidebar from './components/layout/Sidebar/Sidebar';
@@ -10,9 +10,18 @@ import AddCarDataModal from './components/modals/AddCarDataModal/AddCarDataModal
 import AddExpenseModal from './components/modals/AddExpenseModal/AddExpenseModal';
 import ConfirmModal from './components/ui/ConfirmModal/ConfirmModal';
 import EditCarDataModal from './components/modals/EditCarDataModal/EditCarDataModal';
-import { LanguageProvider, useTranslation } from './contexts/LanguageContext'; // <-- ДОБАВИТЬ useTranslation
+import { LanguageProvider, useTranslation } from './contexts/LanguageContext';
 import { CurrencyProvider } from './contexts/CurrencyContext';
-import { useLocalStorage } from './hooks/useLocalStorage';
+import { AuthProvider, useAuth } from './contexts/AuthContext';
+import { AuthModal } from './components/auth/AuthModal';
+import { MigrationNotification } from './components/auth/MigrationNotification';
+import { SyncStatus } from './components/ui/SyncStatus/SyncStatus';
+import { maintenanceService } from './services/database/maintenance'; // <-- ДОБАВИТЬ
+import { useCarData } from './hooks/useCarData';
+import { expenseService } from './services/database/expenses';
+import { useDataMigration } from './hooks/useDataMigration';
+import { useSupabaseData } from './hooks/useSupabaseData';
+import { carService } from './services/database/cars'; // <-- ДОБАВИТЬ
 import { 
   Car, 
   AppModalType, 
@@ -28,15 +37,16 @@ import {
 import './styles/globals.css';
 
 const AppContent = () => {
-  const [cars, setCars] = useLocalStorage<Car[]>('cars', []);
   const { state, dispatch } = useApp();
-  const { t } = useTranslation(); // <-- ДОБАВИТЬ
-  const { selectedCar, activeSection, isMobile, sidebarOpen, modals, modalData } = state;
+  const { t } = useTranslation();
+  const { user, isLoading: authLoading } = useAuth();
+  const { selectedCar, activeSection, isMobile, sidebarOpen, modals, modalData, cars } = state;
+  
+  const [showAuthModal, setShowAuthModal] = useState(false);
+  const { isMigrating } = useDataMigration();
 
-  // Синхронизируем cars с контекстом
-  useEffect(() => {
-    dispatch({ type: 'SET_CARS', payload: cars });
-  }, [cars, dispatch]);
+  useSupabaseData();
+  useCarData();
 
   // Определяем мобильное устройство
   useEffect(() => {
@@ -51,6 +61,13 @@ const AppContent = () => {
     return () => window.removeEventListener('resize', checkMobile);
   }, [dispatch]);
 
+  // Проверка авторизации при загрузке
+  useEffect(() => {
+    if (!authLoading && !user && !isMigrating) {
+      setShowAuthModal(true);
+    }
+  }, [user, authLoading, isMigrating]);
+
   // Обработчики для Sidebar и MainContent
   const handleSetSelectedCar = useCallback((car: Car) => {
     dispatch({ type: 'SET_SELECTED_CAR', payload: car });
@@ -63,6 +80,8 @@ const AppContent = () => {
   const handleSetSidebarOpen = useCallback((open: boolean) => {
     dispatch({ type: 'SET_SIDEBAR_OPEN', payload: open });
   }, [dispatch]);
+
+  
 
   // Обработчик клика вне sidebar для мобильных
   useEffect(() => {
@@ -84,7 +103,6 @@ const AppContent = () => {
   };
 
   const closeModal = () => {
-    // Просто закрываем все активные модалки
     Object.keys(modals).forEach(modalType => {
       if (modals[modalType as AppModalType]) {
         dispatch({ type: 'CLOSE_MODAL', payload: { modalType: modalType as AppModalType } });
@@ -92,106 +110,168 @@ const AppContent = () => {
     });
   };
 
-  // Функции для автомобилей
-  const handleAddCar = (carData: CarFormData) => {
-    const newCar: Car = {
-      id: Date.now().toString(),
-      brand: carData.brand,
-      model: carData.model,
-      year: carData.year,
-      engineType: carData.engineType,
-      transmission: carData.transmission,
-      vin: carData.vin,
-      maintenance: [],
-      carData: [],
-      articles: []
-    };
-    setCars([...cars, newCar]);
-    closeModal();
+  // Функции для автомобилей (ОБНОВЛЕННЫЕ)
+  const handleAddCar = async (carData: CarFormData) => {
+    if (!user) return;
+
+    try {
+      const newCar = await carService.createCar(carData, user.id);
+      dispatch({ type: 'SET_CARS', payload: [...cars, newCar] });
+      closeModal();
+    } catch (error) {
+      console.error('❌ Ошибка создания автомобиля:', error);
+    }
   };
 
-  const handleEditCar = (carId: string, carData: CarFormData) => {
-    const updatedCars = cars.map(car => 
-      car.id === carId ? { ...car, ...carData } : car
-    );
-    setCars(updatedCars);
-    
-    // ⭐⭐⭐ ДОБАВЬ ЭТОТ БЛОК ⭐⭐⭐
-    // Если редактируемый автомобиль сейчас выбран - обновляем его в контексте
-    if (state.selectedCar && state.selectedCar.id === carId) {
-      const updatedSelectedCar = { ...state.selectedCar, ...carData };
-      dispatch({ type: 'SET_SELECTED_CAR', payload: updatedSelectedCar });
+  const handleEditCar = async (carId: string, carData: CarFormData) => {
+    try {
+      const updatedCar = await carService.updateCar(carId, carData);
+      const updatedCars = cars.map(car => 
+        car.id === carId ? updatedCar : car
+      );
+      dispatch({ type: 'SET_CARS', payload: updatedCars });
+      
+      if (selectedCar?.id === carId) {
+        dispatch({ type: 'SET_SELECTED_CAR', payload: updatedCar });
+      }
+      closeModal();
+    } catch (error) {
+      console.error('❌ Ошибка обновления автомобиля:', error);
     }
-    
-    closeModal();
   };
+
+
+
+  const handleAddExpense = async (expenseData: any) => {
+    if (!selectedCar || !user) return;
+    
+    try {
+      const newExpense = await expenseService.createExpense(
+        expenseData, 
+        selectedCar.id
+      );
+      
+      // Здесь можно обновить состояние если нужно отображать расходы
+      // Пока просто закрываем модалку
+      closeModal();
+      
+      // Можно показать уведомление об успехе
+      console.log('✅ Расход добавлен:', newExpense);
+    } catch (error) {
+      console.error('❌ Ошибка добавления расхода:', error);
+    }
+  };
+
+  const handleEditExpense = async (expenseId: string, expenseData: any) => {
+    try {
+      const updatedExpense = await expenseService.updateExpense(expenseId, expenseData);
+      console.log('✅ Расход обновлен:', updatedExpense);
+      closeModal();
+    } catch (error) {
+      console.error('❌ Ошибка обновления расхода:', error);
+    }
+  };
+
+  const handleDeleteExpense = async (expense: any) => {
+    openModal('confirmDelete', { 
+      type: 'delete' as ConfirmType, 
+      title: t('confirmations.deleteExpense'),
+      message: t('confirmations.deleteExpenseMessage', {
+        amount: expense.amount,
+        category: expense.category
+      }),
+      onConfirm: async () => {
+        try {
+          await expenseService.deleteExpense(expense.id);
+          console.log('✅ Расход удален');
+          closeModal();
+        } catch (error) {
+          console.error('❌ Ошибка удаления расхода:', error);
+        }
+      }
+    });
+  };
+
 
   const handleDeleteCar = (car: Car) => {
     openModal('confirmDelete', { 
       type: 'delete' as ConfirmType, 
-      title: t('confirmations.deleteCar'), // <-- ПЕРЕВОД
-      message: t('confirmations.deleteCarMessage', { // <-- ПЕРЕВОД
+      title: t('confirmations.deleteCar'),
+      message: t('confirmations.deleteCarMessage', {
         brand: car.brand,
         model: car.model
       }),
-      onConfirm: () => {
-        const updatedCars = cars.filter(c => c.id !== car.id);
-        setCars(updatedCars);
-        if (selectedCar?.id === car.id) {
-          dispatch({ type: 'SET_SELECTED_CAR', payload: null });
+      onConfirm: async () => {
+        try {
+          await carService.deleteCar(car.id);
+          const updatedCars = cars.filter(c => c.id !== car.id);
+          dispatch({ type: 'SET_CARS', payload: updatedCars });
+          if (selectedCar?.id === car.id) {
+            dispatch({ type: 'SET_SELECTED_CAR', payload: null });
+          }
+          closeModal();
+        } catch (error) {
+          console.error('❌ Ошибка удаления автомобиля:', error);
         }
-        closeModal();
       }
     });
   };
 
-  const handleAddMaintenance = (maintenanceData: MaintenanceFormData) => {
-    if (!selectedCar) return;
+  // ВРЕМЕННО оставляем локальные функции для maintenance и carData
+  // (позже заменим на Supabase версии)
+  const handleAddMaintenance = async (maintenanceData: MaintenanceFormData) => {
+    if (!selectedCar || !user) return;
     
-    const updatedCars = cars.map(car => {
-      if (car.id === selectedCar.id) {
-        const newMaintenance: Maintenance = {
-          id: Date.now().toString(),
-          carId: selectedCar.id,
-          date: maintenanceData.date,
-          mileage: maintenanceData.mileage,
-          cost: maintenanceData.cost ?? null,
-          createdAt: new Date().toISOString(),
-          categoryId: maintenanceData.categoryId,
-          subcategoryId: maintenanceData.subcategoryId,
-          customFields: maintenanceData.customFields
-        };
-        return {
-          ...car,
-          maintenance: [...(car.maintenance || []), newMaintenance]
-        };
-      }
-      return car;
-    });
-    setCars(updatedCars);
-    closeModal();
+    try {
+      const newMaintenance = await maintenanceService.createMaintenance(
+        maintenanceData, 
+        selectedCar.id
+      );
+      
+      // Обновляем автомобиль в состоянии
+      const updatedCars = cars.map(car => {
+        if (car.id === selectedCar.id) {
+          return {
+            ...car,
+            maintenance: [...(car.maintenance || []), newMaintenance]
+          };
+        }
+        return car;
+      });
+      
+      dispatch({ type: 'SET_CARS', payload: updatedCars });
+      closeModal();
+    } catch (error) {
+      console.error('❌ Ошибка создания ТО:', error);
+    }
   };
 
-  // Функции для данных авто
-  const handleAddCarData = (carData: { fields: CarDataField[] }) => {
+  const handleAddCarData = async (carData: { fields: CarDataField[] }) => {
     if (!selectedCar) return;
     
-    const updatedCars = cars.map(car => {
-      if (car.id === selectedCar.id) {
-        const newCarData: CarDataEntry = {
-          id: Date.now().toString(),
-          fields: carData.fields,
-          createdAt: new Date().toISOString()
-        };
-        return {
-          ...car,
-          carData: [...(car.carData || []), newCarData]
-        };
-      }
-      return car;
-    });
-    setCars(updatedCars);
-    closeModal();
+    try {
+      // Пока используем локальное сохранение, но с оффлайн-поддержкой через dispatch
+      const newCarData: CarDataEntry = {
+        id: Date.now().toString(),
+        fields: carData.fields,
+        createdAt: new Date().toISOString()
+      };
+      
+      const updatedCars = cars.map(car => {
+        if (car.id === selectedCar.id) {
+          return {
+            ...car,
+            carData: [...(car.carData || []), newCarData]
+          };
+        }
+        return car;
+      });
+      
+      dispatch({ type: 'SET_CARS', payload: updatedCars });
+      closeModal();
+    } catch (error) {
+      console.error('❌ Ошибка добавления данных автомобиля:', error);
+    }
   };
 
   const handleEditCarDataInEdit = (carId: string, dataId: string, updatedData: { fields: CarDataField[] }) => {
@@ -208,10 +288,9 @@ const AppContent = () => {
       }
       return car;
     });
-    setCars(updatedCars);
+    dispatch({ type: 'SET_CARS', payload: updatedCars }); // <-- ИЗМЕНИТЬ
   };
 
-  // Функция для удаления дополнительных данных в EditCarModal
   const handleDeleteCarDataInEdit = (carId: string, dataId: string) => {
     const updatedCars = cars.map(car => {
       if (car.id === carId) {
@@ -222,31 +301,37 @@ const AppContent = () => {
       }
       return car;
     });
-    setCars(updatedCars);
+    dispatch({ type: 'SET_CARS', payload: updatedCars }); // <-- ИЗМЕНИТЬ
   };
 
-  // Функции для удаления
-  const handleDeleteMaintenance = (maintenance: Maintenance) => {
+  const handleDeleteMaintenance = async (maintenance: Maintenance) => {
     if (!selectedCar) return;
     
     openModal('confirmDelete', { 
       type: 'delete' as ConfirmType, 
-      title: t('confirmations.deleteMaintenance'), // <-- ПЕРЕВОД
-      message: t('confirmations.deleteMaintenanceMessage', { // <-- ПЕРЕВОД
+      title: t('confirmations.deleteMaintenance'),
+      message: t('confirmations.deleteMaintenanceMessage', {
         date: new Date(maintenance.createdAt).toLocaleDateString('ru-RU')
       }),
-      onConfirm: () => {
-        const updatedCars = cars.map(car => {
-          if (car.id === selectedCar.id) {
-            return {
-              ...car,
-              maintenance: (car.maintenance || []).filter(m => m.id !== maintenance.id)
-            };
-          }
-          return car;
-        });
-        setCars(updatedCars);
-        closeModal();
+      onConfirm: async () => {
+        try {
+          await maintenanceService.deleteMaintenance(maintenance.id);
+          
+          const updatedCars = cars.map(car => {
+            if (car.id === selectedCar.id) {
+              return {
+                ...car,
+                maintenance: (car.maintenance || []).filter(m => m.id !== maintenance.id)
+              };
+            }
+            return car;
+          });
+          
+          dispatch({ type: 'SET_CARS', payload: updatedCars });
+          closeModal();
+        } catch (error) {
+          console.error('❌ Ошибка удаления ТО:', error);
+        }
       }
     });
   };
@@ -256,8 +341,8 @@ const AppContent = () => {
     
     openModal('confirmDelete', { 
       type: 'delete' as ConfirmType, 
-      title: t('confirmations.deleteTitle'), // <-- ПЕРЕВОД
-      message: t('confirmations.deleteMessage'), // <-- ПЕРЕВОД
+      title: t('confirmations.deleteTitle'),
+      message: t('confirmations.deleteMessage'),
       onConfirm: () => {
         const updatedCars = cars.map(car => {
           if (car.id === selectedCar.id) {
@@ -268,7 +353,7 @@ const AppContent = () => {
           }
           return car;
         });
-        setCars(updatedCars);
+        dispatch({ type: 'SET_CARS', payload: updatedCars }); // <-- ИЗМЕНИТЬ
         closeModal();
       }
     });
@@ -300,8 +385,19 @@ const AppContent = () => {
 
   return (
     <>
+      <MigrationNotification />
+      <AuthModal 
+        isOpen={showAuthModal && !isMigrating}
+        onClose={() => {
+          if (user) {
+            setShowAuthModal(false);
+          }
+        }} 
+      />
+
+      <SyncStatus />
+
       <div className="app">
-        {/* Оверлей для мобильных */}
         {isMobile && sidebarOpen && (
           <div
             className="overlay"
@@ -309,7 +405,6 @@ const AppContent = () => {
           />
         )}
 
-        {/* Сайдбар */}
         <Sidebar
           cars={cars}
           selectedCar={selectedCar}
@@ -325,7 +420,7 @@ const AppContent = () => {
           <MainContent 
             selectedCar={selectedCar}
             cars={cars}
-            setCars={setCars}
+            setCars={(newCars) => dispatch({ type: 'SET_CARS', payload: newCars })} // <-- ИЗМЕНИТЬ
             activeSection={activeSection}
             setActiveSection={handleSetActiveSection}
             onAddMaintenance={() => openModal('addMaintenance')}
@@ -373,7 +468,6 @@ const AppContent = () => {
         />
       )}
 
-      {/* Модалки для расходов */}
       <AddExpenseModal />
 
       {modals.confirmDelete && isConfirmModalData(modalData) && (
@@ -406,7 +500,7 @@ const AppContent = () => {
               }
               return car;
             });
-            setCars(updatedCars);
+            dispatch({ type: 'SET_CARS', payload: updatedCars }); // <-- ИЗМЕНИТЬ
             closeModal();
           }}
         />
@@ -419,11 +513,13 @@ const App = () => {
   return (
     <ThemeProvider>
       <LanguageProvider>
-        <AppProvider>
-          <CurrencyProvider>
-            <AppContent />
-          </CurrencyProvider>
-        </AppProvider>
+        <AuthProvider>
+          <AppProvider>
+            <CurrencyProvider>
+              <AppContent />
+            </CurrencyProvider>
+          </AppProvider>
+        </AuthProvider>
       </LanguageProvider>
     </ThemeProvider>
   );

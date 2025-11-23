@@ -1,8 +1,11 @@
-import React, { useState } from 'react';
-import { CarDataSectionProps, Article } from '../../../types';
+import React, { useState, useEffect } from 'react';
+import { CarDataSectionProps, Article, CarDataEntry } from '../../../types';
 import { useCurrency } from '../../../contexts/CurrencyContext';
 import { useTranslation } from '../../../contexts/LanguageContext';
 import ConfirmModal from '../../ui/ConfirmModal/ConfirmModal';
+import { carDataService } from '../../../services/database/carData';
+import { articleService } from '../../../services/database/articles';
+import { useApp } from '../../../contexts/AppContext';
 
 type DataSubsection = 'info' | 'articles';
 
@@ -17,23 +20,182 @@ const CarDataSection: React.FC<CarDataSectionProps> = ({
   onEditArticle,
   onDeleteArticle
 }) => {
+  const { state, dispatch } = useApp();
+  const { cars: globalCars } = state;
   const [activeSubsection, setActiveSubsection] = useState<DataSubsection>('info');
-  const currentCar = cars.find(c => c.id === car.id) || car;
+  const currentCar = globalCars.find(c => c.id === car.id) || car;
   const { getCurrencySymbol } = useCurrency();
   const { t } = useTranslation();
   const [expandedArticle, setExpandedArticle] = useState<string | null>(null);
   const [articleToDelete, setArticleToDelete] = useState<Article | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [articlesLoading, setArticlesLoading] = useState(false);
 
-  const handleAddClick = () => {
-    if (activeSubsection === 'info') {
-      onAddCarData();
-    } else if (activeSubsection === 'articles' && onAddArticle) {
-      onAddArticle();
+  // Используем данные из глобального состояния
+  const carData = currentCar.carData || [];
+  const articles = currentCar.articles || [];
+
+  // Загрузка данных только при первом монтировании или смене автомобиля
+  useEffect(() => {
+    const loadData = async () => {
+      if (!car?.id) return;
+      
+      // Проверяем, есть ли уже данные в глобальном состоянии
+      const hasData = carData.length > 0 || articles.length > 0;
+      if (hasData) {
+        console.log('🔍 CarDataSection: Данные уже есть в глобальном состоянии, пропускаем загрузку');
+        return;
+      }
+      
+      try {
+        setLoading(true);
+        setArticlesLoading(true);
+        
+        console.log('🔄 CarDataSection: Загрузка данных для автомобиля:', car.id);
+        
+        const [carDataResult, articlesResult] = await Promise.all([
+          carDataService.getCarDataByCar(car.id),
+          articleService.getArticlesByCar(car.id)
+        ]);
+
+        // Обновляем глобальное состояние с новыми данными
+        const updatedCars = globalCars.map(c => {
+          if (c.id === car.id) {
+            return {
+              ...c,
+              carData: carDataResult,
+              articles: articlesResult
+            };
+          }
+          return c;
+        });
+        
+        dispatch({ type: 'SET_CARS', payload: updatedCars });
+        
+        console.log('✅ CarDataSection: Данные загружены', {
+          carData: carDataResult.length,
+          articles: articlesResult.length
+        });
+        
+      } catch (error) {
+        console.error('❌ CarDataSection: Ошибка загрузки данных:', error);
+      } finally {
+        setLoading(false);
+        setArticlesLoading(false);
+      }
+    };
+
+    loadData();
+  }, [car.id]); // Только при смене car.id
+
+  // Обработчики для статей с Supabase
+  const handleAddArticleWithSupabase = async (articleData: { category: string; subcategory: string; articleNumber: string }) => {
+    console.log('🔍 CarDataSection: handleAddArticleWithSupabase вызван');
+
+    try {
+      // ОПТИМИСТИЧНОЕ ОБНОВЛЕНИЕ
+      const tempArticle: Article = {
+        id: `temp-${Date.now()}`,
+        ...articleData,
+        createdAt: new Date().toISOString(),
+        carId: car.id
+      };
+      
+      const updatedCarsOptimistic = globalCars.map(c => {
+        if (c.id === car.id) {
+          return {
+            ...c,
+            articles: [...(c.articles || []), tempArticle]
+          };
+        }
+        return c;
+      });
+      
+      dispatch({ type: 'SET_CARS', payload: updatedCarsOptimistic });
+      
+      console.log('🔄 CarDataSection: Создание статьи в Supabase...');
+      const result = await articleService.createArticle(car.id, articleData);
+      
+      console.log('✅ CarDataSection: Статья создана в Supabase:', result.id);
+      
+      // ЗАМЕНЯЕМ временную запись на реальную
+      const updatedCarsFinal = globalCars.map(c => {
+        if (c.id === car.id) {
+          return {
+            ...c,
+            articles: (c.articles || []).map(item => 
+              item.id === tempArticle.id ? result : item
+            )
+          };
+        }
+        return c;
+      });
+      
+      dispatch({ type: 'SET_CARS', payload: updatedCarsFinal });
+      
+      console.log('✅ CarDataSection: Оптимистичное обновление завершено');
+      
+      // Уведомляем родительский компонент
+      onAddArticle && onAddArticle();
+      
+    } catch (error) {
+      console.error('❌ CarDataSection: Ошибка создания статьи:', error);
+      
+      // ОТКАТ оптимистичного обновления при ошибке
+      const rolledBackCars = globalCars.map(c => {
+        if (c.id === car.id) {
+          return {
+            ...c,
+            articles: (c.articles || []).filter(item => !item.id.startsWith('temp-'))
+          };
+        }
+        return c;
+      });
+      
+      dispatch({ type: 'SET_CARS', payload: rolledBackCars });
     }
   };
 
-  const toggleArticle = (articleId: string) => {
-    setExpandedArticle(expandedArticle === articleId ? null : articleId);
+  const handleEditArticleWithSupabase = async (articleId: string, updatedData: { category: string; subcategory: string; articleNumber: string }) => {
+    try {
+      console.log('🔄 Обновление статьи:', articleId);
+      const result = await articleService.updateArticle(articleId, updatedData);
+      
+      // ПРИНУДИТЕЛЬНО ОБНОВЛЯЕМ ДАННЫЕ
+      await refreshCarData();
+      
+      console.log('✅ CarDataSection: Данные обновлены после редактирования');
+      
+      // Уведомляем родительский компонент - передаем полный объект Article
+      onEditArticle && onEditArticle(result);
+    } catch (error) {
+      console.error('❌ Ошибка обновления статьи:', error);
+    }
+  };
+
+  const handleDeleteArticleWithSupabase = async (article: Article) => {
+    try {
+      console.log('🗑️ Удаление статьи:', article.id);
+      await articleService.deleteArticle(article.id);
+      
+      // ПРИНУДИТЕЛЬНО ОБНОВЛЯЕМ ДАННЫЕ
+      await refreshCarData();
+      
+      console.log('✅ CarDataSection: Данные обновлены после удаления');
+      
+      // Уведомляем родительский компонент
+      onDeleteArticle && onDeleteArticle(article);
+    } catch (error) {
+      console.error('❌ Ошибка удаления статьи:', error);
+    }
+  };
+
+  const handleAddClick = () => {
+    if (activeSubsection === 'info') {
+      onAddCarData && onAddCarData();
+    } else if (activeSubsection === 'articles') {
+      onAddArticle && onAddArticle();
+    }
   };
 
   const handleDeleteClick = (article: Article) => {
@@ -41,8 +203,8 @@ const CarDataSection: React.FC<CarDataSectionProps> = ({
   };
 
   const handleConfirmDelete = () => {
-    if (articleToDelete && onDeleteArticle) {
-      onDeleteArticle(articleToDelete);
+    if (articleToDelete) {
+      handleDeleteArticleWithSupabase(articleToDelete);
     }
     setArticleToDelete(null);
   };
@@ -172,6 +334,42 @@ const CarDataSection: React.FC<CarDataSectionProps> = ({
         {field.value}
       </span>
     );
+  };
+
+
+  const refreshCarData = async () => {
+    if (!car?.id) return;
+    
+    try {
+      console.log('🔄 CarDataSection: Принудительное обновление данных');
+      
+      const [carDataResult, articlesResult] = await Promise.all([
+        carDataService.getCarDataByCar(car.id),
+        articleService.getArticlesByCar(car.id)
+      ]);
+
+      // Обновляем глобальное состояние
+      const updatedCars = globalCars.map(c => {
+        if (c.id === car.id) {
+          return {
+            ...c,
+            carData: carDataResult,
+            articles: articlesResult
+          };
+        }
+        return c;
+      });
+      
+      dispatch({ type: 'SET_CARS', payload: updatedCars });
+      
+      console.log('✅ CarDataSection: Данные обновлены', {
+        carData: carDataResult.length,
+        articles: articlesResult.length
+      });
+      
+    } catch (error) {
+      console.error('❌ CarDataSection: Ошибка обновления данных:', error);
+    }
   };
 
   // Функция для рендеринга специальных категорий
@@ -336,13 +534,18 @@ const CarDataSection: React.FC<CarDataSectionProps> = ({
     ] : [])
   ];
 
-  // Получаем статьи автомобиля (с проверкой на существование)
-  const carArticles = currentCar.articles || [];
+  // Используем статьи из глобального состояния
+  const carArticles = articles;
 
   // Рендер контента для вкладки "Информация об авто"
   const renderInfoContent = () => (
     <div className="car-data-section__all-data">
-      {(allDataItems.length > 0 || (currentCar.carData && currentCar.carData.length > 0)) && (
+      {loading ? (
+        <div className="car-data-section__loading">
+          <div className="car-data-section__spinner"></div>
+          <p>{t('carData.loading')}</p>
+        </div>
+      ) : (allDataItems.length > 0 || carData.length > 0) ? (
         <div className="main-data-grid">
           {/* Основные данные */}
           {allDataItems.map((item) => (
@@ -352,8 +555,8 @@ const CarDataSection: React.FC<CarDataSectionProps> = ({
             </div>
           ))}
           
-          {/* Дополнительные данные */}
-          {currentCar.carData && currentCar.carData.map((dataEntry, index) => {
+          {/* Дополнительные данные ИЗ SUPABASE */}
+          {carData.map((dataEntry, index) => {
             return dataEntry.fields.map((field, fieldIndex) => {
               const isSpecial = isSpecialCategory(field.name);
               
@@ -371,9 +574,7 @@ const CarDataSection: React.FC<CarDataSectionProps> = ({
             });
           })}
         </div>
-      )}
-
-      {allDataItems.length === 0 && (!currentCar.carData || currentCar.carData.length === 0) && (
+      ) : (
         <div className="section__empty">
           <div className="section__empty-icon">🚗</div>
           <h3 className="section__empty-text">{t('carData.noData')}</h3>
@@ -383,7 +584,7 @@ const CarDataSection: React.FC<CarDataSectionProps> = ({
           <div className="section__empty-actions">
             <button 
               className="btn btn--primary"
-              onClick={() => onEditCar(currentCar)}
+              onClick={() => onEditCar && onEditCar(currentCar)}
             >
               {t('carData.add')}
             </button>
@@ -396,7 +597,12 @@ const CarDataSection: React.FC<CarDataSectionProps> = ({
   // Рендер контента для вкладки "Артикулы"
   const renderArticlesContent = () => (
     <div className="articles-container">
-      {carArticles.length > 0 ? (
+      {articlesLoading ? (
+        <div className="car-data-section__loading">
+          <div className="car-data-section__spinner"></div>
+          <p>{t('articles.loading')}</p>
+        </div>
+      ) : carArticles.length > 0 ? (
         <div className="articles-categories-grid">
           {(() => {
             // Группируем артикулы по категориям
@@ -521,7 +727,7 @@ const CarDataSection: React.FC<CarDataSectionProps> = ({
             {activeSubsection === 'info' && (
               <button 
                 className="btn btn--primary btn--compact"
-                onClick={() => onEditCar(currentCar)}
+                onClick={() => onEditCar && onEditCar(currentCar)}
                 type="button"
                 title={t('cars.editCar')} 
               >
@@ -539,9 +745,9 @@ const CarDataSection: React.FC<CarDataSectionProps> = ({
               type="button"
               title={activeSubsection === 'info' ? t('carData.add') : t('articles.add')} 
             >
-              <svg className="btn__icon" viewBox="0 0 24 24" fill="none">
-                <path d="M12 5v14m-7-7h14" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-              </svg>
+                <svg className="btn__icon" viewBox="0 0 24 24" fill="none">
+                  <path d="M12 5v14m-7-7h14" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                </svg>
             </button>
           </div>
         </div>

@@ -10,6 +10,7 @@ export interface Car {
   maintenance: Maintenance[];
   carData: CarDataEntry[];
   articles: Article[];
+  expenses?: Expense[];
 }
 
 // Добавляем к существующим типам
@@ -476,4 +477,6 @@ export interface Article {
   link?: string;
   createdAt: string;
   subcategory: string;
+  updatedAt?: string; // <-- ДОБАВИТЬ это свойство (опционально)
+  carId?: string; // <-- ДОБАВИТЬ если нужно
 }

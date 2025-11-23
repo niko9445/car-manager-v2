@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+// components/expenses/ExpenseFilters/ExpenseFilters.tsx
+import React, { useState } from 'react'; // <-- УБРАТЬ useEffect
 import { ExpenseCategory } from '../../../types';
 import { useTranslation } from '../../../contexts/LanguageContext';
 
@@ -18,27 +19,33 @@ const ExpenseFilters: React.FC<ExpenseFiltersProps> = ({ onFilterChange }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const { t } = useTranslation();
 
-  useEffect(() => {
-    onFilterChange(filters);
-  }, [filters, onFilterChange]);
+  // УБРАТЬ этот useEffect:
+  // useEffect(() => {
+  //   onFilterChange(filters);
+  // }, [filters, onFilterChange]);
 
   const handleCategoryChange = (category: ExpenseCategory | 'all') => {
-    setFilters(prev => ({
-      ...prev,
+    const newFilters = {
+      ...filters,
       category: category === 'all' ? undefined : category
-    }));
+    };
+    setFilters(newFilters);
+    onFilterChange(newFilters); // <-- ЯВНЫЙ вызов
   };
 
   const handleDateChange = (field: 'dateFrom' | 'dateTo', value: string) => {
-    setFilters(prev => ({
-      ...prev,
+    const newFilters = {
+      ...filters,
       [field]: value || undefined
-    }));
+    };
+    setFilters(newFilters);
+    onFilterChange(newFilters); // <-- ЯВНЫЙ вызов
   };
 
   const clearFilters = () => {
     setFilters({});
     setIsExpanded(false);
+    onFilterChange({}); // <-- ЯВНЫЙ вызов при сбросе
   };
 
   const hasActiveFilters = Object.keys(filters).length > 0;
@@ -73,9 +80,7 @@ const ExpenseFilters: React.FC<ExpenseFiltersProps> = ({ onFilterChange }) => {
 
         {isExpanded && (
           <div className="expense-filters__expanded-content">
-            {/* 👇 ИЗМЕНЕННАЯ СТРУКТУРА ДЛЯ ДАТ - КАЖДАЯ ПАРА НА ОТДЕЛЬНОЙ СТРОКЕ */}
             <div className="expense-filters__date-container">
-              {/* Строка для "Дата с" */}
               <div className="expense-filters__date-row">
                 <label className="expense-filters__date-label">
                   {t('expenses.dateFrom')}
@@ -90,7 +95,6 @@ const ExpenseFilters: React.FC<ExpenseFiltersProps> = ({ onFilterChange }) => {
                 />
               </div>
               
-              {/* Строка для "Дата по" */}
               <div className="expense-filters__date-row">
                 <label className="expense-filters__date-label">
                   {t('expenses.dateTo')}
@@ -106,7 +110,6 @@ const ExpenseFilters: React.FC<ExpenseFiltersProps> = ({ onFilterChange }) => {
               </div>
             </div>
 
-            {/* 👇 ФИЛЬТРЫ ПО КАТЕГОРИЯМ */}
             <div className="expense-filters__categories-section">
               <label className="expense-filters__categories-label">
                 {t('expenses.categories')}
@@ -128,7 +131,6 @@ const ExpenseFilters: React.FC<ExpenseFiltersProps> = ({ onFilterChange }) => {
               </div>
             </div>
 
-            {/* Кнопка сброса */}
             {hasActiveFilters && (
               <div className="expense-filters__reset">
                 <button

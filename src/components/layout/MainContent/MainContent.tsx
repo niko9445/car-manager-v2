@@ -9,6 +9,8 @@ import { MainContentProps, Maintenance, Article } from '../../../types';
 import { useTranslation } from '../../../contexts/LanguageContext';
 import { useApp } from '../../../contexts/AppContext';
 import { useCarOperations } from '../../../hooks/useCarOperations';
+import { articleService } from '../../../services/database/articles';
+import { carDataService } from '../../../services/database/carData'
 
 const MainContent: React.FC<MainContentProps> = ({ 
   cars, 
@@ -33,7 +35,8 @@ const MainContent: React.FC<MainContentProps> = ({
   const [editingArticle, setEditingArticle] = useState<Article | null>(null);
   const [isEditArticleModalOpen, setIsEditArticleModalOpen] = useState(false);
 
-  const { addArticle, editArticle  } = useCarOperations(cars, setCars);
+  // УДАЛЯЕМ: деструктуризацию несуществующих функций
+  const { /* editArticle, deleteArticle */ } = useCarOperations(cars, setCars);
 
   const handleEditMaintenance = (maintenance: Maintenance): void => {
     setIsEditMaintenanceModalOpen(false);
@@ -54,13 +57,61 @@ const MainContent: React.FC<MainContentProps> = ({
     setIsAddArticleModalOpen(true);
   };
 
-  const handleAddArticle = (articleData: { category: string; subcategory: string; articleNumber: string }) => {
+  const handleAddArticle = async () => {
     if (!selectedCar) {
       console.error('No car selected');
       return;
     }
-    addArticle(selectedCar, articleData);
-    setIsAddArticleModalOpen(false);
+
+    try {
+      console.log('🔄 Обновление данных после добавления артикула...');
+      
+      // ОБНОВЛЯЕМ ДАННЫЕ ИЗ БАЗЫ
+      await refreshCarData();
+      
+      // ЗАКРЫВАЕМ МОДАЛКУ
+      setIsAddArticleModalOpen(false);
+      
+      console.log('✅ Данные обновлены, модалка закрыта');
+      
+    } catch (error) {
+      console.error('❌ Ошибка обновления данных:', error);
+    }
+  };
+
+  const refreshCarData = async () => {
+    if (!selectedCar) return;
+    
+    try {
+      console.log('🔄 Обновление данных автомобиля:', selectedCar.id);
+      
+      const [carDataResult, articlesResult] = await Promise.all([
+        carDataService.getCarDataByCar(selectedCar.id),
+        articleService.getArticlesByCar(selectedCar.id)
+      ]);
+
+      // Обновляем глобальное состояние
+      const updatedCars = cars.map(c => {
+        if (c.id === selectedCar.id) {
+          return {
+            ...c,
+            carData: carDataResult,
+            articles: articlesResult
+          };
+        }
+        return c;
+      });
+      
+      setCars(updatedCars);
+      
+      console.log('✅ Данные автомобиля обновлены', {
+        carData: carDataResult.length,
+        articles: articlesResult.length
+      });
+      
+    } catch (error) {
+      console.error('❌ Ошибка обновления данных автомобиля:', error);
+    }
   };
 
   const handleSaveMaintenance = (maintenanceId: string, updatedData: Partial<Maintenance>): void => {
@@ -80,27 +131,41 @@ const MainContent: React.FC<MainContentProps> = ({
     setEditingMaintenance(null);
   };
 
-  const handleSaveArticle = (articleId: string, updatedData: { category: string; subcategory: string; articleNumber: string }) => {
+  const handleSaveArticle = async (articleId: string, updatedData: { category: string; subcategory: string; articleNumber: string }) => {
     if (!selectedCar) return;
-    editArticle(selectedCar.id, articleId, updatedData);
-    setIsEditArticleModalOpen(false);
-    setEditingArticle(null);
+
+    try {
+      console.log('🔄 Обновление статьи через Supabase...');
+      
+      await articleService.updateArticle(articleId, updatedData);
+      console.log('✅ Статья обновлена в Supabase:', articleId);
+      
+      // ОБНОВЛЯЕМ ДАННЫЕ
+      await refreshCarData();
+      
+      setIsEditArticleModalOpen(false);
+      setEditingArticle(null);
+      
+    } catch (error) {
+      console.error('❌ Ошибка обновления статьи в Supabase:', error);
+    }
   };
 
-  const handleDeleteArticle = (article: Article) => {
+  const handleDeleteArticle = async (article: Article) => {
     if (!selectedCar) return;
     
-    // Нужно добавить функцию deleteArticle в useCarOperations
-    const updatedCars = cars.map(car => {
-      if (car.id === selectedCar.id) {
-        return {
-          ...car,
-          articles: car.articles.filter(a => a.id !== article.id)
-        };
-      }
-      return car;
-    });
-    setCars(updatedCars);
+    try {
+      console.log('🔄 Удаление статьи через Supabase...');
+      
+      await articleService.deleteArticle(article.id);
+      console.log('✅ Статья удалена из Supabase:', article.id);
+      
+      // ОБНОВЛЯЕМ ДАННЫЕ
+      await refreshCarData();
+      
+    } catch (error) {
+      console.error('❌ Ошибка удаления статьи из Supabase:', error);
+    }
   };
 
   if (!selectedCar) {
@@ -261,9 +326,9 @@ const MainContent: React.FC<MainContentProps> = ({
       </div>
 
       {isAddArticleModalOpen && (
-        <AddArticleModal
+        <AddArticleModal 
           onClose={() => setIsAddArticleModalOpen(false)}
-          onSave={handleAddArticle}
+          onSave={handleAddArticle} // Просто закрываем
         />
       )}
 

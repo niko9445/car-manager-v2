@@ -10,6 +10,7 @@ type AppAction =
   | { type: 'SET_SIDEBAR_OPEN'; payload: boolean }
   | { type: 'OPEN_MODAL'; payload: { modalType: AppModalType; data?: ModalData } }
   | { type: 'CLOSE_MODAL'; payload: { modalType: AppModalType } };
+  
 
 interface AppContextType {
   state: AppState;

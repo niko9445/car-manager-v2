@@ -3,6 +3,9 @@ import Modal from '../../ui/Modal/Modal';
 import { CarDataField } from '../../../types';
 import { useCurrency } from '../../../contexts/CurrencyContext';
 import { useTranslation } from '../../../contexts/LanguageContext';
+import { carDataService } from '../../../services/database/carData'; // <-- ДОБАВИТЬ
+import { useAuth } from '../../../contexts/AuthContext'; // <-- ДОБАВИТЬ
+import { useApp } from '../../../contexts/AppContext'; // <-- ДОБАВИТЬ для получения selectedCar
 
 interface AddCarDataModalProps {
   onClose: () => void;
@@ -11,8 +14,22 @@ interface AddCarDataModalProps {
 
 const AddCarDataModal: React.FC<AddCarDataModalProps> = ({ onClose, onSave }) => {
   const [fields, setFields] = useState<CarDataField[]>([{ name: '', value: '', unit: '' }]);
+  const [loading, setLoading] = useState(false); // <-- ДОБАВИТЬ состояние загрузки
   const { getCurrencySymbol } = useCurrency();
   const { t } = useTranslation();
+  const { user } = useAuth(); // <-- ДОБАВИТЬ
+  const { state } = useApp(); // <-- ДОБАВИТЬ
+  const { selectedCar } = state;
+
+  const getDataTypeFromFields = (fields: CarDataField[]): 'insurance' | 'inspection' | 'custom' => {
+    const fieldName = fields[0]?.name;
+    if (fieldName === 'insurance') return 'insurance';
+    if (fieldName === 'inspection') return 'inspection';
+    if (fieldName === 'dimensions') return 'custom';
+    if (fieldName === 'consumption') return 'custom';
+    // Добавить другие категории по необходимости
+    return 'custom';
+  };
 
   // Дополнительные поля для специальных категорий
   const [insuranceData, setInsuranceData] = useState({
@@ -75,90 +92,111 @@ const AddCarDataModal: React.FC<AddCarDataModalProps> = ({ onClose, onSave }) =>
   const selectedCategoryName = selectedCategory?.name || '';
   
   const isSpecialCategory = selectedCategoryKey === 'insurance' || selectedCategoryKey === 'inspection' || selectedCategoryKey === 'dimensions' || selectedCategoryKey === 'consumption';
-  const showValueField = !isSpecialCategory && selectedCategoryKey !== 'purchaseDate';
+  const showValueField = !isSpecialCategory && selectedCategoryKey !== 'purchaseDate' && selectedCategoryKey !== 'cost';
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    if (selectedCategoryKey === 'insurance') {
-      const formattedStartDate = new Date(insuranceData.startDate).toLocaleDateString('ru-RU');
-      const formattedEndDate = new Date(insuranceData.endDate).toLocaleDateString('ru-RU');
-      const insuranceValue = `${insuranceData.series}${insuranceData.number} с ${formattedStartDate} до ${formattedEndDate}`;
-      
-      const insuranceField = { 
-        name: 'insurance', // ← Сохраняем КЛЮЧ
-        value: insuranceValue, 
-        unit: ''
-      };
-      onSave({ fields: [insuranceField] });
-    } 
-    else if (selectedCategoryKey === 'inspection') {
-      const formattedDate = new Date(inspectionData.validUntil).toLocaleDateString('ru-RU');
-      const inspectionValue = `${inspectionData.series}${inspectionData.number} до ${formattedDate}`;
-      
-      const inspectionField = { 
-        name: 'inspection', // ← Сохраняем КЛЮЧ
-        value: inspectionValue, 
-        unit: ''
-      };
-      onSave({ fields: [inspectionField] });
+
+    if (!user || !selectedCar) {
+      console.error('❌ Пользователь не авторизован или автомобиль не выбран');
+      return;
     }
-    else if (selectedCategoryKey === 'dimensions') {
-      // Собираем только заполненные поля
-      const dimensionParts = [];
-      
-      if (dimensionsData.length) dimensionParts.push(`${t('dimensions.length')}:${dimensionsData.length}`);
-      if (dimensionsData.width) dimensionParts.push(`${t('dimensions.width')}:${dimensionsData.width}`);
-      if (dimensionsData.height) dimensionParts.push(`${t('dimensions.height')}:${dimensionsData.height}`);
-      if (dimensionsData.clearance) dimensionParts.push(`${t('dimensions.clearance')}:${dimensionsData.clearance}`);
-      if (dimensionsData.wheelSize) dimensionParts.push(`${t('dimensions.wheelSize')}:${dimensionsData.wheelSize}`);
-      if (dimensionsData.boltPattern) dimensionParts.push(`${t('dimensions.boltPattern')}:${dimensionsData.boltPattern}`);
-      if (dimensionsData.wheelDimensions) dimensionParts.push(`${t('dimensions.wheelDimensions')}:${dimensionsData.wheelDimensions}`);
-      
-      const dimensionsValue = dimensionParts.join(' ');
-      // ⭐⭐⭐ ДОБАВЬ ЭТИ СТРОКИ ⭐⭐⭐
-      console.log('=== DIMENSIONS DEBUG ===');
-      console.log('dimensionsData:', dimensionsData);
-      console.log('dimensionParts:', dimensionParts);
-      console.log('dimensionsValue:', dimensionsValue);
-      console.log('boltPattern filled:', dimensionsData.boltPattern);
-      console.log('wheelDimensions filled:', dimensionsData.wheelDimensions);
-      console.log('========================');
-      const dimensionsField = { 
-        name: 'dimensions',
-        value: dimensionsValue, 
-        unit: ''
-      };
-      onSave({ fields: [dimensionsField] });
-    }
-    else if (selectedCategoryKey === 'consumption') {
-      const consumptionValue = `${t('consumption.mixed')}:${consumptionData.mixed} ${t('consumption.city')}:${consumptionData.city} ${t('consumption.highway')}:${consumptionData.highway}`;
-      const consumptionField = { 
-        name: 'consumption', // ← Сохраняем КЛЮЧ
-        value: consumptionValue, 
-        unit: ''
-      };
-      onSave({ fields: [consumptionField] });
-    }
-    else if (selectedCategoryKey === 'purchaseDate') {
-      const dateField = { 
-        name: 'purchaseDate', // ← Сохраняем КЛЮЧ
-        value: fields[0].value, 
-        unit: ''
-      };
-      onSave({ fields: [dateField] });
-    }
-    else {
-      // Для стандартных полей сохраняем ключ
-      const selectedField = predefinedFields.find(f => f.key === fields[0].name);
-      if (selectedField && fields.every(f => f.name.trim() && f.value.trim())) {
-        const standardField = { 
-          name: selectedField.key, // ← Сохраняем КЛЮЧ
-          value: fields[0].value, 
-          unit: fields[0].unit
-        };
-        onSave({ fields: [standardField] });
+
+    setLoading(true);
+
+    try {
+      let carDataToSave: { fields: CarDataField[] } = { fields: [] };
+
+      if (selectedCategoryKey === 'insurance') {
+        const formattedStartDate = new Date(insuranceData.startDate).toLocaleDateString('ru-RU');
+        const formattedEndDate = new Date(insuranceData.endDate).toLocaleDateString('ru-RU');
+        const insuranceValue = `${insuranceData.series}${insuranceData.number} с ${formattedStartDate} до ${formattedEndDate}`;
+        
+        carDataToSave.fields = [{ 
+          name: 'insurance',
+          value: insuranceValue, 
+          unit: ''
+        }];
+      } 
+      else if (selectedCategoryKey === 'inspection') {
+        const formattedDate = new Date(inspectionData.validUntil).toLocaleDateString('ru-RU');
+        const inspectionValue = `${inspectionData.series}${inspectionData.number} до ${formattedDate}`;
+        
+        carDataToSave.fields = [{ 
+          name: 'inspection',
+          value: inspectionValue, 
+          unit: ''
+        }];
       }
+      else if (selectedCategoryKey === 'dimensions') {
+        const dimensionParts = [];
+        
+        if (dimensionsData.length) dimensionParts.push(`${t('dimensions.length')}:${dimensionsData.length}`);
+        if (dimensionsData.width) dimensionParts.push(`${t('dimensions.width')}:${dimensionsData.width}`);
+        if (dimensionsData.height) dimensionParts.push(`${t('dimensions.height')}:${dimensionsData.height}`);
+        if (dimensionsData.clearance) dimensionParts.push(`${t('dimensions.clearance')}:${dimensionsData.clearance}`);
+        if (dimensionsData.wheelSize) dimensionParts.push(`${t('dimensions.wheelSize')}:${dimensionsData.wheelSize}`);
+        if (dimensionsData.boltPattern) dimensionParts.push(`${t('dimensions.boltPattern')}:${dimensionsData.boltPattern}`);
+        if (dimensionsData.wheelDimensions) dimensionParts.push(`${t('dimensions.wheelDimensions')}:${dimensionsData.wheelDimensions}`);
+        
+        const dimensionsValue = dimensionParts.join(' ');
+        
+        carDataToSave.fields = [{ 
+          name: 'dimensions',
+          value: dimensionsValue, 
+          unit: ''
+        }];
+      }
+      else if (selectedCategoryKey === 'consumption') {
+        const consumptionValue = `${t('consumption.mixed')}:${consumptionData.mixed} ${t('consumption.city')}:${consumptionData.city} ${t('consumption.highway')}:${consumptionData.highway}`;
+        
+        carDataToSave.fields = [{ 
+          name: 'consumption',
+          value: consumptionValue, 
+          unit: ''
+        }];
+      }
+      else if (selectedCategoryKey === 'purchaseDate') {
+        carDataToSave.fields = [{ 
+          name: 'purchaseDate',
+          value: fields[0].value, 
+          unit: ''
+        }];
+      }
+      else {
+        const selectedField = predefinedFields.find(f => f.key === fields[0].name);
+        if (selectedField && fields.every(f => f.name.trim() && f.value.trim())) {
+          carDataToSave.fields = [{ 
+            name: selectedField.key,
+            value: fields[0].value, 
+            unit: fields[0].unit
+          }];
+        }
+      }
+
+      // Проверяем что есть данные для сохранения
+      if (carDataToSave.fields.length === 0) {
+        console.error('❌ Нет данных для сохранения');
+        return;
+      }
+
+      console.log('🔄 Создание CarData для автомобиля:', selectedCar.id);
+      
+      // Сохраняем в Supabase
+      await carDataService.createCarData(selectedCar.id, {
+        fields: carDataToSave.fields,
+        dataType: getDataTypeFromFields(carDataToSave.fields)
+      });
+
+      console.log('✅ CarData созданы');
+      
+      // Уведомляем родительский компонент
+      onSave(carDataToSave);
+      
+    } catch (error) {
+      console.error('❌ Ошибка создания CarData:', error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -264,7 +302,7 @@ const AddCarDataModal: React.FC<AddCarDataModalProps> = ({ onClose, onSave }) =>
                 placeholder={t('carData.enterValue')}
                 value={fields[0].value}
                 onChange={(e) => updateField(0, 'value', e.target.value)}
-                required={selectedCategoryKey !== 'cost'}
+                required={selectedCategoryKey !== 'cost' && selectedCategoryKey !== 'tax'}
               />
             </div>
           )}
@@ -509,15 +547,15 @@ const AddCarDataModal: React.FC<AddCarDataModalProps> = ({ onClose, onSave }) =>
         {/* Кнопки действий */}
         <div className="modal__actions-container">
           <div className="modal__actions modal__actions--centered">
-            <button type="button" className="btn btn--cancel" onClick={onClose}>
+            <button type="button" className="btn btn--cancel" onClick={onClose} disabled={loading}>
               {t('common.cancel')}
             </button>
             <button 
               type="submit" 
-              className="btn btn--action"
-              disabled={!isFormValid()}
+               className={`btn btn--action ${loading ? 'btn--action-loading' : ''}`}
+              disabled={!isFormValid() || loading}
             >
-              {t('common.add')}
+              {loading ? t('common.saving') : t('common.add')}
             </button>
           </div>
           

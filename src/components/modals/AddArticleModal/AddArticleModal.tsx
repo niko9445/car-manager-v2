@@ -1,10 +1,14 @@
 import React, { useState, useMemo } from 'react';
 import Modal from '../../ui/Modal/Modal';
 import { useTranslation } from '../../../contexts/LanguageContext';
+import { articleService } from '../../../services/database/articles'; // <-- ИМПОРТ СЕРВИСА
+import { useAuth } from '../../../contexts/AuthContext';
+import { useApp } from '../../../contexts/AppContext';
+
 
 interface AddArticleModalProps {
   onClose: () => void;
-  onSave: (articleData: { category: string; subcategory: string; articleNumber: string }) => void;
+  onSave: () => void;
 }
 
 interface Subcategory {
@@ -22,7 +26,11 @@ const AddArticleModal: React.FC<AddArticleModalProps> = ({ onClose, onSave }) =>
   const [selectedCategory, setSelectedCategory] = useState('');
   const [selectedSubcategory, setSelectedSubcategory] = useState('');
   const [articleNumber, setArticleNumber] = useState('');
+  const [loading, setLoading] = useState(false);
   const { t } = useTranslation();
+  const { user } = useAuth();
+  const { state } = useApp();
+  const { selectedCar } = state;
 
   // Полная структура категорий и подкатегорий запчастей с переводами
   const articleCategories = useMemo((): Category[] => [
@@ -225,20 +233,44 @@ const AddArticleModal: React.FC<AddArticleModalProps> = ({ onClose, onSave }) =>
     }
   ], [t]);
 
-  const handleCategoryChange = (categoryKey: string) => {
-    setSelectedCategory(categoryKey);
-    setSelectedSubcategory(''); // Сбрасываем подкатегорию при смене категории
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (selectedCategory && selectedSubcategory && articleNumber.trim()) {
-      onSave({
+    
+    if (!user || !selectedCar) {
+      console.error('❌ Пользователь не авторизован или автомобиль не выбран');
+      return;
+    }
+
+    if (!isFormValid()) return;
+
+    setLoading(true);
+
+    try {
+      console.log('🔄 Создание запчасти для автомобиля:', selectedCar.id);
+      
+      // Сохраняем в Supabase через сервис
+      const result = await articleService.createArticle(selectedCar.id, {
         category: selectedCategory,
         subcategory: selectedSubcategory,
         articleNumber: articleNumber.trim()
       });
+
+      console.log('✅ Запчасть создана:', result.id);
+      
+      // Уведомляем родительский компонент
+      onSave();
+      
+    } catch (error) {
+      console.error('❌ Ошибка создания запчасти:', error);
+      // TODO: Добавить уведомление об ошибке для пользователя
+    } finally {
+      setLoading(false);
     }
+  };
+
+  const handleCategoryChange = (categoryKey: string) => {
+    setSelectedCategory(categoryKey);
+    setSelectedSubcategory('');
   };
 
   const isFormValid = () => {
@@ -260,6 +292,7 @@ const AddArticleModal: React.FC<AddArticleModalProps> = ({ onClose, onSave }) =>
               value={selectedCategory}
               onChange={(e) => handleCategoryChange(e.target.value)}
               required
+              disabled={loading}
             >
               <option value="">{t('articles.chooseCategory')}</option>
               {articleCategories.map(category => (
@@ -271,7 +304,7 @@ const AddArticleModal: React.FC<AddArticleModalProps> = ({ onClose, onSave }) =>
           </div>
         </div>
 
-        {/* Шаг 2: Выбор подкатегории (появляется после выбора категории) */}
+        {/* Шаг 2: Выбор подкатегории */}
         {selectedCategoryData && (
           <div className="modal__form-section">
             <div className="modal__form-group">
@@ -281,6 +314,7 @@ const AddArticleModal: React.FC<AddArticleModalProps> = ({ onClose, onSave }) =>
                 value={selectedSubcategory}
                 onChange={(e) => setSelectedSubcategory(e.target.value)}
                 required
+                disabled={loading}
               >
                 <option value="">{t('articles.chooseSubcategory')}</option>
                 {selectedCategoryData.subcategories.map(subcategory => (
@@ -293,7 +327,7 @@ const AddArticleModal: React.FC<AddArticleModalProps> = ({ onClose, onSave }) =>
           </div>
         )}
 
-        {/* Шаг 3: Ввод артикула (появляется после выбора подкатегории) */}
+        {/* Шаг 3: Ввод артикула */}
         {selectedSubcategory && (
           <div className="modal__form-section">
             <div className="modal__form-group">
@@ -305,6 +339,7 @@ const AddArticleModal: React.FC<AddArticleModalProps> = ({ onClose, onSave }) =>
                 value={articleNumber}
                 onChange={(e) => setArticleNumber(e.target.value)}
                 required
+                disabled={loading}
               />
             </div>
           </div>
@@ -313,15 +348,20 @@ const AddArticleModal: React.FC<AddArticleModalProps> = ({ onClose, onSave }) =>
         {/* Кнопки действий */}
         <div className="modal__actions-container">
           <div className="modal__actions modal__actions--centered">
-            <button type="button" className="btn btn--cancel" onClick={onClose}>
+            <button 
+              type="button" 
+              className="btn btn--cancel" 
+              onClick={onClose}
+              disabled={loading}
+            >
               {t('common.cancel')}
             </button>
             <button 
               type="submit" 
-              className="btn btn--action"
-              disabled={!isFormValid()}
+              className={`btn btn--action ${loading ? 'btn--action-loading' : ''}`}
+              disabled={!isFormValid() || loading}
             >
-              {t('common.add')}
+              {loading ? t('common.saving') : t('common.add')}
             </button>
           </div>
           

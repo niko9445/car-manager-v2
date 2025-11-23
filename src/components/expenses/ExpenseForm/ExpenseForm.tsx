@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useApp } from '../../../contexts/AppContext';
 import { Expense, ExpenseCategory, FuelData, PartsData, InsuranceData, InspectionData } from '../../../types';
-import { ExpenseService } from '../../../services/expenseService';
+import { expenseService } from '../../../services/database/expenses';
 import { useCurrency } from '../../../contexts/CurrencyContext';
 import { useTranslation } from '../../../contexts/LanguageContext'; // <-- ДОБАВИТЬ
+import { useAuth } from '../../../contexts/AuthContext';
 
 interface ExpenseFormData {
   date: string;
@@ -48,6 +49,7 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({
   const { selectedCar } = state;
   const { getCurrencySymbol } = useCurrency();
   const { t } = useTranslation();
+  const { user } = useAuth();
   
   const [formData, setFormData] = useState<ExpenseFormData>({
     date: new Date().toISOString().split('T')[0],
@@ -61,7 +63,6 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({
     inspectionData: undefined
   });
   
-  //Состояния
   const [errors, setErrors] = useState<ExpenseFormErrors>({});
   const [loading, setLoading] = useState(false);
   const [quickTags, setQuickTags] = useState<string[]>([]);
@@ -97,13 +98,14 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({
 
   // Сброс описания при смене категории
   useEffect(() => {
-    if (!expense) { // Только для новых расходов, не для редактирования
+    if (!expense) {
       setFormData(prev => ({
         ...prev,
         description: ''
       }));
     }
-  }, [formData.category, expense]); // Срабатывает при изменении категории
+  }, [formData.category, expense]);
+
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
@@ -307,7 +309,7 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!validateForm() || !selectedCar) {
+    if (!validateForm() || !selectedCar || !user) {
       return;
     }
 
@@ -317,16 +319,32 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({
       console.log('Saving expense...', formData);
       
       if (expense) {
-        const result = await ExpenseService.updateExpense(expense.id, {
-          ...formData,
-          carId: selectedCar.id
+        // ИЗМЕНИТЬ: используем новый сервис для обновления
+        const result = await expenseService.updateExpense(expense.id, {
+          date: formData.date,
+          category: formData.category,
+          amount: formData.amount,
+          description: formData.description,
+          odometer: formData.odometer,
+          fuelData: formData.fuelData,
+          partsData: formData.partsData,
+          insuranceData: formData.insuranceData,
+          inspectionData: formData.inspectionData
         });
         console.log('Expense updated:', result);
       } else {
-        const result = await ExpenseService.addExpense({
-          ...formData,
-          carId: selectedCar.id
-        });
+        // ИЗМЕНИТЬ: используем новый сервис для создания
+        const result = await expenseService.createExpense({
+          date: formData.date,
+          category: formData.category,
+          amount: formData.amount,
+          description: formData.description,
+          odometer: formData.odometer,
+          fuelData: formData.fuelData,
+          partsData: formData.partsData,
+          insuranceData: formData.insuranceData,
+          inspectionData: formData.inspectionData
+        }, selectedCar.id);
         console.log('Expense added:', result);
       }
       
@@ -337,11 +355,12 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({
       
     } catch (error) {
       console.error('Error saving expense:', error);
-      alert(t('expenseForm.saveError')); // <-- ПЕРЕВОД
+      alert(t('expenseForm.saveError'));
     } finally {
       setLoading(false);
     }
   };
+
 
   const categoryOptions: { value: ExpenseCategory; label: string; icon: string }[] = [
     { value: 'fuel', label: `⛽ ${t('expenseCategories.fuel')}`, icon: '⛽' }, // <-- ПЕРЕВОД

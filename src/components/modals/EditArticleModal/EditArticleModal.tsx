@@ -2,6 +2,8 @@ import React, { useState, useMemo } from 'react';
 import Modal from '../../ui/Modal/Modal';
 import { Article } from '../../../types';
 import { useTranslation } from '../../../contexts/LanguageContext';
+import { articleService } from '../../../services/database/articles'; // <-- ИМПОРТ СЕРВИСА
+import { useAuth } from '../../../contexts/AuthContext';
 
 interface EditArticleModalProps {
   article: Article;
@@ -24,7 +26,9 @@ const EditArticleModal: React.FC<EditArticleModalProps> = ({ article, onClose, o
   const [selectedCategory, setSelectedCategory] = useState(article.category);
   const [selectedSubcategory, setSelectedSubcategory] = useState(article.subcategory || '');
   const [articleNumber, setArticleNumber] = useState(article.articleNumber);
+  const [loading, setLoading] = useState(false);
   const { t } = useTranslation();
+  const { user } = useAuth();
 
   // Полная структура категорий и подкатегорий запчастей с переводами
   const articleCategories = useMemo((): Category[] => [
@@ -227,20 +231,48 @@ const EditArticleModal: React.FC<EditArticleModalProps> = ({ article, onClose, o
     }
   ], [t]);
 
-  const handleCategoryChange = (categoryKey: string) => {
-    setSelectedCategory(categoryKey);
-    setSelectedSubcategory(''); // Сбрасываем подкатегорию при смене категории
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (selectedCategory && selectedSubcategory && articleNumber.trim()) {
+    
+    if (!user) {
+      console.error('❌ Пользователь не авторизован');
+      return;
+    }
+
+    if (!isFormValid()) return;
+
+    setLoading(true);
+
+    try {
+      console.log('🔄 Обновление запчасти:', article.id);
+      
+      // Обновляем в Supabase через сервис
+      const result = await articleService.updateArticle(article.id, {
+        category: selectedCategory,
+        subcategory: selectedSubcategory,
+        articleNumber: articleNumber.trim()
+      });
+
+      console.log('✅ Запчасть обновлена:', result.id);
+      
+      // Уведомляем родительский компонент
       onSave(article.id, {
         category: selectedCategory,
         subcategory: selectedSubcategory,
         articleNumber: articleNumber.trim()
       });
+      
+    } catch (error) {
+      console.error('❌ Ошибка обновления запчасти:', error);
+      // TODO: Добавить уведомление об ошибке для пользователя
+    } finally {
+      setLoading(false);
     }
+  };
+
+  const handleCategoryChange = (categoryKey: string) => {
+    setSelectedCategory(categoryKey);
+    setSelectedSubcategory('');
   };
 
   const isFormValid = () => {

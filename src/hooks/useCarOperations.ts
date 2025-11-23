@@ -1,5 +1,7 @@
 import { useCallback } from 'react';
 import { Car, CarFormData, MaintenanceFormData, CarDataField, CarDataEntry, Article } from '../types';
+import { articleService } from '../services/database/articles'; // <-- ДОБАВИТЬ
+import { carDataService } from '../services/database/carData'; // <-- ДОБАВИТЬ если нужно
 
 export const useCarOperations = (cars: Car[], setCars: (cars: Car[]) => void) => {
   // Добавление автомобиля
@@ -110,49 +112,31 @@ export const useCarOperations = (cars: Car[], setCars: (cars: Car[]) => void) =>
     setCars(updatedCars);
   }, [cars, setCars]);
 
-  // Добавление артикула
-  const addArticle = (selectedCar: Car, articleData: { category: string; subcategory: string; articleNumber: string }) => {
-    const updatedCars = cars.map(car => {
-      if (car.id === selectedCar.id) {
-        const newArticle: Article = {
-          id: Date.now().toString(),
-          category: articleData.category,
-          subcategory: articleData.subcategory,
-          articleNumber: articleData.articleNumber,
-          createdAt: new Date().toISOString()
-        };
-        
-        return {
-          ...car,
-          articles: [...(car.articles || []), newArticle]
-        };
-      }
-      return car;
-    });
-    setCars(updatedCars);
-  };
+  const addArticle = useCallback((articleData: { category: string; subcategory: string; articleNumber: string }) => {
+    const newArticle: Article = {
+      id: `temp-${Date.now()}`,
+      category: articleData.category,
+      subcategory: articleData.subcategory,
+      articleNumber: articleData.articleNumber,
+      createdAt: new Date().toISOString()
+    };
 
-  const editArticle = (carId: string, articleId: string, updatedData: { category: string; subcategory: string; articleNumber: string }) => {
+    // Возвращаем созданную статью, а не обновляем состояние
+    return newArticle;
+  }, []);
+
+  // ОБНОВИТЬ: Редактирование артикула
+  const editArticle = useCallback((carId: string, articleId: string, updatedData: { category: string; subcategory: string; articleNumber: string }) => {
     const updatedCars = cars.map(car => {
       if (car.id === carId) {
         const updatedArticles = car.articles?.map(article => 
           article.id === articleId 
             ? { ...article, ...updatedData }
             : article
-        );
-        return { ...car, articles: updatedArticles };
-      }
-      return car;
-    });
-    setCars(updatedCars);
-  };
-
-  const deleteArticle = useCallback((carId: string, articleId: string) => {
-    const updatedCars = cars.map(car => {
-      if (car.id === carId) {
-        return {
-          ...car,
-          articles: car.articles.filter(article => article.id !== articleId)
+        ) || [];
+        return { 
+          ...car, 
+          articles: updatedArticles 
         };
       }
       return car;
@@ -160,15 +144,78 @@ export const useCarOperations = (cars: Car[], setCars: (cars: Car[]) => void) =>
     setCars(updatedCars);
   }, [cars, setCars]);
 
-  return {
+  // ОБНОВИТЬ: Удаление артикула
+  const deleteArticle = useCallback((carId: string, articleId: string) => {
+    const updatedCars = cars.map(car => {
+      if (car.id === carId) {
+        return {
+          ...car,
+          articles: car.articles?.filter(article => article.id !== articleId) || []
+        };
+      }
+      return car;
+    });
+    setCars(updatedCars);
+  }, [cars, setCars]);
+
+  // ДОБАВИТЬ: Функция для обновления статьи после сохранения в Supabase
+  const updateArticleAfterSupabase = useCallback((carId: string, tempArticleId: string, realArticle: Article) => {
+    const updatedCars = cars.map(car => {
+      if (car.id === carId) {
+        const updatedArticles = car.articles?.map(article => 
+          article.id === tempArticleId ? realArticle : article
+        ) || [realArticle];
+        return { 
+          ...car, 
+          articles: updatedArticles 
+        };
+      }
+      return car;
+    });
+    setCars(updatedCars);
+  }, [cars, setCars]);
+
+  const addArticleToLocalState = useCallback((carId: string, article: Article) => {
+    const updatedCars = cars.map(car => {
+      if (car.id === carId) {
+        return {
+          ...car,
+          articles: [...(car.articles || []), article]
+        };
+      }
+      return car;
+    });
+    setCars(updatedCars);
+  }, [cars, setCars]);
+
+  // ДОБАВИТЬ: Функция для замены временной статьи на реальную
+  const replaceTempArticle = useCallback((carId: string, tempArticleId: string, realArticle: Article) => {
+    const updatedCars = cars.map(car => {
+      if (car.id === carId) {
+        const updatedArticles = car.articles?.map(article => 
+          article.id === tempArticleId ? realArticle : article
+        ) || [realArticle];
+        return { 
+          ...car, 
+          articles: updatedArticles 
+        };
+      }
+      return car;
+    });
+    setCars(updatedCars);
+  }, [cars, setCars]);
+
+   return {
     addCar,
     editCar,
     addMaintenance,
     addCarData,
     editCarData,
     deleteCarData,
-    addArticle,
+    addArticle, // Теперь возвращает статью, а не обновляет состояние
     editArticle,
-    deleteArticle
+    deleteArticle,
+    addArticleToLocalState, // Новая функция
+    replaceTempArticle // Новая функция
   };
 };
