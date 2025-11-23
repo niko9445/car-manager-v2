@@ -1,77 +1,186 @@
 /* components/auth/AuthModal.css */
-.auth-modal-overlay {
+.auth-modal {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-}
-
-.auth-modal {
-  background: white;
-  border-radius: 8px;
-  padding: 0;
-  width: 90%;
-  max-width: 400px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-}
-
-.auth-modal-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 20px 24px;
-  border-bottom: 1px solid #e5e7eb;
-}
-
-.auth-modal-header h2 {
-  margin: 0;
-  font-size: 1.5rem;
-  font-weight: 600;
-}
-
-.auth-modal-close {
-  background: none;
-  border: none;
-  font-size: 24px;
-  cursor: pointer;
-  padding: 0;
-  width: 30px;
-  height: 30px;
+  z-index: 10000;
   display: flex;
   align-items: center;
   justify-content: center;
+  padding: 20px;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
 }
 
-.auth-modal-content {
-  padding: 24px;
+.auth-modal--open {
+  opacity: 1;
+  visibility: visible;
 }
 
-.auth-modal-switch {
+.auth-modal--closing {
+  opacity: 0;
+  visibility: hidden;
+}
+
+/* Фон */
+.auth-modal__bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--color-bg-primary);
+}
+
+/* Контент - компактный с отступами */
+.auth-modal__content {
+  position: relative;
+  width: 100%;
+  max-width: 320px; /* Более компактно */
+  background: var(--color-bg-primary);
+  border-radius: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 24px; /* Меньше отступов */
+  transform: translateY(20px);
+  transition: transform 0.3s ease;
+}
+
+.auth-modal--open .auth-modal__content {
+  transform: translateY(0);
+}
+
+/* Заголовок */
+.auth-header {
   text-align: center;
-  margin-top: 20px;
-  padding-top: 20px;
-  border-top: 1px solid #e5e7eb;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px; /* Меньше отступов */
 }
 
-.auth-switch-btn {
-  background: none;
+.auth-header__title {
+  margin: 0;
+  font-size: 24px; /* Меньше размер */
+  font-weight: 700;
+  color: var(--color-text-primary);
+  letter-spacing: -0.02em;
+}
+
+.auth-header__subtitle {
+  margin: 0;
+  font-size: 14px; /* Меньше размер */
+  color: var(--color-text-secondary);
+  line-height: 1.4;
+}
+
+/* Табы - компактнее */
+.auth-tabs {
+  display: flex;
+  background: var(--color-bg-secondary);
+  border-radius: 8px; /* Меньше радиус */
+  padding: 3px; /* Меньше паддинг */
+  border: 1px solid var(--color-border-primary);
+}
+
+.auth-tab {
+  flex: 1;
+  padding: 8px 12px; /* Компактнее */
   border: none;
-  color: #3b82f6;
+  background: transparent;
+  color: var(--color-text-secondary);
+  font-weight: 500;
+  border-radius: 6px; /* Меньше радиус */
   cursor: pointer;
-  text-decoration: underline;
+  transition: all 0.2s ease;
+  font-size: 13px; /* Меньше шрифт */
 }
 
-.auth-switch-btn:disabled {
+.auth-tab:hover:not(:disabled) {
+  color: var(--color-text-primary);
+}
+
+.auth-tab--active {
+  background: var(--color-accent);
+  color: white;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.auth-tab:disabled {
   opacity: 0.5;
   cursor: not-allowed;
 }
 
-.auth-switch-btn:hover:not(:disabled) {
-  color: #2563eb;
+/* Формы */
+.auth-forms {
+  min-height: 180px; /* Меньше высота */
 }
+
+/* Мобильная адаптация */
+@media (max-width: 768px) {
+  .auth-modal {
+    padding: 16px;
+  }
+  
+  .auth-modal__content {
+    gap: 20px;
+    max-width: 280px; /* Еще компактнее на мобильных */
+  }
+  
+  .auth-header__title {
+    font-size: 22px;
+  }
+  
+  .auth-header__subtitle {
+    font-size: 13px;
+  }
+  
+  .auth-tab {
+    padding: 7px 10px;
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .auth-modal {
+    padding: 12px;
+  }
+  
+  .auth-modal__content {
+    gap: 18px;
+    max-width: 260px; /* Минимальная ширина */
+  }
+  
+  .auth-header__title {
+    font-size: 20px;
+  }
+  
+  .auth-tabs {
+    padding: 2px;
+  }
+  
+  .auth-tab {
+    padding: 6px 8px;
+    font-size: 12px;
+  }
+}
+
+/* Анимация появления форм */
+@keyframes formSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.auth-forms > * {
+  animation: formSlideUp 0.3s ease-out;
+}
+

@@ -64,8 +64,23 @@ const AppContent = () => {
 
   // Проверка авторизации при загрузке
   useEffect(() => {
-    if (!authLoading && !user && !isMigrating) {
-      setShowAuthModal(true);
+    console.log('🔐 Auth state:', { 
+      user: user?.email, 
+      authLoading, 
+      isMigrating 
+    });
+
+    // Ждем пока закончится загрузка авторизации И миграция
+    if (!authLoading && !isMigrating) {
+      if (!user) {
+        console.log('🔄 No user found - opening auth modal');
+        setShowAuthModal(true);
+      } else {
+        console.log('✅ User authenticated - closing auth modal');
+        setShowAuthModal(false);
+      }
+    } else {
+      console.log('⏳ Waiting for auth/migration to complete...');
     }
   }, [user, authLoading, isMigrating]);
 

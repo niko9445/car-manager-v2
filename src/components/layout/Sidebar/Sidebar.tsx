@@ -2,8 +2,9 @@ import React, { useState } from 'react';
 import { SidebarProps } from '../../../types';
 import CarCard from '../../ui/CarCard/CarCard';
 import SettingsModal from '../../modals/SettingsModal/SettingsModal';
-import { useTranslation } from '../../../contexts/LanguageContext'; // <-- ДОБАВИТЬ
+import { useTranslation } from '../../../contexts/LanguageContext';
 import { useApp } from '../../../contexts/AppContext';
+import { useAuth } from '../../../contexts/AuthContext';
 
 const Sidebar: React.FC<SidebarProps> = ({
   cars,
@@ -15,9 +16,10 @@ const Sidebar: React.FC<SidebarProps> = ({
   className = ''
 }) => {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
-  const { t } = useTranslation(); // <-- ДОБАВИТЬ
-  const { state } = useApp(); // ← ДОБАВЛЯЕМ
-  const selectedCar = state.selectedCar; // ← Берем из контекста
+  const { t } = useTranslation();
+  const { state } = useApp();
+  const { signOut } = useAuth();
+  const selectedCar = state.selectedCar;
 
   const handleCarSelect = (car: any) => {
     setSelectedCar(car);
@@ -33,6 +35,14 @@ const Sidebar: React.FC<SidebarProps> = ({
     }
   };
 
+  const handleSignOut = async () => {
+    try {
+      await signOut();
+    } catch (error) {
+      console.error('Ошибка при выходе:', error);
+    }
+  };
+
   return (
     <>
       <div className={`sidebar ${className}`}>
@@ -40,7 +50,7 @@ const Sidebar: React.FC<SidebarProps> = ({
         <div className="sidebar__header">
           <div className="sidebar__header-top">
             <h2 className="sidebar__title">
-              {t('navigation.myCars')} {/* <-- ИСПОЛЬЗУЕМ ПЕРЕВОД */}
+              {t('navigation.myCars')}
             </h2>
           </div>
           
@@ -55,7 +65,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                 <svg className="btn__icon" viewBox="0 0 24 24" fill="none" width="16" height="16">
                   <path d="M12 5v14m-7-7h14" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
                 </svg>
-                {t('cars.addCar')} {/* <-- ИСПОЛЬЗУЕМ ПЕРЕВОД */}
+                {t('cars.addCar')}
               </button>
               
               {/* Кнопка настроек справа от кнопки добавления */}
@@ -79,7 +89,7 @@ const Sidebar: React.FC<SidebarProps> = ({
           {cars.length === 0 ? (
             <div className="sidebar__empty">
               <p className="sidebar__empty-text">
-                {t('cars.noCars')} {/* <-- ИСПОЛЬЗУЕМ ПЕРЕВОД */}
+                {t('cars.noCars')}
               </p>
             </div>
           ) : (
@@ -99,10 +109,24 @@ const Sidebar: React.FC<SidebarProps> = ({
           )}
         </div>
 
-        {/* Футер с подписью */}
+        {/* Футер с подписью и кнопкой выхода */}
         <div className="sidebar__footer">
-          <div className="sidebar-footer__credits">
-            {t('app.copyright')} {/* <-- ИСПОЛЬЗУЕМ ПЕРЕВОД */}
+          <div className="sidebar-footer__content">
+            <div className="sidebar-footer__credits">
+              {t('app.copyright')}
+            </div>
+            <button 
+              className="sidebar__logout-btn"
+              onClick={handleSignOut}
+              type="button"
+              title={t('auth.signOut')}
+            >
+              <svg viewBox="0 0 24 24" fill="none" width="18" height="18">
+                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                <polyline points="16,17 21,12 16,7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                <line x1="21" y1="12" x2="9" y2="12" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+              </svg>
+            </button>
           </div>
         </div>
       </div>

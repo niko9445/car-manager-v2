@@ -20,12 +20,25 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    console.log('🔄 AuthContext: начальная загрузка...');
+
     // Получаем текущую сессию при загрузке
     const getSession = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      setSession(session);
-      setUser(session?.user ?? null);
-      setIsLoading(false);
+      try {
+        const { data: { session }, error } = await supabase.auth.getSession();
+        
+        if (error) {
+          console.error('❌ Ошибка получения сессии:', error);
+        }
+        
+        console.log('📋 Initial session:', session ? 'есть' : 'нет');
+        setSession(session);
+        setUser(session?.user ?? null);
+        
+        // НЕ устанавливаем isLoading здесь - ждем onAuthStateChange
+      } catch (error) {
+        console.error('❌ Ошибка инициализации auth:', error);
+      }
     };
 
     getSession();
@@ -33,9 +46,17 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     // Слушаем изменения аутентификации
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
+        console.log('🔐 Auth state changed:', event, session ? 'user exists' : 'no user');
+        
         setSession(session);
         setUser(session?.user ?? null);
-        setIsLoading(false);
+        
+        // ВАЖНО: устанавливаем isLoading = false только здесь
+        // после того как получили окончательное состояние
+        if (isLoading) {
+          console.log('✅ Auth initialization complete');
+          setIsLoading(false);
+        }
       }
     );
 

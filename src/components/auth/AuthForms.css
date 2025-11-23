@@ -1,65 +1,263 @@
+/* ПЕРЕОПРЕДЕЛЕНИЕ ОСНОВНЫХ СТИЛЕЙ ДЛЯ ФОРМ */
+.auth-form .form-field .form-input {
+  padding: 12px 12px 12px 42px !important;
+  border: 1.5px solid var(--color-border-primary) !important;
+  border-radius: 8px !important;
+  background: var(--color-bg-primary) !important;
+  color: var(--color-text-primary) !important;
+  font-size: 14px !important;
+}
+
+/* Мобильные */
+@media (max-width: 768px) {
+  .auth-form .form-field .form-input {
+    padding: 10px 10px 10px 38px !important;
+    font-size: 14px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .auth-form .form-field .form-input {
+    padding: 8px 8px 8px 34px !important;
+    font-size: 14px !important;
+  }
+}
+
 /* components/auth/AuthForms.css */
+.auth-form .form-field .form-input {
+  padding: 12px 12px 12px 42px !important;
+  border: 1.5px solid var(--color-border-primary) !important;
+  border-radius: 8px !important;
+  background: var(--color-bg-primary) !important;
+  color: var(--color-text-primary) !important;
+  font-size: 14px !important;
+}
+
+/* Мобильные */
+@media (max-width: 768px) {
+  .auth-form .form-field .form-input {
+    padding: 10px 10px 10px 38px !important;
+    font-size: 14px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .auth-form .form-field .form-input {
+    padding: 8px 8px 8px 34px !important;
+    font-size: 14px !important;
+  }
+}
+
 .auth-form {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 16px; /* Меньше отступов */
 }
 
-.form-group {
+/* Поля формы - исправлено наложение */
+.form-field {
+  position: relative;
   display: flex;
-  flex-direction: column;
-  gap: 4px;
+  align-items: center;
 }
 
-.form-group label {
-  font-weight: 500;
-  color: #374151;
+.form-field__icon {
+  position: absolute;
+  left: 12px;
+  width: 18px;
+  height: 18px;
+  color: var(--color-text-muted);
+  z-index: 2;
+  pointer-events: none;
 }
 
-.form-group input {
-  padding: 8px 12px;
-  border: 1px solid #d1d5db;
-  border-radius: 6px;
+.form-field__icon svg {
+  width: 100%;
+  height: 100%;
+}
+
+.form-input {
+  width: 100%;
+  padding: 12px 12px 12px 42px; /* ← ВАЖНО: 42px слева */
+  border: 1.5px solid var(--color-border-primary);
+  border-radius: 8px;
+  background: var(--color-bg-primary);
+  color: var(--color-text-primary);
   font-size: 14px;
+  font-weight: 400;
+  transition: all 0.2s ease;
 }
 
-.form-group input:focus {
+/* Убираем наложение текста на иконки */
+.form-input::placeholder {
+  color: var(--color-text-muted);
+  opacity: 1;
+}
+
+.form-input:focus {
   outline: none;
-  border-color: #3b82f6;
+  border-color: var(--color-accent);
+  background: var(--color-bg-primary);
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
-.form-group input:disabled {
-  background-color: #f9fafb;
+.form-input:disabled {
+  background: var(--color-bg-secondary);
+  color: var(--color-text-muted);
   cursor: not-allowed;
+  opacity: 0.7;
 }
 
-.auth-error {
-  background: #fef2f2;
-  border: 1px solid #fecaca;
-  color: #dc2626;
-  padding: 12px;
-  border-radius: 6px;
-  font-size: 14px;
-}
-
-.auth-submit-btn {
-  background: #3b82f6;
+/* Ошибка */
+.auth-form__error {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px; /* Компактнее */
+  background: var(--color-accent-red);
   color: white;
+  border-radius: 6px; /* Меньше радиус */
+  font-size: 13px; /* Меньше шрифт */
+  line-height: 1.4;
+  animation: formSlideUp 0.3s ease-out;
+}
+
+.auth-form__error--success {
+  background: var(--color-accent-green);
+}
+
+.auth-form__error svg {
+  flex-shrink: 0;
+}
+
+/* Забыли пароль */
+.auth-form__forgot {
+  text-align: center;
+  margin: -8px 0 4px 0; /* Компактные отступы */
+}
+
+.auth-form__forgot-btn {
+  background: none;
   border: none;
-  padding: 12px 16px;
-  border-radius: 6px;
-  font-size: 16px;
-  font-weight: 500;
+  color: var(--color-accent);
+  font-size: 13px;
   cursor: pointer;
-  margin-top: 8px;
+  text-decoration: underline;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
 }
 
-.auth-submit-btn:hover:not(:disabled) {
-  background: #2563eb;
+.auth-form__forgot-btn:hover:not(:disabled) {
+  color: var(--color-accent-blue-hover);
+  background: var(--color-bg-secondary);
 }
 
-.auth-submit-btn:disabled {
-  background: #9ca3af;
+.auth-form__forgot-btn:disabled {
+  opacity: 0.5;
   cursor: not-allowed;
+}
+
+/* Кнопка отправки - компактнее */
+.auth-form__submit {
+  width: 100%;
+  padding: 12px 16px; /* Компактнее */
+  border: none;
+  border-radius: 8px; /* Меньше радиус */
+  background: var(--color-accent);
+  color: white;
+  font-size: 14px; /* Меньше шрифт */
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 4px; /* Меньше отступ */
+}
+
+.auth-form__submit:hover:not(:disabled) {
+  background: var(--color-accent-blue-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.auth-form__submit:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.auth-form__submit:disabled {
+  background: var(--color-text-muted);
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Спиннер загрузки */
+.loading-spinner {
+  width: 14px; /* Меньше */
+  height: 14px;
+  border: 2px solid transparent;
+  border-top: 2px solid currentColor;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Мобильная адаптация */
+@media (max-width: 768px) {
+  .auth-form {
+    gap: 14px;
+  }
+.form-field__icon {
+    left: 10px;
+    width: 16px;
+    height: 16px;
+  }
+  
+  .form-input {
+    padding: 10px 10px 10px 38px; /* ← 38px слева */
+  }
+  
+  .auth-form__error {
+    padding: 8px 10px;
+    font-size: 12px;
+  }
+  
+  .auth-form__forgot-btn {
+    font-size: 12px;
+    padding: 3px 6px;
+  }
+  
+  .auth-form__submit {
+    padding: 10px 14px;
+    font-size: 13px;
+    border-radius: 6px;
+  }
+  
+  .loading-spinner {
+    width: 12px;
+    height: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .auth-form {
+    gap: 12px;
+  }
+  
+  .form-field__icon {
+    left: 8px;
+    width: 14px;
+    height: 14px;
+  }
+  
+  .form-input {
+    padding: 8px 8px 8px 34px; /* ← 34px слева */
+  }
 }

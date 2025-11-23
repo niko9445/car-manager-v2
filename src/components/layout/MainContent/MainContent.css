@@ -89,6 +89,10 @@
   padding: var(--space-8);
   overflow: hidden;
   background: var(--color-bg-primary);
+  width: 100%;
+  margin: 0;
+  left: 0;
+  right: 0;
 }
 
 .main-welcome__background {
@@ -109,6 +113,8 @@
   gap: var(--space-8);
   max-width: 480px;
   text-align: center;
+  margin: 0 auto;
+  width: 100%;
 }
 
 .main-welcome__icon {
@@ -431,3 +437,5 @@
   
   
 }
+
+
