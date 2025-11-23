@@ -97,15 +97,15 @@ const AddCarDataModal: React.FC<AddCarDataModalProps> = ({ onClose, onSave }) =>
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!user || !selectedCar) {
-      console.error('❌ Пользователь не авторизован или автомобиль не выбран');
-      return;
-    }
+      if (!user || !selectedCar) {
+        console.error('❌ Пользователь не авторизован или автомобиль не выбран');
+        return;
+      }
 
-    setLoading(true);
+      setLoading(true);
 
-    try {
-      let carDataToSave: { fields: CarDataField[] } = { fields: [] };
+      try {
+        let carDataToSave: { fields: CarDataField[] } = { fields: [] };
 
       if (selectedCategoryKey === 'insurance') {
         const formattedStartDate = new Date(insuranceData.startDate).toLocaleDateString('ru-RU');
@@ -191,14 +191,14 @@ const AddCarDataModal: React.FC<AddCarDataModalProps> = ({ onClose, onSave }) =>
       console.log('✅ CarData созданы');
       
       // Уведомляем родительский компонент
-      onSave(carDataToSave);
-      
-    } catch (error) {
-      console.error('❌ Ошибка создания CarData:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
+      onClose();
+    
+  } catch (error) {
+    console.error('❌ Ошибка создания CarData:', error);
+  } finally {
+    setLoading(false);
+  }
+};
 
   const updateField = (index: number, key: keyof CarDataField, value: string) => {
     const updated = fields.map((f, i) => i === index ? { ...f, [key]: value } : f);

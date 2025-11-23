@@ -3,21 +3,27 @@ import Modal from '../../ui/Modal/Modal';
 import { CarDataEntry, CarDataField } from '../../../types';
 import { useCurrency } from '../../../contexts/CurrencyContext';
 import { useTranslation } from '../../../contexts/LanguageContext';
-import { carDataService } from '../../../services/database/carData'; // <-- ДОБАВИТЬ
-import { useAuth } from '../../../contexts/AuthContext'; // <-- ДОБАВИТЬ
+import { carDataService } from '../../../services/database/carData';
+import { useAuth } from '../../../contexts/AuthContext';
 
 interface EditCarDataModalProps {
   data: CarDataEntry;
   onClose: () => void;
   onSave: (dataId: string, updatedData: { fields: CarDataField[] }) => void;
+  onDelete?: (dataId: string) => void;
 }
 
-const EditCarDataModal: React.FC<EditCarDataModalProps> = ({ data, onClose, onSave }) => {
+const EditCarDataModal: React.FC<EditCarDataModalProps> = ({ 
+  data, 
+  onClose, 
+  onSave,
+  onDelete // <-- ДОБАВЛЕНО onDelete в деструктуризацию
+}) => {
   const [field, setField] = useState<CarDataField>(data.fields[0]);
-  const [loading, setLoading] = useState(false); // <-- ДОБАВИТЬ состояние загрузки
+  const [loading, setLoading] = useState(false);
   const { getCurrencySymbol } = useCurrency();
   const { t } = useTranslation();
-  const { user } = useAuth(); // <-- ДОБАВИТЬ для проверки авторизации
+  const { user } = useAuth();
 
   const predefinedFields = useMemo(() => [
     { key: 'insurance', name: t('carDataFields.insurance'), unit: '' },
@@ -56,7 +62,6 @@ const EditCarDataModal: React.FC<EditCarDataModalProps> = ({ data, onClose, onSa
     return found?.name || field.name;
   }, [currentFieldKey, predefinedFields, field.name]);
 
-  // ОБНОВЛЕННЫЙ handleSubmit с использованием carDataService
   const handleSubmit = async (e: React.FormEvent): Promise<void> => {
     e.preventDefault();
     
@@ -125,7 +130,7 @@ const EditCarDataModal: React.FC<EditCarDataModalProps> = ({ data, onClose, onSa
               value={currentFieldKey}
               onChange={(e) => handleParameterChange(e.target.value)}
               required
-              disabled={loading} // <-- ДОБАВИТЬ disabled при загрузке
+              disabled={loading}
             >
               <option value="">{t('carData.selectParameter')}</option>
               {predefinedFields.map(item => (
@@ -147,7 +152,7 @@ const EditCarDataModal: React.FC<EditCarDataModalProps> = ({ data, onClose, onSa
                 value={field.value}
                 onChange={(e) => updateField('value', e.target.value)}
                 required
-                disabled={loading} // <-- ДОБАВИТЬ disabled при загрузке
+                disabled={loading}
               />
             ) : (
               <input
@@ -157,7 +162,7 @@ const EditCarDataModal: React.FC<EditCarDataModalProps> = ({ data, onClose, onSa
                 value={field.value}
                 onChange={(e) => updateField('value', e.target.value)}
                 required={currentFieldKey !== 'cost'}
-                disabled={loading} // <-- ДОБАВИТЬ disabled при загрузке
+                disabled={loading}
               />
             )}
           </div>
@@ -165,11 +170,26 @@ const EditCarDataModal: React.FC<EditCarDataModalProps> = ({ data, onClose, onSa
 
         <div className="modal__actions-container">
           <div className="modal__actions modal__actions--centered">
+            {onDelete && (
+              <button 
+                type="button" 
+                className="btn btn--danger" 
+                onClick={() => {
+                  if (window.confirm(t('confirmations.deleteMessage'))) {
+                    onDelete(data.id);
+                    onClose();
+                  }
+                }}
+                disabled={loading}
+              >
+                {t('common.delete')}
+              </button>
+            )}
             <button 
               type="button" 
               className="btn btn--cancel" 
               onClick={onClose}
-              disabled={loading} // <-- ДОБАВИТЬ disabled при загрузке
+              disabled={loading}
             >
               {t('common.cancel')}
             </button>
@@ -178,7 +198,7 @@ const EditCarDataModal: React.FC<EditCarDataModalProps> = ({ data, onClose, onSa
               className={`btn btn--action ${loading ? 'btn--action-loading' : ''}`}
               disabled={!currentFieldKey.trim() || (currentFieldKey !== 'cost' && !field.value.trim()) || loading}
             >
-              {loading ? t('common.saving') : t('common.save')} {/* <-- ИЗМЕНИТЬ текст при загрузке */}
+              {loading ? t('common.saving') : t('common.save')}
             </button>
           </div>
           

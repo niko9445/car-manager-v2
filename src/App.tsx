@@ -21,6 +21,7 @@ import { useCarData } from './hooks/useCarData';
 import { expenseService } from './services/database/expenses';
 import { useDataMigration } from './hooks/useDataMigration';
 import { useSupabaseData } from './hooks/useSupabaseData';
+import { carDataService } from './services/database/carData'
 import { carService } from './services/database/cars'; // <-- ДОБАВИТЬ
 import { 
   Car, 
@@ -109,6 +110,8 @@ const AppContent = () => {
       }
     });
   };
+
+  
 
   // Функции для автомобилей (ОБНОВЛЕННЫЕ)
   const handleAddCar = async (carData: CarFormData) => {
@@ -247,63 +250,82 @@ const AppContent = () => {
   };
 
   const handleAddCarData = async (carData: { fields: CarDataField[] }) => {
-    if (!selectedCar) return;
+    if (!selectedCar || !user) return;
     
     try {
-      // Пока используем локальное сохранение, но с оффлайн-поддержкой через dispatch
-      const newCarData: CarDataEntry = {
-        id: Date.now().toString(),
+      // Сохраняем в базу данных
+      const newCarData = await carDataService.createCarData(selectedCar.id, {
         fields: carData.fields,
-        createdAt: new Date().toISOString()
-      };
+        dataType: 'custom'
+      });
       
+      console.log('✅ CarData добавлены в БД');
+      
+      // НЕ обновляем локальное состояние - useSupabaseData сделает это автоматически
+      closeModal();
+      
+    } catch (error) {
+      console.error('❌ Ошибка добавления данных автомобиля:', error);
+    }
+  };
+
+  const handleEditCarDataInEdit = async (carId: string, dataId: string, updatedData: { fields: CarDataField[] }) => {
+    try {
+      console.log('🔄 Обновление CarData:', dataId);
+      
+      // 1. Обновляем в базе данных
+      await carDataService.updateCarData(dataId, {
+        fields: updatedData.fields
+      });
+      
+      // 2. Обновляем локальное состояние
       const updatedCars = cars.map(car => {
-        if (car.id === selectedCar.id) {
+        if (car.id === carId) {
           return {
             ...car,
-            carData: [...(car.carData || []), newCarData]
+            carData: car.carData.map(item => 
+              item.id === dataId 
+                ? { ...item, fields: updatedData.fields }
+                : item
+            )
           };
         }
         return car;
       });
       
       dispatch({ type: 'SET_CARS', payload: updatedCars });
-      closeModal();
+      console.log('✅ CarData обновлены в БД и состоянии');
+      
     } catch (error) {
-      console.error('❌ Ошибка добавления данных автомобиля:', error);
+      console.error('❌ Ошибка обновления CarData:', error);
     }
   };
 
-  const handleEditCarDataInEdit = (carId: string, dataId: string, updatedData: { fields: CarDataField[] }) => {
-    const updatedCars = cars.map(car => {
-      if (car.id === carId) {
-        return {
-          ...car,
-          carData: car.carData.map(item => 
-            item.id === dataId 
-              ? { ...item, fields: updatedData.fields }
-              : item
-          )
-        };
-      }
-      return car;
-    });
-    dispatch({ type: 'SET_CARS', payload: updatedCars }); // <-- ИЗМЕНИТЬ
+  const handleDeleteCarDataInEdit = async (carId: string, dataId: string) => {
+    try {
+      console.log('🔄 Удаление CarData:', dataId);
+      
+      // 1. Удаляем из базы данных
+      await carDataService.deleteCarData(dataId);
+      
+      // 2. Обновляем локальное состояние
+      const updatedCars = cars.map(car => {
+        if (car.id === carId) {
+          return {
+            ...car,
+            carData: car.carData.filter(item => item.id !== dataId)
+          };
+        }
+        return car;
+      });
+      
+      dispatch({ type: 'SET_CARS', payload: updatedCars });
+      console.log('✅ CarData удалены из БД и состояния');
+      
+    } catch (error) {
+      console.error('❌ Ошибка удаления CarData:', error);
+    }
   };
-
-  const handleDeleteCarDataInEdit = (carId: string, dataId: string) => {
-    const updatedCars = cars.map(car => {
-      if (car.id === carId) {
-        return {
-          ...car,
-          carData: car.carData.filter(item => item.id !== dataId)
-        };
-      }
-      return car;
-    });
-    dispatch({ type: 'SET_CARS', payload: updatedCars }); // <-- ИЗМЕНИТЬ
-  };
-
   const handleDeleteMaintenance = async (maintenance: Maintenance) => {
     if (!selectedCar) return;
     
@@ -336,28 +358,17 @@ const AppContent = () => {
     });
   };
 
-  const handleDeleteCarData = (data: CarDataEntry) => {
-    if (!selectedCar) return;
-    
-    openModal('confirmDelete', { 
-      type: 'delete' as ConfirmType, 
-      title: t('confirmations.deleteTitle'),
-      message: t('confirmations.deleteMessage'),
-      onConfirm: () => {
-        const updatedCars = cars.map(car => {
-          if (car.id === selectedCar.id) {
-            return {
-              ...car,
-              carData: (car.carData || []).filter(d => d.id !== data.id)
-            };
-          }
-          return car;
-        });
-        dispatch({ type: 'SET_CARS', payload: updatedCars }); // <-- ИЗМЕНИТЬ
-        closeModal();
-      }
-    });
-  };
+   const handleEditCarData = useCallback((dataId: string, updatedData: { fields: CarDataField[] }) => {
+      if (!selectedCar) return;
+      handleEditCarDataInEdit(selectedCar.id, dataId, updatedData);
+    }, [selectedCar, handleEditCarDataInEdit]);
+
+    const handleDeleteCarData = useCallback((dataId: string) => {
+      if (!selectedCar) return;
+      handleDeleteCarDataInEdit(selectedCar.id, dataId);
+    }, [selectedCar, handleDeleteCarDataInEdit]);
+
+  
 
   // Получение дополнительных данных для автомобиля
   const getCarDataEntries = (carId: string): CarDataEntry[] => {
@@ -416,23 +427,31 @@ const AppContent = () => {
           className={sidebarOpen ? 'sidebar--open' : ''}
         />
 
-        <div className="main-content">
-          <MainContent 
-            selectedCar={selectedCar}
-            cars={cars}
-            setCars={(newCars) => dispatch({ type: 'SET_CARS', payload: newCars })} // <-- ИЗМЕНИТЬ
-            activeSection={activeSection}
-            setActiveSection={handleSetActiveSection}
-            onAddMaintenance={() => openModal('addMaintenance')}
-            onAddCarData={() => openModal('addCarData')}
-            onDeleteMaintenance={handleDeleteMaintenance}
-            onDeleteCarData={handleDeleteCarData}
-            onEditCarData={(data) => openModal('editCarData', { data })}
-            onEditCar={(car) => openModal('editCar', { car })}
-            isMobile={isMobile}
-            onOpenSidebar={() => handleSetSidebarOpen(true)}
-          />
-        </div>
+        <MainContent 
+          selectedCar={selectedCar}
+          cars={cars}
+          setCars={(newCars) => dispatch({ type: 'SET_CARS', payload: newCars })}
+          activeSection={activeSection}
+          setActiveSection={handleSetActiveSection}
+          onAddMaintenance={() => openModal('addMaintenance')}
+          onAddCarData={() => openModal('addCarData')}
+          onDeleteMaintenance={handleDeleteMaintenance}
+          onDeleteCarData={(data) => {
+            if (!selectedCar) return;
+            openModal('confirmDelete', { 
+              type: 'delete' as ConfirmType, 
+              title: t('confirmations.deleteTitle'),
+              message: t('confirmations.deleteMessage'),
+              onConfirm: async () => {
+                await handleDeleteCarDataInEdit(selectedCar.id, data.id);
+              }
+            });
+          }} // Обновленная функция
+          onEditCarData={(data) => openModal('editCarData', { data })}
+          onEditCar={(car) => openModal('editCar', { car })}
+          isMobile={isMobile}
+          onOpenSidebar={() => handleSetSidebarOpen(true)}
+        />
       </div>
 
       {/* Модальные окна */}
@@ -485,24 +504,8 @@ const AppContent = () => {
         <EditCarDataModal
           data={modalData.data}
           onClose={closeModal}
-          onSave={(dataId, updatedData) => {
-            if (!selectedCar) return;
-            const updatedCars = cars.map(car => {
-              if (car.id === selectedCar.id) {
-                return {
-                  ...car,
-                  carData: car.carData.map(item => 
-                    item.id === dataId 
-                      ? { ...item, fields: updatedData.fields }
-                      : item
-                  )
-                };
-              }
-              return car;
-            });
-            dispatch({ type: 'SET_CARS', payload: updatedCars }); // <-- ИЗМЕНИТЬ
-            closeModal();
-          }}
+          onSave={handleEditCarData} // Используем совместимую функцию
+          onDelete={handleDeleteCarData} // Используем совместимую функцию
         />
       )}
     </>

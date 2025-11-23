@@ -1,5 +1,5 @@
 // hooks/useSupabaseData.ts
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { useApp } from '../contexts/AppContext';
 import { carService } from '../services/database/cars';
@@ -8,18 +8,25 @@ import { carDataService } from '../services/database/carData';
 
 export const useSupabaseData = () => {
   const { user } = useAuth();
-  const { dispatch } = useApp();
+  const { dispatch, state } = useApp();
+  const loadingRef = useRef(false); // Защита от множественных вызовов
 
   useEffect(() => {
     const loadUserData = async () => {
+      if (loadingRef.current) {
+        console.log('⏳ Загрузка уже выполняется, пропускаем...');
+        return;
+      }
+
       if (!user) {
-        // Если пользователь вышел - очищаем данные
         dispatch({ type: 'SET_CARS', payload: [] });
         return;
       }
 
       try {
+        loadingRef.current = true;
         console.log('🔄 Загрузка данных пользователя из Supabase...');
+        
         const userCars = await carService.getUserCars(user.id);
         
         // Загружаем связанные данные для каждого автомобиля
@@ -50,19 +57,13 @@ export const useSupabaseData = () => {
         dispatch({ type: 'SET_CARS', payload: carsWithRelatedData });
         console.log('✅ Данные загружены из Supabase:', carsWithRelatedData.length, 'автомобилей');
         
-        // Логируем количество артикулов и carData
-        carsWithRelatedData.forEach(car => {
-          console.log(`📊 Автомобиль ${car.brand} ${car.model}:`, {
-            articles: car.articles?.length || 0,
-            carData: car.carData?.length || 0
-          });
-        });
-        
       } catch (error) {
         console.error('❌ Ошибка загрузки данных из Supabase:', error);
+      } finally {
+        loadingRef.current = false;
       }
     };
 
     loadUserData();
-  }, [user, dispatch]);
+  }, [user, dispatch]); // Убрать state.cars из зависимостей
 };
