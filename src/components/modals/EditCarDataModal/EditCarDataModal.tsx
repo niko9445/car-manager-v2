@@ -78,20 +78,30 @@ const EditCarDataModal: React.FC<EditCarDataModalProps> = ({
         name: currentFieldKey
       };
 
-      console.log('🔄 Сохранение CarData:', data.id);
+      console.log('🟡 [EditCarDataModal] handleSubmit START', { 
+        dataId: data.id,
+        updatedField 
+      });
+
+      // 🔄 СНАЧАЛА оптимистичное обновление через onSave
+      console.log('🟡 [EditCarDataModal] Вызов onSave для оптимистичного обновления');
+      onSave(data.id, { fields: [updatedField] });
       
-      // Сохраняем в Supabase
+      // 🔄 ПОТОМ сохранение в Supabase
+      console.log('🟡 [EditCarDataModal] Сохранение в Supabase...');
       await carDataService.updateCarData(data.id, {
         fields: [updatedField]
       });
 
-      console.log('✅ CarData обновлены');
+      console.log('🟢 [EditCarDataModal] Данные сохранены в Supabase');
       
-      // Уведомляем родительский компонент
-      onSave(data.id, { fields: [updatedField] });
+      // Закрываем модалку после успешного сохранения
+      onClose();
       
     } catch (error) {
-      console.error('❌ Ошибка сохранения CarData:', error);
+      console.error('🔴 [EditCarDataModal] Ошибка сохранения CarData:', error);
+      
+      // При ошибке onSave автоматически откатит изменения (благодаря обработке ошибок в App.tsx)
     } finally {
       setLoading(false);
     }

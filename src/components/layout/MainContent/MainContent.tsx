@@ -35,6 +35,14 @@ const MainContent: React.FC<MainContentProps> = ({
   const [editingArticle, setEditingArticle] = useState<Article | null>(null);
   const [isEditArticleModalOpen, setIsEditArticleModalOpen] = useState(false);
 
+  console.log('🟡 [MainContent] RENDER', {
+  selectedCarId: selectedCar?.id,
+  activeSection,
+  carsCount: cars.length,
+  carDataCount: selectedCar?.carData?.length,
+  carData: selectedCar?.carData
+});
+
   // УДАЛЯЕМ: деструктуризацию несуществующих функций
   const { /* editArticle, deleteArticle */ } = useCarOperations(cars, setCars);
 
@@ -80,37 +88,44 @@ const MainContent: React.FC<MainContentProps> = ({
   };
 
   const refreshCarData = async () => {
-    if (!selectedCar) return;
+    if (!selectedCar) {
+      console.log('🟡 [MainContent] refreshCarData - нет выбранного авто');
+      return;
+    }
     
     try {
-      console.log('🔄 Обновление данных автомобиля:', selectedCar.id);
+      console.log('🔄 [MainContent] refreshCarData - начало', selectedCar.id);
       
       const [carDataResult, articlesResult] = await Promise.all([
         carDataService.getCarDataByCar(selectedCar.id),
         articleService.getArticlesByCar(selectedCar.id)
       ]);
 
+      console.log('🟡 [MainContent] refreshCarData - данные получены', {
+        carData: carDataResult.length,
+        articles: articlesResult.length
+      });
+
       // Обновляем глобальное состояние
       const updatedCars = cars.map(c => {
         if (c.id === selectedCar.id) {
-          return {
+          const updatedCar = {
             ...c,
             carData: carDataResult,
             articles: articlesResult
           };
+          console.log('🟡 [MainContent] refreshCarData - обновленный авто', updatedCar);
+          return updatedCar;
         }
         return c;
       });
       
       setCars(updatedCars);
       
-      console.log('✅ Данные автомобиля обновлены', {
-        carData: carDataResult.length,
-        articles: articlesResult.length
-      });
+      console.log('🟢 [MainContent] refreshCarData - завершено');
       
     } catch (error) {
-      console.error('❌ Ошибка обновления данных автомобиля:', error);
+      console.error('🔴 [MainContent] refreshCarData - ошибка:', error);
     }
   };
 

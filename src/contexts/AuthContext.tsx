@@ -10,6 +10,8 @@ interface AuthContextType {
   signUp: (email: string, password: string) => Promise<{ error: any }>;
   signIn: (email: string, password: string) => Promise<{ error: any }>;
   signOut: () => Promise<void>;
+  resetPassword: (email: string) => Promise<{ error: any }>; // 🔴 ДОБАВЛЕНО
+  updatePassword: (password: string) => Promise<{ error: any }>; // 🔴 ДОБАВЛЕНО
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -83,6 +85,42 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     await supabase.auth.signOut();
   };
 
+  // 🔴 ДОБАВЛЕНО: Функция восстановления пароля
+  const resetPassword = async (email: string) => {
+    console.log('🔄 Sending password reset email to:', email);
+    
+    const redirectUrl = `${window.location.origin}/auth/reset-password`;
+    
+    const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: redirectUrl,
+    });
+
+    if (error) {
+      console.error('❌ Password reset error:', error);
+    } else {
+      console.log('✅ Password reset email sent successfully');
+    }
+
+    return { error };
+  };
+
+  // 🔴 ДОБАВЛЕНО: Функция обновления пароля
+  const updatePassword = async (password: string) => {
+    console.log('🔄 Updating password...');
+    
+    const { data, error } = await supabase.auth.updateUser({
+      password: password
+    });
+
+    if (error) {
+      console.error('❌ Password update error:', error);
+    } else {
+      console.log('✅ Password updated successfully');
+    }
+
+    return { error };
+  };
+
   const value = {
     user,
     session,
@@ -90,6 +128,8 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     signUp,
     signIn,
     signOut,
+    resetPassword, // 🔴 ДОБАВЛЕНО
+    updatePassword, // 🔴 ДОБАВЛЕНО
   };
 
   return (

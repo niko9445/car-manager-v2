@@ -35,58 +35,22 @@ const CarDataSection: React.FC<CarDataSectionProps> = ({
   const carData = currentCar.carData || [];
   const articles = currentCar.articles || [];
 
+  console.log('🟡 [CarDataSection] RENDER', {
+    carId: car.id,
+    currentCarId: currentCar.id,
+    carDataCount: currentCar.carData?.length,
+    articlesCount: currentCar.articles?.length,
+    globalCarsCount: globalCars.length
+  });
+
   // Загрузка данных только при первом монтировании или смене автомобиля
   useEffect(() => {
-    const loadData = async () => {
-      if (!car?.id) return;
-      
-      // Проверяем, есть ли уже данные в глобальном состоянии
-      const hasData = carData.length > 0 || articles.length > 0;
-      if (hasData) {
-        console.log('🔍 CarDataSection: Данные уже есть в глобальном состоянии, пропускаем загрузку');
-        return;
-      }
-      
-      try {
-        setLoading(true);
-        setArticlesLoading(true);
-        
-        console.log('🔄 CarDataSection: Загрузка данных для автомобиля:', car.id);
-        
-        const [carDataResult, articlesResult] = await Promise.all([
-          carDataService.getCarDataByCar(car.id),
-          articleService.getArticlesByCar(car.id)
-        ]);
-
-        // Обновляем глобальное состояние с новыми данными
-        const updatedCars = globalCars.map(c => {
-          if (c.id === car.id) {
-            return {
-              ...c,
-              carData: carDataResult,
-              articles: articlesResult
-            };
-          }
-          return c;
-        });
-        
-        dispatch({ type: 'SET_CARS', payload: updatedCars });
-        
-        console.log('✅ CarDataSection: Данные загружены', {
-          carData: carDataResult.length,
-          articles: articlesResult.length
-        });
-        
-      } catch (error) {
-        console.error('❌ CarDataSection: Ошибка загрузки данных:', error);
-      } finally {
-        setLoading(false);
-        setArticlesLoading(false);
-      }
-    };
-
-    loadData();
-  }, [car.id]); // Только при смене car.id
+  // Просто логируем, что данные уже загружены
+  const hasData = carData.length > 0 || articles.length > 0;
+    if (hasData) {
+      console.log('🔍 CarDataSection: Данные уже загружены useSupabaseData');
+    }
+  }, [car.id, carData.length, articles.length]);
 
   // Обработчики для статей с Supabase
   const handleAddArticleWithSupabase = async (articleData: { category: string; subcategory: string; articleNumber: string }) => {

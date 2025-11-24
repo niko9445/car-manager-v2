@@ -390,5 +390,14 @@
       "cooling": "Ахалоджванне",
       "other": "Іншае"
     }
+  },
+  "auth": {
+    "signOut": "Выйсці",
+    "signIn": "Увайсці",
+    "signUp": "Зарэгістравацца",
+    "email": "Email",
+    "password": "Пароль",
+    "confirmPassword": "Пацвердзіце пароль",
+    "forgotPassword": "Забылі пароль?"
   }
 }

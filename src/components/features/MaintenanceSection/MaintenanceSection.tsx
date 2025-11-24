@@ -14,6 +14,8 @@ const MaintenanceSection: React.FC<MaintenanceSectionProps> = ({
   const [expandedCardId, setExpandedCardId] = useState<string | null>(null);
   const { t } = useTranslation();
 
+
+
   // 🔥 СОРТИРОВКА по дате (новые сверху)
   const sortedMaintenance = useMemo(() => {
     if (!currentCar.maintenance) return [];

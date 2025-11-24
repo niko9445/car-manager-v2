@@ -392,6 +392,15 @@
       "cooling": "Cooling",
       "other": "Other"
     }
+  },
+   "auth": {
+    "signOut": "Sign Out",
+    "signIn": "Sign In",
+    "signUp": "Sign Up", 
+    "email": "Email",
+    "password": "Password",
+    "confirmPassword": "Confirm Password",
+    "forgotPassword": "Forgot Password?"
   }
 }
 

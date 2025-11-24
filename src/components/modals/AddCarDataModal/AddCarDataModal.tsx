@@ -9,7 +9,7 @@ import { useApp } from '../../../contexts/AppContext'; // <-- ДОБАВИТЬ �
 
 interface AddCarDataModalProps {
   onClose: () => void;
-  onSave: (carData: { fields: CarDataField[] }) => void;
+  onSave: (carData: { fields: CarDataField[] }) => void; // Изменяем сигнатуру
 }
 
 const AddCarDataModal: React.FC<AddCarDataModalProps> = ({ onClose, onSave }) => {
@@ -95,17 +95,24 @@ const AddCarDataModal: React.FC<AddCarDataModalProps> = ({ onClose, onSave }) =>
   const showValueField = !isSpecialCategory && selectedCategoryKey !== 'purchaseDate' && selectedCategoryKey !== 'cost';
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+      e.preventDefault();
 
       if (!user || !selectedCar) {
-        console.error('❌ Пользователь не авторизован или автомобиль не выбран');
+        console.error('🔴 [AddCarDataModal] Пользователь не авторизован или автомобиль не выбран');
         return;
       }
+
+      console.log('🟡 [AddCarDataModal] handleSubmit START', { 
+        user: user.email, 
+        selectedCarId: selectedCar.id,
+        fields 
+      });
 
       setLoading(true);
 
       try {
         let carDataToSave: { fields: CarDataField[] } = { fields: [] };
+
 
       if (selectedCategoryKey === 'insurance') {
         const formattedStartDate = new Date(insuranceData.startDate).toLocaleDateString('ru-RU');
@@ -176,29 +183,26 @@ const AddCarDataModal: React.FC<AddCarDataModalProps> = ({ onClose, onSave }) =>
 
       // Проверяем что есть данные для сохранения
       if (carDataToSave.fields.length === 0) {
-        console.error('❌ Нет данных для сохранения');
+        console.error('🔴 [AddCarDataModal] Нет данных для сохранения');
         return;
       }
 
-      console.log('🔄 Создание CarData для автомобиля:', selectedCar.id);
+      console.log('🟡 [AddCarDataModal] Данные для сохранения:', carDataToSave);
       
-      // Сохраняем в Supabase
-      await carDataService.createCarData(selectedCar.id, {
-        fields: carDataToSave.fields,
-        dataType: getDataTypeFromFields(carDataToSave.fields)
-      });
-
-      console.log('✅ CarData созданы');
+      // 🔄 ВЫЗЫВАЕМ onSave ДЛЯ ОПТИМИСТИЧНОГО ОБНОВЛЕНИЯ
+      console.log('🟡 [AddCarDataModal] Вызов onSave...');
+      onSave(carDataToSave);
       
-      // Уведомляем родительский компонент
+      console.log('🟡 [AddCarDataModal] Закрытие модалки...');
       onClose();
     
-  } catch (error) {
-    console.error('❌ Ошибка создания CarData:', error);
-  } finally {
-    setLoading(false);
-  }
-};
+    } catch (error) {
+      console.error('🔴 [AddCarDataModal] Ошибка:', error);
+    } finally {
+      setLoading(false);
+      console.log('🟡 [AddCarDataModal] handleSubmit FINISH');
+    }
+  };
 
   const updateField = (index: number, key: keyof CarDataField, value: string) => {
     const updated = fields.map((f, i) => i === index ? { ...f, [key]: value } : f);

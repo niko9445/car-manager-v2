@@ -21,6 +21,12 @@ const EditCarModal: React.FC<EditCarModalProps> = ({
   onEditCarData,
   onDeleteCarData
 }) => {
+  console.log('🔵 [EditCarModal] RENDER', { 
+    carId: car?.id,
+    carDataEntriesCount: carDataEntries?.length,
+    carBrand: car?.brand
+  });
+
   const [formData, setFormData] = useState<CarFormData>({
     brand: '',
     model: '',
@@ -32,10 +38,61 @@ const EditCarModal: React.FC<EditCarModalProps> = ({
 
   const [editingDataId, setEditingDataId] = useState<string | null>(null);
   const [editingDataField, setEditingDataField] = useState<CarDataField>({ name: '', value: '', unit: '' });
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [localCarData, setLocalCarData] = useState<CarDataEntry[]>(carDataEntries);
   const { t } = useTranslation();
 
-  // Функция для получения переведенного названия поля по ключу
+  // 🔴 ЛОГИРОВАНИЕ ПРОПСОВ И СОСТОЯНИЙ
+  console.log('🔵 [EditCarModal] PROPS and STATE', {
+    car: car ? { id: car.id, brand: car.brand, model: car.model } : 'NO CAR',
+    carDataEntries: carDataEntries?.map(entry => ({
+      id: entry.id,
+      fields: entry.fields
+    })),
+    localCarData: localCarData?.map(entry => ({
+      id: entry.id,
+      fields: entry.fields
+    })),
+    formData,
+    editingDataId,
+    editingDataField,
+    isProcessing
+  });
+
+  // 🔴 ЛОГИРОВАНИЕ ЭФФЕКТОВ
+  useEffect(() => {
+    console.log('🔵 [EditCarModal] EFFECT - carDataEntries changed', {
+      prevLocalCarData: localCarData?.length,
+      newCarDataEntries: carDataEntries?.length
+    });
+    setLocalCarData(carDataEntries);
+  }, [carDataEntries]);
+
+  useEffect(() => {
+    console.log('🔵 [EditCarModal] EFFECT - car changed', {
+      car: car ? { id: car.id, brand: car.brand } : 'NO CAR'
+    });
+    
+    if (car) {
+      console.log('🔵 [EditCarModal] Setting formData from car', {
+        brand: car.brand,
+        model: car.model,
+        year: car.year
+      });
+      
+      setFormData({
+        brand: car.brand || '',
+        model: car.model || '',
+        year: car.year || new Date().getFullYear(),
+        engineType: car.engineType || 'petrol',
+        transmission: car.transmission || 'manual',
+        vin: car.vin || ''
+      });
+    }
+  }, [car]);
+
   const getTranslatedFieldName = (fieldKey: string): string => {
+    console.log('🔵 [EditCarModal] getTranslatedFieldName', { fieldKey });
     const translationMap: Record<string, string> = {
       'insurance': t('carDataFields.insurance'),
       'inspection': t('carDataFields.inspection'),
@@ -59,10 +116,11 @@ const EditCarModal: React.FC<EditCarModalProps> = ({
       'warranty': t('carDataFields.warranty'),
       'tax': t('carDataFields.tax')
     };
-    return translationMap[fieldKey] || fieldKey;
+    const result = translationMap[fieldKey] || fieldKey;
+    console.log('🔵 [EditCarModal] getTranslatedFieldName result', { fieldKey, result });
+    return result;
   };
 
-  // Список предопределенных полей для выбора при редактировании
   const predefinedFields = [
     { key: 'insurance', name: t('carDataFields.insurance'), unit: '' },
     { key: 'inspection', name: t('carDataFields.inspection'), unit: '' },
@@ -87,65 +145,187 @@ const EditCarModal: React.FC<EditCarModalProps> = ({
     { key: 'tax', name: t('carDataFields.tax'), unit: `${'₽'}/${t('units.year')}` }
   ];
 
-  useEffect(() => {
-    if (car) {
-      setFormData({
-        brand: car.brand || '',
-        model: car.model || '',
-        year: car.year || new Date().getFullYear(),
-        engineType: car.engineType || 'petrol',
-        transmission: car.transmission || 'manual',
-        vin: car.vin || ''
-      });
-    }
-  }, [car]);
-
+  // 🔴 ЛОГИРОВАНИЕ ОБРАБОТЧИКОВ
   const handleSubmit = (e: React.FormEvent): void => {
+    console.log('🔵 [EditCarModal] handleSubmit START', { formData });
     e.preventDefault();
     if (formData.brand && formData.model) {
+      console.log('🔵 [EditCarModal] Calling onSave', { carId: car.id, formData });
       onSave(car.id, formData);
+    } else {
+      console.warn('🟡 [EditCarModal] handleSubmit - missing required fields');
     }
   };
 
   const startEditingData = (dataEntry: CarDataEntry) => {
+    console.log('🔵 [EditCarModal] startEditingData', { 
+      dataEntryId: dataEntry.id,
+      dataEntryFields: dataEntry.fields 
+    });
+    
     setEditingDataId(dataEntry.id);
     const field = dataEntry.fields[0] || { name: '', value: '', unit: '' };
     
-    // Находим переведенное название для текущего поля
     const predefinedField = predefinedFields.find(f => f.key === field.name);
     const displayName = predefinedField ? predefinedField.name : field.name;
     
+    console.log('🔵 [EditCarModal] startEditingData - setting field', {
+      originalField: field,
+      displayName,
+      predefinedField
+    });
+    
     setEditingDataField({ 
       ...field, 
-      name: displayName // Сохраняем переведенное имя для редактирования
+      name: displayName
     });
   };
 
   const cancelEditingData = () => {
+    console.log('🔵 [EditCarModal] cancelEditingData', { editingDataId });
     setEditingDataId(null);
     setEditingDataField({ name: '', value: '', unit: '' });
   };
 
-  const handleSaveEditedData = (dataId: string) => {
-    if (editingDataField.name.trim() && editingDataField.value.trim()) {
-      // Находим ключ по переведенному имени
+  const handleSaveEditedData = async (dataId: string) => {
+    console.log('🔵 [EditCarModal] handleSaveEditedData START', {
+      dataId,
+      editingDataField,
+      isProcessing
+    });
+
+    if (!editingDataField.name.trim() || !editingDataField.value.trim()) {
+      console.warn('🟡 [EditCarModal] handleSaveEditedData - missing required fields');
+      return;
+    }
+
+    if (isProcessing) {
+      console.warn('🟡 [EditCarModal] handleSaveEditedData - already processing');
+      return;
+    }
+
+    setIsProcessing(true);
+    console.log('🔵 [EditCarModal] handleSaveEditedData - setting isProcessing true');
+
+    try {
+      // 🔴 ЛОГИРОВАНИЕ ОПТИМИСТИЧНОГО ОБНОВЛЕНИЯ
       const predefinedField = predefinedFields.find(f => f.name === editingDataField.name);
       const fieldKey = predefinedField ? predefinedField.key : editingDataField.name;
       
       const updatedField = {
         ...editingDataField,
-        name: fieldKey, // Сохраняем ключ
+        name: fieldKey,
         unit: predefinedField ? predefinedField.unit : editingDataField.unit
       };
+
+      console.log('🔵 [EditCarModal] handleSaveEditedData - optimistic update', {
+        predefinedField,
+        fieldKey,
+        updatedField
+      });
+
+      // ОПТИМИСТИЧНОЕ ОБНОВЛЕНИЕ
+      setLocalCarData(prev => {
+        const updated = prev.map(entry => 
+          entry.id === dataId 
+            ? { ...entry, fields: [updatedField] }
+            : entry
+        );
+        console.log('🔵 [EditCarModal] handleSaveEditedData - localCarData updated', {
+          prevLength: prev.length,
+          updatedLength: updated.length
+        });
+        return updated;
+      });
+
+      // 🔴 ЛОГИРОВАНИЕ ВЫЗОВА РОДИТЕЛЬСКОЙ ФУНКЦИИ
+      console.log('🔵 [EditCarModal] handleSaveEditedData - calling onEditCarData', {
+        carId: car.id,
+        dataId,
+        updatedData: { fields: [updatedField] }
+      });
+
+      await onEditCarData(car.id, dataId, { fields: [updatedField] });
+
+      console.log('🟢 [EditCarModal] handleSaveEditedData - onEditCarData completed');
       
-      onEditCarData(car.id, dataId, { fields: [updatedField] });
       setEditingDataId(null);
+      console.log('🔵 [EditCarModal] handleSaveEditedData - editingDataId cleared');
+
+    } catch (error) {
+      console.error('🔴 [EditCarModal] handleSaveEditedData - ERROR:', error);
+      // ВОССТАНАВЛИВАЕМ ПРЕЖНИЕ ДАННЫЯ ПРИ ОШИБКЕ
+      console.log('🔵 [EditCarModal] handleSaveEditedData - restoring carDataEntries');
+      setLocalCarData(carDataEntries);
+    } finally {
+      setIsProcessing(false);
+      console.log('🔵 [EditCarModal] handleSaveEditedData - setting isProcessing false');
+    }
+  };
+
+  const handleDeleteData = async (dataId: string) => {
+    console.log('🔵 [EditCarModal] handleDeleteData START', { dataId, isProcessing });
+
+    if (!window.confirm(t('carData.confirmDelete'))) {
+      console.log('🔵 [EditCarModal] handleDeleteData - user cancelled');
+      return;
+    }
+
+    if (isProcessing) {
+      console.warn('🟡 [EditCarModal] handleDeleteData - already processing');
+      return;
+    }
+
+    setIsProcessing(true);
+    console.log('🔵 [EditCarModal] handleDeleteData - setting isProcessing true');
+
+    try {
+      // 🔴 ЛОГИРОВАНИЕ ОПТИМИСТИЧНОГО УДАЛЕНИЯ
+      console.log('🔵 [EditCarModal] handleDeleteData - optimistic delete');
+      
+      setLocalCarData(prev => {
+        const updated = prev.filter(entry => entry.id !== dataId);
+        console.log('🔵 [EditCarModal] handleDeleteData - localCarData updated', {
+          prevLength: prev.length,
+          updatedLength: updated.length
+        });
+        return updated;
+      });
+
+      // 🔴 ЛОГИРОВАНИЕ ВЫЗОВА РОДИТЕЛЬСКОЙ ФУНКЦИИ
+      console.log('🔵 [EditCarModal] handleDeleteData - calling onDeleteCarData', {
+        carId: car.id,
+        dataId
+      });
+
+      await onDeleteCarData(car.id, dataId);
+
+      console.log('🟢 [EditCarModal] handleDeleteData - onDeleteCarData completed');
+
+    } catch (error) {
+      console.error('🔴 [EditCarModal] handleDeleteData - ERROR:', error);
+      // ВОССТАНАВЛИВАЕМ ПРЕЖНИЕ ДАННЫЯ ПРИ ОШИБКЕ
+      console.log('🔵 [EditCarModal] handleDeleteData - restoring carDataEntries');
+      setLocalCarData(carDataEntries);
+    } finally {
+      setIsProcessing(false);
+      console.log('🔵 [EditCarModal] handleDeleteData - setting isProcessing false');
     }
   };
 
   const updateEditingField = (updates: Partial<CarDataField>) => {
+    console.log('🔵 [EditCarModal] updateEditingField', { 
+      previous: editingDataField,
+      updates 
+    });
     setEditingDataField(prev => ({ ...prev, ...updates }));
   };
+
+  console.log('🔵 [EditCarModal] RENDER - final state before return', {
+    localCarDataCount: localCarData?.length,
+    editingDataId,
+    isProcessing
+  });
 
   return (
     <Modal isOpen={true} onClose={onClose} title={t('cars.editCar')} size="lg">
@@ -163,7 +343,10 @@ const EditCarModal: React.FC<EditCarModalProps> = ({
                 <input
                   type="text"
                   value={formData.brand}
-                  onChange={(e) => setFormData({...formData, brand: e.target.value})}
+                  onChange={(e) => {
+                    console.log('🔵 [EditCarModal] brand change', { value: e.target.value });
+                    setFormData({...formData, brand: e.target.value});
+                  }}
                   required
                   className="modal__input"
                 />
@@ -174,7 +357,10 @@ const EditCarModal: React.FC<EditCarModalProps> = ({
                 <input
                   type="text"
                   value={formData.model}
-                  onChange={(e) => setFormData({...formData, model: e.target.value})}
+                  onChange={(e) => {
+                    console.log('🔵 [EditCarModal] model change', { value: e.target.value });
+                    setFormData({...formData, model: e.target.value});
+                  }}
                   required
                   className="modal__input"
                 />
@@ -185,7 +371,10 @@ const EditCarModal: React.FC<EditCarModalProps> = ({
                 <input
                   type="number"
                   value={formData.year}
-                  onChange={(e) => setFormData({...formData, year: parseInt(e.target.value)})}
+                  onChange={(e) => {
+                    console.log('🔵 [EditCarModal] year change', { value: e.target.value });
+                    setFormData({...formData, year: parseInt(e.target.value)});
+                  }}
                   required
                   min="1950"
                   max={new Date().getFullYear()}
@@ -197,7 +386,10 @@ const EditCarModal: React.FC<EditCarModalProps> = ({
                 <label className="modal__label">{t('cars.engineType')}</label>
                 <select
                   value={formData.engineType}
-                  onChange={(e) => setFormData({...formData, engineType: e.target.value as any})}
+                  onChange={(e) => {
+                    console.log('🔵 [EditCarModal] engineType change', { value: e.target.value });
+                    setFormData({...formData, engineType: e.target.value as any});
+                  }}
                   className="modal__input"
                 >
                   {engineTypes.map(type => (
@@ -212,7 +404,10 @@ const EditCarModal: React.FC<EditCarModalProps> = ({
                 <label className="modal__label">{t('cars.transmission')}</label>
                 <select
                   value={formData.transmission}
-                  onChange={(e) => setFormData({...formData, transmission: e.target.value as any})}
+                  onChange={(e) => {
+                    console.log('🔵 [EditCarModal] transmission change', { value: e.target.value });
+                    setFormData({...formData, transmission: e.target.value as any});
+                  }}
                   className="modal__input"
                 >
                   {transmissionTypes.map(type => (
@@ -228,7 +423,10 @@ const EditCarModal: React.FC<EditCarModalProps> = ({
                 <input
                   type="text"
                   value={formData.vin}
-                  onChange={(e) => setFormData({...formData, vin: e.target.value})}
+                  onChange={(e) => {
+                    console.log('🔵 [EditCarModal] vin change', { value: e.target.value });
+                    setFormData({...formData, vin: e.target.value});
+                  }}
                   placeholder={t('common.optional')} 
                   className="modal__input"
                 />
@@ -238,7 +436,7 @@ const EditCarModal: React.FC<EditCarModalProps> = ({
         </div>
 
         {/* Секция дополнительных данных */}
-        {carDataEntries.length > 0 && (
+        {localCarData.length > 0 && (
           <div className="card card--compact">
             <div className="card__header">
               <div className="card__main-info">
@@ -249,7 +447,7 @@ const EditCarModal: React.FC<EditCarModalProps> = ({
 
               {/* Список дополнительных данных */}
               <div className="modal__items-list">
-                {carDataEntries.map((dataEntry) => (
+                {localCarData.map((dataEntry) => (
                   <div key={dataEntry.id} className="modal__item">
                     {editingDataId === dataEntry.id ? (
                       /* Режим редактирования */
@@ -258,7 +456,11 @@ const EditCarModal: React.FC<EditCarModalProps> = ({
                           <select
                             className="modal__input modal__input--sm"
                             value={editingDataField.name}
-                            onChange={(e) => updateEditingField({ name: e.target.value })}
+                            onChange={(e) => {
+                              console.log('🔵 [EditCarModal] field name change', { value: e.target.value });
+                              updateEditingField({ name: e.target.value });
+                            }}
+                            disabled={isProcessing}
                           >
                             <option value="">{t('carData.selectParameter')}</option>
                             {predefinedFields.map(item => (
@@ -271,29 +473,44 @@ const EditCarModal: React.FC<EditCarModalProps> = ({
                             type="text"
                             className="modal__input modal__input--sm"
                             value={editingDataField.value}
-                            onChange={(e) => updateEditingField({ value: e.target.value })}
-                            placeholder={t('carData.value')} 
+                            onChange={(e) => {
+                              console.log('🔵 [EditCarModal] field value change', { value: e.target.value });
+                              updateEditingField({ value: e.target.value });
+                            }}
+                            placeholder={t('carData.value')}
+                            disabled={isProcessing}
                           />
                           <input
                             type="text"
                             className="modal__input modal__input--sm"
                             value={editingDataField.unit}
-                            onChange={(e) => updateEditingField({ unit: e.target.value })}
-                            placeholder={t('carData.unit')} 
+                            onChange={(e) => {
+                              console.log('🔵 [EditCarModal] field unit change', { value: e.target.value });
+                              updateEditingField({ unit: e.target.value });
+                            }}
+                            placeholder={t('carData.unit')}
+                            disabled={isProcessing}
                           />
                           <div className="modal__edit-actions">
                             <button 
                               type="button"
                               className="btn btn--primary btn--sm"
-                              onClick={() => handleSaveEditedData(dataEntry.id)}
-                              disabled={!editingDataField.name.trim() || !editingDataField.value.trim()}
+                              onClick={() => {
+                                console.log('🔵 [EditCarModal] save button clicked');
+                                handleSaveEditedData(dataEntry.id);
+                              }}
+                              disabled={!editingDataField.name.trim() || !editingDataField.value.trim() || isProcessing}
                             >
-                              {t('common.save')}
+                              {isProcessing ? t('common.saving') : t('common.save')}
                             </button>
                             <button 
                               type="button"
                               className="btn btn--secondary btn--sm"
-                              onClick={cancelEditingData}
+                              onClick={() => {
+                                console.log('🔵 [EditCarModal] cancel button clicked');
+                                cancelEditingData();
+                              }}
+                              disabled={isProcessing}
                             >
                               {t('common.cancel')}
                             </button>
@@ -301,12 +518,11 @@ const EditCarModal: React.FC<EditCarModalProps> = ({
                         </div>
                       </div>
                     ) : (
-                      /* Режим просмотра - ИСПОЛЬЗУЕМ ПЕРЕВОД */
+                      /* Режим просмотра */
                       <div className="modal__item-content">
                         <div className="modal__item-info">
                           {dataEntry.fields[0] && (
                             <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                              {/* ИСПОЛЬЗУЕМ ПЕРЕВОДЕННОЕ НАЗВАНИЕ */}
                               <span className="modal__item-name">
                                 {getTranslatedFieldName(dataEntry.fields[0].name)}
                               </span>
@@ -320,14 +536,22 @@ const EditCarModal: React.FC<EditCarModalProps> = ({
                           <button 
                             type="button"
                             className="btn btn--secondary btn--sm"
-                            onClick={() => startEditingData(dataEntry)}
+                            onClick={() => {
+                              console.log('🔵 [EditCarModal] edit button clicked');
+                              startEditingData(dataEntry);
+                            }}
+                            disabled={isProcessing}
                           >
                             {t('common.edit')}
                           </button>
                           <button 
                             type="button"
                             className="btn btn--danger btn--sm"
-                            onClick={() => onDeleteCarData(car.id, dataEntry.id)}
+                            onClick={() => {
+                              console.log('🔵 [EditCarModal] delete button clicked');
+                              handleDeleteData(dataEntry.id);
+                            }}
+                            disabled={isProcessing}
                           >
                             {t('common.delete')}
                           </button>
@@ -346,17 +570,22 @@ const EditCarModal: React.FC<EditCarModalProps> = ({
           <div className="modal__actions modal__actions--centered">
             <button 
               type="button" 
-              onClick={onClose}
+              onClick={() => {
+                console.log('🔵 [EditCarModal] cancel button clicked');
+                onClose();
+              }}
               className="btn btn--cancel"
+              disabled={isProcessing}
             >
               {t('common.cancel')}
             </button>
             <button 
               type="submit" 
               className="btn btn--action"
-              disabled={!formData.brand || !formData.model}
+              disabled={!formData.brand || !formData.model || isProcessing}
+              onClick={() => console.log('🔵 [EditCarModal] save main data button clicked')}
             >
-              {t('common.save')}
+              {isProcessing ? t('common.saving') : t('common.save')}
             </button>
           </div>
           

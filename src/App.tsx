@@ -46,7 +46,14 @@ const AppContent = () => {
   const [showAuthModal, setShowAuthModal] = useState(false);
   const { isMigrating } = useDataMigration();
 
-  useSupabaseData();
+  console.log('🟡 [App] RENDER', {
+    carsCount: cars.length,
+    selectedCarId: selectedCar?.id,
+    modalsOpen: Object.keys(modals).filter(key => modals[key as AppModalType]),
+    user: user?.email
+  });
+
+  const { isEditingRef } = useSupabaseData();
   useCarData();
 
   // Определяем мобильное устройство
@@ -86,6 +93,10 @@ const AppContent = () => {
 
   // Обработчики для Sidebar и MainContent
   const handleSetSelectedCar = useCallback((car: Car) => {
+    console.log('🔵 [handleSetSelectedCar]', { 
+      carId: car.id, 
+      carDataCount: car.carData?.length 
+    });
     dispatch({ type: 'SET_SELECTED_CAR', payload: car });
   }, [dispatch]);
 
@@ -142,19 +153,68 @@ const AppContent = () => {
   };
 
   const handleEditCar = async (carId: string, carData: CarFormData) => {
+    console.log('🟡 [handleEditCar] START', { carId, carData });
+    
     try {
+      // Находим текущий автомобиль
+      const currentCar = cars.find(car => car.id === carId);
+      if (!currentCar) {
+        console.error('🔴 [handleEditCar] Автомобиль не найден');
+        return;
+      }
+
+      // 🔴 СОХРАНЯЕМ СУЩЕСТВУЮЩИЕ ДАННЫЕ
+      const existingCarData = currentCar.carData || [];
+      const existingArticles = currentCar.articles || [];
+      const existingMaintenance = currentCar.maintenance || [];
+      const existingExpenses = currentCar.expenses || [];
+      
+      console.log('🟡 [handleEditCar] Сохраняем существующие данные:', {
+        carData: existingCarData.length,
+        articles: existingArticles.length,
+        maintenance: existingMaintenance.length,
+        expenses: existingExpenses.length
+      });
+
+      // Обновляем автомобиль в базе
       const updatedCar = await carService.updateCar(carId, carData);
-      const updatedCars = cars.map(car => 
-        car.id === carId ? updatedCar : car
-      );
+
+      // 🔴 СОЗДАЕМ ОБНОВЛЕННЫЙ АВТОМОБИЛЬ СО ВСЕМИ ДАННЫМИ
+      const updatedCars = cars.map(car => {
+        if (car.id === carId) {
+          return {
+            ...car,
+            ...carData, // основные данные
+            // 🔴 ЯВНО СОХРАНЯЕМ ВСЕ СУЩЕСТВУЮЩИЕ ДАННЫЕ
+            carData: existingCarData,
+            articles: existingArticles,
+            maintenance: existingMaintenance,
+            expenses: existingExpenses,
+            // Сохраняем ID и другие системные поля
+            id: car.id
+          };
+        }
+        return car;
+      });
+
       dispatch({ type: 'SET_CARS', payload: updatedCars });
       
       if (selectedCar?.id === carId) {
-        dispatch({ type: 'SET_SELECTED_CAR', payload: updatedCar });
+        dispatch({ type: 'SET_SELECTED_CAR', payload: {
+          ...selectedCar,
+          ...carData,
+          carData: existingCarData,
+          articles: existingArticles,
+          maintenance: existingMaintenance,
+          expenses: existingExpenses
+        } });
       }
+      
+      console.log('🟢 [handleEditCar] Автомобиль обновлен с сохранением данных');
       closeModal();
+      
     } catch (error) {
-      console.error('❌ Ошибка обновления автомобиля:', error);
+      console.error('🔴 [handleEditCar] Ошибка:', error);
     }
   };
 
@@ -240,18 +300,26 @@ const AppContent = () => {
   const handleAddMaintenance = async (maintenanceData: MaintenanceFormData) => {
     if (!selectedCar || !user) return;
     
+    console.log('🔧 [handleAddMaintenance] START', { 
+      selectedCarId: selectedCar.id,
+      maintenanceData 
+    });
+    
     try {
       const newMaintenance = await maintenanceService.createMaintenance(
         maintenanceData, 
         selectedCar.id
       );
       
-      // Обновляем автомобиль в состоянии
+      console.log('🔧 [handleAddMaintenance] Создано в Supabase:', newMaintenance.id);
+
       const updatedCars = cars.map(car => {
         if (car.id === selectedCar.id) {
+          const updatedMaintenance = [...(car.maintenance || []), newMaintenance];
+          console.log('🔧 [handleAddMaintenance] Обновленный maintenance:', updatedMaintenance.length);
           return {
             ...car,
-            maintenance: [...(car.maintenance || []), newMaintenance]
+            maintenance: updatedMaintenance
           };
         }
         return car;
@@ -266,35 +334,122 @@ const AppContent = () => {
 
   const handleAddCarData = async (carData: { fields: CarDataField[] }) => {
     if (!selectedCar || !user) return;
-    
+
+    const tempId = `temp-${Date.now()}`;
+    console.log('🟡 [handleAddCarData] START', { 
+      selectedCarId: selectedCar.id, 
+      tempId,
+      carData 
+    });
+
+    // Выносим объявление переменной за пределы try-catch
+    let updatedCars: Car[] = [];
+
     try {
-      // Сохраняем в базу данных
-      const newCarData = await carDataService.createCarData(selectedCar.id, {
+      // 🔄 ОПТИМИСТИЧНОЕ ОБНОВЛЕНИЕ
+      const tempCarData: CarDataEntry = {
+        id: tempId,
         fields: carData.fields,
-        dataType: 'custom'
+        dataType: getDataTypeFromFields(carData.fields),
+        createdAt: new Date().toISOString()
+      };
+
+      console.log('🟡 [handleAddCarData] Оптимистичное обновление', { tempCarData });
+
+      // Сразу обновляем состояние
+      updatedCars = cars.map(car => {
+        if (car.id === selectedCar.id) {
+          const newCarData = [...(car.carData || []), tempCarData];
+          console.log('🟡 [handleAddCarData] Новые carData для автомобиля:', newCarData);
+          return {
+            ...car,
+            carData: newCarData
+          };
+        }
+        return car;
       });
       
-      console.log('✅ CarData добавлены в БД');
+      dispatch({ type: 'SET_CARS', payload: updatedCars });
+      console.log('🟡 [handleAddCarData] Состояние обновлено (оптимистично)');
+
+      // Сохраняем в базу данных
+      console.log('🟡 [handleAddCarData] Сохранение в Supabase...');
+      const newCarData = await carDataService.createCarData(selectedCar.id, {
+        fields: carData.fields,
+        dataType: getDataTypeFromFields(carData.fields)
+      });
+
+      console.log('🟢 [handleAddCarData] Данные сохранены в Supabase:', newCarData);
+
+      // 🔄 ИСПРАВЛЕНИЕ: Используем обновленное состояние (updatedCars), а не старое (cars)
+      const finalCars = updatedCars.map(car => {
+        if (car.id === selectedCar.id) {
+          const finalCarData = car.carData.map(item => 
+            item.id === tempId ? newCarData : item
+          );
+          console.log('🟡 [handleAddCarData] Финальные carData:', finalCarData);
+          return {
+            ...car,
+            carData: finalCarData
+          };
+        }
+        return car;
+      });
       
-      // НЕ обновляем локальное состояние - useSupabaseData сделает это автоматически
+      dispatch({ type: 'SET_CARS', payload: finalCars });
+      console.log('🟢 [handleAddCarData] Состояние обновлено (финально)');
+
       closeModal();
       
     } catch (error) {
-      console.error('❌ Ошибка добавления данных автомобиля:', error);
+      console.error('🔴 [handleAddCarData] Ошибка:', error);
+      
+      // 🔄 ОТКАТ ПРИ ОШИБКЕ - используем обновленное состояние
+      const rolledBackCars = updatedCars.map((car: Car) => {
+        if (car.id === selectedCar.id) {
+          const rolledBackCarData = car.carData.filter((item: CarDataEntry) => !item.id.startsWith('temp-'));
+          console.log('🟡 [handleAddCarData] Откат carData:', rolledBackCarData);
+          return {
+            ...car,
+            carData: rolledBackCarData
+          };
+        }
+        return car;
+      });
+      
+      dispatch({ type: 'SET_CARS', payload: rolledBackCars });
+      console.log('🟡 [handleAddCarData] Состояние откатано');
     }
   };
 
+  // Вспомогательная функция для определения типа данных
+  const getDataTypeFromFields = (fields: CarDataField[]): 'insurance' | 'inspection' | 'custom' => {
+    const fieldName = fields[0]?.name;
+    if (fieldName === 'insurance') return 'insurance';
+    if (fieldName === 'inspection') return 'inspection';
+    return 'custom';
+  };
+
   const handleEditCarDataInEdit = async (carId: string, dataId: string, updatedData: { fields: CarDataField[] }) => {
+    console.log('🟡 [handleEditCarDataInEdit] START', { carId, dataId, updatedData });
+
+    // 🔴 БЛОКИРУЕМ загрузку в useSupabaseData
+    isEditingRef.current = true;
+
+    const originalCarData = cars.find(car => car.id === carId)?.carData || [];
+    const originalData = originalCarData.find(item => item.id === dataId);
+
+    if (!originalData) {
+      console.error('🔴 Не найдены оригинальные данные');
+      isEditingRef.current = false; // 🔴 РАЗБЛОКИРУЕМ
+      return;
+    }
+
     try {
-      console.log('🔄 Обновление CarData:', dataId);
+      // 🔄 ОПТИМИСТИЧНОЕ ОБНОВЛЕНИЕ
+      console.log('🟡 [handleEditCarDataInEdit] Оптимистичное обновление');
       
-      // 1. Обновляем в базе данных
-      await carDataService.updateCarData(dataId, {
-        fields: updatedData.fields
-      });
-      
-      // 2. Обновляем локальное состояние
-      const updatedCars = cars.map(car => {
+      const updatedCarsOptimistic = cars.map(car => {
         if (car.id === carId) {
           return {
             ...car,
@@ -308,23 +463,83 @@ const AppContent = () => {
         return car;
       });
       
-      dispatch({ type: 'SET_CARS', payload: updatedCars });
-      console.log('✅ CarData обновлены в БД и состоянии');
+      dispatch({ type: 'SET_CARS', payload: updatedCarsOptimistic });
+      console.log('🟡 [handleEditCarDataInEdit] Состояние обновлено (оптимистично)');
+
+      // 1. Обновляем в базе данных
+      console.log('🟡 [handleEditCarDataInEdit] Сохранение в Supabase...');
+      const updatedCarData = await carDataService.updateCarData(dataId, {
+        fields: updatedData.fields
+      });
+      
+      console.log('🟢 [handleEditCarDataInEdit] Данные обновлены в Supabase:', updatedCarData);
+
+      // 🔄 ОБНОВЛЯЕМ СОСТОЯНИЕ С РЕАЛЬНЫМИ ДАННЫМИ
+      const finalCars = updatedCarsOptimistic.map(car => {
+        if (car.id === carId) {
+          return {
+            ...car,
+            carData: car.carData.map(item => 
+              item.id === dataId 
+                ? updatedCarData
+                : item
+            )
+          };
+        }
+        return car;
+      });
+      
+      dispatch({ type: 'SET_CARS', payload: finalCars });
+      console.log('🟢 [handleEditCarDataInEdit] Состояние обновлено с реальными данными');
       
     } catch (error) {
-      console.error('❌ Ошибка обновления CarData:', error);
+      console.error('🔴 [handleEditCarDataInEdit] Ошибка:', error);
+      
+      // 🔄 ОТКАТ ПРИ ОШИБКЕ
+      console.log('🟡 [handleEditCarDataInEdit] Откат изменений');
+      const rolledBackCars = cars.map(car => {
+        if (car.id === carId) {
+          return {
+            ...car,
+            carData: car.carData.map(item => 
+              item.id === dataId 
+                ? originalData
+                : item
+            )
+          };
+        }
+        return car;
+      });
+      
+      dispatch({ type: 'SET_CARS', payload: rolledBackCars });
+      console.log('🟡 [handleEditCarDataInEdit] Состояние откатано');
+    } finally {
+      // 🔴 РАЗБЛОКИРУЕМ загрузку
+      isEditingRef.current = false;
+      console.log('🟢 [handleEditCarDataInEdit] Блокировка снята');
     }
   };
 
   const handleDeleteCarDataInEdit = async (carId: string, dataId: string) => {
+    console.log('🟡 [handleDeleteCarDataInEdit] START', { 
+      carId, 
+      dataId 
+    });
+
+    // Сохраняем оригинальные данные для отката
+    const originalCarData = cars.find(car => car.id === carId)?.carData || [];
+    const dataToDelete = originalCarData.find(item => item.id === dataId);
+
+    if (!dataToDelete) {
+      console.error('🔴 [handleDeleteCarDataInEdit] Не найдены данные для удаления');
+      return;
+    }
+
     try {
-      console.log('🔄 Удаление CarData:', dataId);
+      // 🔄 ОПТИМИСТИЧНОЕ ОБНОВЛЕНИЕ
+      console.log('🟡 [handleDeleteCarDataInEdit] Оптимистичное удаление');
       
-      // 1. Удаляем из базы данных
-      await carDataService.deleteCarData(dataId);
-      
-      // 2. Обновляем локальное состояние
-      const updatedCars = cars.map(car => {
+      const updatedCarsOptimistic = cars.map(car => {
         if (car.id === carId) {
           return {
             ...car,
@@ -334,13 +549,35 @@ const AppContent = () => {
         return car;
       });
       
-      dispatch({ type: 'SET_CARS', payload: updatedCars });
-      console.log('✅ CarData удалены из БД и состояния');
+      dispatch({ type: 'SET_CARS', payload: updatedCarsOptimistic });
+      console.log('🟡 [handleDeleteCarDataInEdit] Состояние обновлено (оптимистично)');
+
+      // 1. Удаляем из базы данных
+      console.log('🟡 [handleDeleteCarDataInEdit] Удаление из Supabase...');
+      await carDataService.deleteCarData(dataId);
+      
+      console.log('🟢 [handleDeleteCarDataInEdit] Данные удалены из Supabase');
       
     } catch (error) {
-      console.error('❌ Ошибка удаления CarData:', error);
+      console.error('🔴 [handleDeleteCarDataInEdit] Ошибка:', error);
+      
+      // 🔄 ОТКАТ ПРИ ОШИБКЕ
+      console.log('🟡 [handleDeleteCarDataInEdit] Откат удаления');
+      const rolledBackCars = cars.map(car => {
+        if (car.id === carId) {
+          return {
+            ...car,
+            carData: originalCarData // Восстанавливаем оригинальный массив
+          };
+        }
+        return car;
+      });
+      
+      dispatch({ type: 'SET_CARS', payload: rolledBackCars });
+      console.log('🟡 [handleDeleteCarDataInEdit] Состояние откатано');
     }
   };
+
   const handleDeleteMaintenance = async (maintenance: Maintenance) => {
     if (!selectedCar) return;
     
@@ -388,6 +625,11 @@ const AppContent = () => {
   // Получение дополнительных данных для автомобиля
   const getCarDataEntries = (carId: string): CarDataEntry[] => {
     const car = cars.find(c => c.id === carId);
+    console.log('🔵 [getCarDataEntries]', { 
+      carId, 
+      carFound: !!car,
+      carDataCount: car?.carData?.length 
+    });
     return car?.carData || [];
   };
 
@@ -498,7 +740,7 @@ const AppContent = () => {
       {modals.addCarData && selectedCar && (
         <AddCarDataModal
           onClose={closeModal}
-          onSave={handleAddCarData}
+          onSave={handleAddCarData} // Теперь передаем функцию с оптимистичным обновлением
         />
       )}
 
@@ -519,8 +761,14 @@ const AppContent = () => {
         <EditCarDataModal
           data={modalData.data}
           onClose={closeModal}
-          onSave={handleEditCarData} // Используем совместимую функцию
-          onDelete={handleDeleteCarData} // Используем совместимую функцию
+          onSave={(dataId, updatedData) => {
+            if (!selectedCar) return;
+            handleEditCarDataInEdit(selectedCar.id, dataId, updatedData);
+          }}
+          onDelete={(dataId) => {
+            if (!selectedCar) return;
+            handleDeleteCarDataInEdit(selectedCar.id, dataId);
+          }}
         />
       )}
     </>

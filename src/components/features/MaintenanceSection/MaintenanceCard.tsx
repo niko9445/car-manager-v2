@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Maintenance, Car } from '../../../types';
 import { useCurrency } from '../../../contexts/CurrencyContext';
 import { useTranslation } from '../../../contexts/LanguageContext';
@@ -29,6 +29,18 @@ const MaintenanceCard: React.FC<MaintenanceCardProps> = ({
   // Получаем данные о категории и подкатегории
   const categoryData = MAINTENANCE_CATEGORIES.find(cat => cat.id === maintenance.categoryId);
   const subcategoryData = categoryData?.subcategories.find(sub => sub.id === maintenance.subcategoryId);
+
+  // 🔴 ДОБАВЛЕНО: Отладочное логирование
+  useEffect(() => {
+    console.log('🔧 [MaintenanceCard] DEBUG:', {
+      id: maintenance.id,
+      subcategoryId: maintenance.subcategoryId,
+      categoryId: maintenance.categoryId,
+      categoryData: categoryData?.name,
+      subcategoryData: subcategoryData?.name,
+      // workType: maintenance.workType // 🔴 УБРАНО - этого поля может не быть
+    });
+  }, [maintenance, categoryData, subcategoryData]);
 
   const handleCardClick = () => {
     onToggle();
@@ -77,6 +89,27 @@ const MaintenanceCard: React.FC<MaintenanceCardProps> = ({
   const customFields = formatCustomFields();
   const hasCustomFields = customFields && customFields.length > 0;
 
+  // 🔴 ИСПРАВЛЕНО: Получаем название для заголовка
+  const getMaintenanceTitle = (): string => {
+    // 1. Пробуем получить название подкатегории
+    if (subcategoryData?.name) {
+      return subcategoryData.name;
+    }
+    
+    // 2. Пробуем получить название категории
+    if (categoryData?.name) {
+      return categoryData.name;
+    }
+    
+    // 3. Используем fallback перевод
+    return t('maintenance.technicalService');
+  };
+
+  // 🔴 ИСПРАВЛЕНО: Получаем название для категории
+  const getCategoryTitle = (): string => {
+    return categoryData?.name || t('maintenance.technicalService');
+  };
+
   return (
     <div 
       className={`card card--interactive ${isExpanded ? 'card--expanded' : ''}`}
@@ -92,10 +125,7 @@ const MaintenanceCard: React.FC<MaintenanceCardProps> = ({
           
           {/* Тип работ как заголовок */}
           <div className="maintenance-type">
-            {maintenance.subcategoryId 
-              ? t(`maintenanceCategories.subcategories.${maintenance.subcategoryId}`) // <-- ИСПРАВЛЕНО
-              : t('maintenance.technicalService')
-            }
+            {getMaintenanceTitle()} {/* 🔴 ИСПРАВЛЕНО */}
           </div>
           
           {/* В нераскрытой карточке ТОЛЬКО затраты */}
@@ -146,10 +176,7 @@ const MaintenanceCard: React.FC<MaintenanceCardProps> = ({
             <div className="card__info-item">
               <div className="card__info-label">{t('maintenance.category')}</div>
               <div className="card__info-value">
-                {categoryData?.icon} {maintenance.categoryId 
-                  ? t(`maintenanceCategories.${maintenance.categoryId}`) // <-- ИСПРАВЛЕНО
-                  : t('maintenance.technicalService')
-                }
+                {categoryData?.icon} {getCategoryTitle()} {/* 🔴 ИСПРАВЛЕНО */}
               </div>
             </div>
             

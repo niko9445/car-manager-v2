@@ -1,6 +1,7 @@
 // services/database/maintenance.ts
 import { BaseService } from './baseService';
 import { Maintenance, MaintenanceFormData } from '../../types';
+import { convertKeysToCamelCase, convertKeysToSnakeCase } from '../../utils/convertCase'; // 🔴 ИМПОРТИРУЕМ
 
 export class MaintenanceService extends BaseService {
   constructor() {
@@ -8,7 +9,10 @@ export class MaintenanceService extends BaseService {
   }
 
   async createMaintenance(maintenanceData: MaintenanceFormData, carId: string): Promise<Maintenance> {
-    const maintenance = await this.create({
+    console.log('🟡 [maintenanceService] createMaintenance START', { maintenanceData, carId });
+    
+    // 🔴 КОНВЕРТИРУЕМ В snake_case ПЕРЕД ЗАПИСЬЮ В БД
+    const dbData = convertKeysToSnakeCase({
       ...maintenanceData,
       carId,
       date: maintenanceData.date,
@@ -19,22 +23,42 @@ export class MaintenanceService extends BaseService {
       customFields: maintenanceData.customFields || {}
     });
 
+    console.log('🟡 [maintenanceService] createMaintenance DB DATA:', dbData);
+    
+    const maintenance = await this.create(dbData);
+
+    console.log('🟢 [maintenanceService] createMaintenance SUCCESS', { maintenance });
+    
     return this.mapToMaintenance(maintenance);
   }
 
   async getMaintenanceByCar(carId: string): Promise<Maintenance[]> {
+    console.log('🟡 [maintenanceService] getMaintenanceByCar START', { carId });
+    
     const { data, error } = await this.supabase
       .from(this.tableName)
       .select('*')
       .eq('car_id', carId)
       .order('date', { ascending: false });
 
-    if (error) throw error;
-    return data.map(item => this.mapToMaintenance(item));
+    if (error) {
+      console.error('🔴 [maintenanceService] getMaintenanceByCar ERROR', error);
+      throw error;
+    }
+
+    console.log('🟢 [maintenanceService] getMaintenanceByCar RAW DATA:', data);
+    
+    // 🔴 КОНВЕРТИРУЕМ В camelCase ПОСЛЕ ЧТЕНИЯ ИЗ БД
+    const result = data.map(item => this.mapToMaintenance(item));
+    console.log('🟢 [maintenanceService] getMaintenanceByCar MAPPED RESULT:', result);
+    
+    return result;
   }
 
   async updateMaintenance(maintenanceId: string, updates: Partial<MaintenanceFormData>): Promise<Maintenance> {
-    const updated = await this.update(maintenanceId, updates);
+    // 🔴 КОНВЕРТИРУЕМ В snake_case ПЕРЕД ОБНОВЛЕНИЕМ
+    const dbUpdates = convertKeysToSnakeCase(updates);
+    const updated = await this.update(maintenanceId, dbUpdates);
     return this.mapToMaintenance(updated);
   }
 
@@ -43,17 +67,28 @@ export class MaintenanceService extends BaseService {
   }
 
   private mapToMaintenance(dbMaintenance: any): Maintenance {
-    return {
-      id: dbMaintenance.id,
-      carId: dbMaintenance.carId,
-      date: dbMaintenance.date,
-      mileage: dbMaintenance.mileage,
-      cost: dbMaintenance.cost,
-      createdAt: dbMaintenance.createdAt,
-      categoryId: dbMaintenance.categoryId,
-      subcategoryId: dbMaintenance.subcategoryId,
-      customFields: dbMaintenance.customFields || {}
+    // 🔴 ИСПОЛЬЗУЕМ АВТОМАТИЧЕСКУЮ КОНВЕРСИЮ
+    const camelCaseData = convertKeysToCamelCase(dbMaintenance);
+    
+    const result = {
+      id: camelCaseData.id,
+      carId: camelCaseData.carId,
+      date: camelCaseData.date,
+      mileage: camelCaseData.mileage,
+      cost: camelCaseData.cost,
+      createdAt: camelCaseData.createdAt,
+      categoryId: camelCaseData.categoryId,
+      subcategoryId: camelCaseData.subcategoryId,
+      customFields: camelCaseData.customFields || {}
     };
+
+    console.log('🟣 [maintenanceService] mapToMaintenance', { 
+      dbMaintenance, 
+      camelCaseData,
+      mappedResult: result 
+    });
+    
+    return result;
   }
 }
 

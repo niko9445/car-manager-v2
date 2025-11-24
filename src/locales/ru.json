@@ -364,6 +364,16 @@
     "readErrorMessage": "Не удалось прочитать файл"
   },
 
+  "auth": {
+    "signOut": "Выйти",
+    "signIn": "Войти", 
+    "signUp": "Зарегистрироваться",
+    "email": "Email",
+    "password": "Пароль",
+    "confirmPassword": "Подтвердите пароль",
+    "forgotPassword": "Забыли пароль?"
+  },
+
    "articles": {
     "addArticle": "Добавить артикул",
     "selectCategory": "Категория запчасти",
@@ -506,4 +516,6 @@
       "care_products": "Средства по уходу"
     }
   }
+
+  
 }
